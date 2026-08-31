@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}FRENDACH — Soccer Training{% endblock %}
 {% block description %}FRENDACH. Soccer training in Maryland. Small roster, high school first, film as part of the method.{% endblock %}
@@ -19,147 +18,210 @@
     </p>
     <div class="actions">
       <a class="btn btn--solid" href="{% url 'train:schedule' %}">Open sessions</a>
-      <a class="btn btn--quiet" href="#sessions">What a session is</a>
+      <a class="btn btn--quiet" href="#offer">Ways to train</a>
     </div>
   </div>
 </section>
 
 <hr class="tickrule shell">
 
-{# ---------------------------------------------------------------- belief #}
-<section class="section">
-  <div class="shell split split--sticky">
-    <div>
-      <p class="beat">The belief</p>
-      <blockquote class="quote">
-        Once you are the best on the team, it is getting to be time to go.
-        <cite>Mother's Law</cite>
-      </blockquote>
-    </div>
-    <div class="stack">
-      <p class="lead">
-        You spend time doing the things you love. So if you are going to apply yourself
-        to training, you have to love it — the fun, the frustration, the winning, the
-        goals, and finding out who you actually are as a player.
-      </p>
-      <p>
-        Once you get older and around better players, the margin for technical difference
-        becomes minuscule. The mental side — playing with freedom in tense situations — is
-        what separates one player from another. That, paired with knowing this is a game,
-        and a tool used to develop you for the rest of your life.
-      </p>
-      <p>
-        No getting high on the highs. No getting too low on the lows. When you choose to
-        love it, you choose to accept both as the thing that makes you better.
-      </p>
-      <p class="aside">
-        Be the best in the neighbourhood first. The country second. Know the next step,
-        rise to the top of this one, move, repeat. Keep training in the off hours you
-        aren't with your team.
-      </p>
-    </div>
-  </div>
-</section>
-
-{# ---------------------------------------------------------------- the laws #}
-{% if laws %}
-<section class="section">
+{% comment %}
+The doctrine is the longest thing in the house. Rather than five screens of
+scrolling, it is one screen you step through: belief, the laws, Mother's Law,
+the record. Everything is in the page for search engines and for JS-off
+visitors — the panels only decide what is on top.
+{% endcomment %}
+<section class="section" id="doctrine">
   <div class="shell">
-    <p class="beat">The seven laws</p>
-    <h2>What the session is built on.</h2>
-    <ol class="laws laws--grid rise" style="margin-top:clamp(22px,3vw,36px)">
-      {% for law in laws %}
-        <li class="law">
-          <p class="law__title">{{ law.title }}</p>
-          <p class="law__body">{{ law.body }}</p>
-        </li>
-      {% endfor %}
-    </ol>
+    <div class="headrow">
+      <div>
+        <p class="beat">The doctrine</p>
+        <h2>What the session is built on.</h2>
+      </div>
+      <p class="meta" style="max-width:26ch;text-align:right">
+        Four ways in. Same belief underneath.
+      </p>
+    </div>
+
+    <div class="panels" data-panels>
+      <div class="panels__bar" role="tablist" aria-label="Doctrine">
+        <button class="panels__tab" type="button" role="tab" data-panel-tab
+                id="doc-tab-belief" aria-controls="doc-belief" aria-selected="true">Belief</button>
+        <button class="panels__tab" type="button" role="tab" data-panel-tab
+                id="doc-tab-laws" aria-controls="doc-laws" aria-selected="false">The Seven Laws</button>
+        <button class="panels__tab" type="button" role="tab" data-panel-tab
+                id="doc-tab-mother" aria-controls="doc-mother" aria-selected="false">Mother's Law</button>
+        <button class="panels__tab" type="button" role="tab" data-panel-tab
+                id="doc-tab-record" aria-controls="doc-record" aria-selected="false">The record</button>
+      </div>
+
+      <div class="panels__panel" role="tabpanel" data-panel
+           id="doc-belief" aria-labelledby="doc-tab-belief">
+        <div class="split">
+          <blockquote class="quote">
+            When you choose to love it, you choose the weather.
+          </blockquote>
+          <div class="stack">
+            <p class="lead">
+              You spend time doing the things you love. So if you are going to apply
+              yourself to training, you have to love it — the fun, the frustration,
+              the winning, the goals, and finding out who you actually are as a player.
+            </p>
+            <p>
+              Once you get older and around better players, the margin for technical
+              difference becomes minuscule. The mental side — playing with freedom in
+              tense situations — is what separates one player from another. That,
+              paired with knowing this is a game, and a tool used to develop you for
+              the rest of your life.
+            </p>
+            <p>
+              No getting high on the highs. No getting too low on the lows. When you
+              choose to love it, you choose to accept both as the thing that makes
+              you better.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panels__panel" role="tabpanel" data-panel hidden
+           id="doc-laws" aria-labelledby="doc-tab-laws">
+        <ol class="laws laws--grid">
+          {% for law in laws %}
+            <li class="law">
+              <p class="law__title">{{ law.title }}</p>
+              <p class="law__body">{{ law.body }}</p>
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      <div class="panels__panel" role="tabpanel" data-panel hidden
+           id="doc-mother" aria-labelledby="doc-tab-mother">
+        <div class="split">
+          <blockquote class="quote">
+            Once you are the best on the team, it is getting to be time to go.
+            <cite>Mother's Law</cite>
+          </blockquote>
+          <div class="stack">
+            <p class="lead">
+              Be the best in the neighbourhood first. The country second. You are a
+              player inside a large pool — know the next step, rise to the top of
+              this one, move, repeat.
+            </p>
+            <p>
+              And keep training in the off hours you aren't with your team. That is
+              where the difference is actually made.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panels__panel" role="tabpanel" data-panel hidden
+           id="doc-record" aria-labelledby="doc-tab-record">
+        <div class="split">
+          <div class="stack">
+            <p class="lead">
+              Dunkirk / Waldorf, Maryland. Central midfielder. He has been the best
+              player on teams and he has been the one watching from the bench. Both
+              are in how he coaches.
+            </p>
+            <p class="meta">Favourite player growing up: Ronaldinho. Joy is not the opposite of standards.</p>
+          </div>
+          {% if milestones %}
+            <ul class="facts">
+              {% for milestone in milestones %}
+                <li>
+                  <b>{{ milestone.title }}{% if milestone.detail %} <span style="color:var(--muted)">— {{ milestone.detail }}</span>{% endif %}</b>
+                  <span>{{ milestone.year }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-{% endif %}
 
-{# ---------------------------------------------------------------- sessions #}
-<section class="section" id="sessions">
+{% comment %}
+The offer and what is actually open, side by side. A parent wants to know the
+price and the next available time in the same glance.
+{% endcomment %}
+<section class="section" id="offer">
   <div class="shell">
     <p class="beat">The offer</p>
-    <h2>Ways to train.</h2>
+    <h2>Ways to train, and what is open.</h2>
 
-    <ul class="tariff">
-      {% for session in sessions %}
-        <li class="tariff__row rise">
-          <a class="tariff__name" href="{{ session.get_absolute_url }}">{{ session.name }}</a>
-          <p class="tariff__what">{{ session.summary }}</p>
-          <span class="tariff__spec">{{ session.duration_minutes }} min · {{ session.get_format_display }}</span>
-          <span class="price">{{ session.price_label }}</span>
-        </li>
-      {% empty %}
-        <li class="tariff__row"><p class="tariff__what">Sessions are being set. Ask directly.</p></li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
+    <div class="bento">
+      <div class="tile tile--twothirds">
+        <span class="tile__label">Sessions</span>
+        <ul class="tariff">
+          {% for session in sessions %}
+            <li class="tariff__row">
+              <a class="tariff__name" href="{{ session.get_absolute_url }}">{{ session.name }}</a>
+              <p class="tariff__what">{{ session.summary }}</p>
+              <span class="tariff__spec">{{ session.duration_minutes }} min · {{ session.get_format_display }}</span>
+              <span class="price">{{ session.price_label }}</span>
+            </li>
+          {% empty %}
+            <li class="tariff__row"><p class="tariff__what">Sessions are being set. Ask directly.</p></li>
+          {% endfor %}
+        </ul>
+      </div>
 
-<section class="section">
-  <div class="shell">
-    <div class="split">
-      <div class="stack">
-        <p class="beat">Next open</p>
-        <h2>Take a time.</h2>
-        <p class="lead">
-          Booking a slot sends a request. Nothing is confirmed until Paul confirms it —
-          you get a reference either way.
-        </p>
-        <div class="slots" style="margin-top:0.6rem">
-          {% for slot in next_slots|slice:":4" %}
+      <div class="tile tile--third">
+        <span class="tile__label">Next open</span>
+        <div class="slots slots--mini">
+          {% for slot in next_slots|slice:":3" %}
             <a class="slot" href="{% url 'train:book' slot.id %}">
               <span>
                 <span class="slot__when">{{ slot.starts_at|date:"D j M · g:i A" }}</span><br>
-                <span class="slot__where">{{ slot.session_type.name }} · {{ slot.location }}</span>
+                <span class="slot__where">{{ slot.session_type.name }}</span>
               </span>
-              <span class="slot__seats">{{ slot.seats_left }} left</span>
+              <span class="slot__seats">{{ slot.seats_left }}</span>
             </a>
           {% empty %}
-            <p class="notice">Nothing open right now. <a href="{% url 'house:contact' %}?world=train">Ask about a time.</a></p>
+            <p class="tile__body">Nothing open right now.</p>
           {% endfor %}
         </div>
         <a class="linkline" href="{% url 'train:schedule' %}">Full schedule</a>
       </div>
 
-      <div class="stack">
-        <p class="beat">Who is running it</p>
-        <h2>He played it.</h2>
-        <p class="lead">
-          Dunkirk / Waldorf, Maryland. Central midfielder. He has been the best player
-          on teams and he has been the one watching from the bench. Both are in how
-          he coaches.
+      <div class="tile tile--third">
+        <span class="tile__label">How it works</span>
+        <p class="tile__body">
+          Taking a slot sends a request with a reference. Paul confirms by hand —
+          a small roster is the point, not a bottleneck.
         </p>
-        {% if milestones %}
-          <ul class="facts">
-            {% for milestone in milestones %}
-              <li>
-                <b>{{ milestone.title }}{% if milestone.detail %} <span style="color:var(--muted)">— {{ milestone.detail }}</span>{% endif %}</b>
-                <span>{{ milestone.year }}</span>
-              </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
       </div>
+
+      <div class="tile tile--third">
+        <span class="tile__label">Who it is for</span>
+        <p class="tile__body">
+          High school first. Players who want the work, not a highlight reel.
+          Film is part of the method.
+        </p>
+      </div>
+
+      <a class="tile tile--third" href="{% url 'house:contact' %}?world=train">
+        <span class="tile__label">Not sure yet</span>
+        <p class="tile__figure">Ask.</p>
+        <p class="tile__body">Say where the player is and a time will be made.</p>
+      </a>
     </div>
   </div>
 </section>
 
 <section class="section section--tight">
-  <div class="shell" style="text-align:center">
+  <div class="shell center">
     <h2 style="max-width:18ch;margin-inline:auto">Touches in the hours nobody scheduled.</h2>
-    <p style="margin:1.6rem auto 0;max-width:44ch;color:var(--bone-dim)">
-      If your player wants the work, there is room. If they want a highlight reel,
-      this is the wrong page.
+    <p style="margin:1.1rem auto 0;max-width:44ch;color:var(--bone-dim)">
+      If your player wants the work, there is room. If they want a highlight
+      reel, this is the wrong page.
     </p>
-    <p style="margin-top:1.8rem">
+    <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="{% url 'train:schedule' %}">Find a time</a>
-    </p>
+    </div>
   </div>
 </section>
-
 {% endblock %}

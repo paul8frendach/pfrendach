@@ -71,6 +71,30 @@ steel *morph* into each other instead of cutting.
 - `/flash/` is excluded: it loads its own script, and only `main` is swapped.
 - Pages containing a CSRF token are never cached.
 
+## Density — how a long page is solved
+
+A portfolio has a lot of important information and almost no permission to make
+someone scroll for it. Four shared components carry that load; the worlds
+restyle them but never re-implement them.
+
+| Component | Job | Where |
+|---|---|---|
+| `.panels` (`[data-panels]`) | Step through blocks in place instead of stacking them | Train's doctrine (belief / laws / Mother's Law / record), Build's app rack |
+| `.bento` + `.tile` | Varied tiles, one glance, no chaos | Train's offer, Create's commission |
+| `.rail` | A horizontal run with scroll snap | Collections on narrow screens |
+| `.fold` (`<details>`) | Summary always visible, depth on request | Build's API example |
+
+Everything inside a panel is in the HTML on first render — panels only decide
+what is on top, so search engines and JS-off visitors still get all of it.
+
+The effect on the deepest pages, measured on a 390×844 phone:
+
+| | Before | After |
+|---|---|---|
+| Train | 6.3 screens | 4.8 |
+| Build | 5.0 | 4.2 |
+| Create | 5.4 | 4.6 |
+
 ## The three rooms
 
 They share the chrome, the mark and the movement. Everything else changes.
@@ -96,6 +120,13 @@ nameplate: signature, then the three worlds, then About and Contact as
 sub-text. On the first scroll it collapses to a slim bar — signature left,
 the three worlds still dead-centre. On a phone the condensed bar is 53px
 (6% of the viewport) and carries the mark alone plus the three worlds.
+
+The three worlds sit in a segmented rail with one lit jewel that slides
+between them. It rests under the active room, follows the pointer, and takes
+that room's colour — which is what makes the bar read as a mechanism rather
+than three links. It re-seats after fonts load, on resize, after the chrome
+condenses, and after every room change, because tab widths are decided by
+type metrics and those arrive late.
 
 ## The rules that are enforced in code
 

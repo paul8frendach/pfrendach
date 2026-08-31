@@ -109,21 +109,32 @@ left to right, like a contact sheet.
       on what your place actually looks like when it is working.
     </p>
 
-    <div class="cards" style="margin-top:clamp(24px,3vw,38px)">
+    <div class="bento">
       {% for package in packages %}
-        <div class="card card--hover rise">
-          <span class="card__title">{{ package.name }}</span>
-          <p class="card__body">{{ package.summary }}</p>
+        <div class="tile tile--third">
+          <span class="tile__label">{{ package.price_label }} · {{ package.turnaround }}</span>
+          <span class="tile__figure">{{ package.name }}</span>
+          <p class="tile__body">{{ package.summary }}</p>
           <ul class="ticks">
             {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
           </ul>
-          <span class="card__foot">
-            <span>{{ package.price_label }}</span>
-            <span>{{ package.turnaround }}</span>
-          </span>
-          <a class="btn" href="{% url 'house:contact' %}?world=create">Commission this</a>
+          <a class="linkline" href="{% url 'house:contact' %}?world=create">Commission this</a>
         </div>
       {% endfor %}
+
+      <div class="tile tile--half">
+        <span class="tile__label">What you actually get</span>
+        <p class="tile__body">
+          A film that looks like your place on its best day, cut for where it is
+          going — wide for the site, vertical for the feed, stills for everything
+          else. Every crop framed on purpose.
+        </p>
+      </div>
+      <a class="tile tile--half" href="{% url 'house:contact' %}?world=create">
+        <span class="tile__label">Something else in mind</span>
+        <span class="tile__figure">Tell me.</span>
+        <p class="tile__body">Most of the good work started as a conversation, not a package.</p>
+      </a>
     </div>
   </div>
 </section>

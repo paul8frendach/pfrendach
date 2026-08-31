@@ -21,7 +21,7 @@
   Set synchronously, before any content paints: reveal-on-scroll starts hidden,
   and it must only ever do that when there is JavaScript around to unhide it.
   {% endcomment %}
-  <script>document.documentElement.classList.add("js");</script>
+  <script>document.documentElement.classList.add("js", "is-fresh");</script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

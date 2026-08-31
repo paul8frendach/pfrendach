@@ -32,10 +32,10 @@ Everything stays on one screen instead of becoming a scroll.
     <p class="beat">Shipped</p>
     <h2>The apps, and what is inside them.</h2>
 
-    <div class="rack" data-rack>
+    <div class="rack" data-panels>
       <div class="rack__list" role="tablist" aria-label="Projects">
         {% for project in projects %}
-          <button class="rack__tab" type="button" role="tab"
+          <button class="rack__tab" type="button" role="tab" data-panel-tab
                   id="rack-tab-{{ project.slug }}"
                   aria-controls="rack-panel-{{ project.slug }}"
                   aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
@@ -49,7 +49,7 @@ Everything stays on one screen instead of becoming a scroll.
 
       <div class="rack__panels">
         {% for project in projects %}
-          <div class="rack__panel" role="tabpanel"
+          <div class="rack__panel" role="tabpanel" data-panel
                id="rack-panel-{{ project.slug }}"
                aria-labelledby="rack-tab-{{ project.slug }}"
                {% if not forloop.first %}hidden{% endif %}>
@@ -119,19 +119,20 @@ Everything stays on one screen instead of becoming a scroll.
 {% endif %}
 
 <section class="section section--tight">
-  <div class="shell split">
-    <div class="stack">
-      <p class="beat">Worked example</p>
-      <h2>This site's booking API.</h2>
-      <p class="lead">
-        The Train room runs on a small JSON API in this same codebase. Open
-        slots, session types and booking status are readable endpoints — which
-        is how a widget, an app, or a client's own site hooks into it.
-      </p>
-      <a class="linkline" href="/train/api/slots/">Open /train/api/slots/</a>
-    </div>
-    <div>
-      <pre class="code"><i># open slots for one session type</i>
+  <div class="shell">
+    <details class="fold">
+      <summary>Worked example — this site's own booking API</summary>
+      <div class="fold__body split">
+        <div class="stack">
+          <p class="lead">
+            The Train room runs on a small JSON API in this same codebase. Open
+            slots, session types and booking status are readable endpoints —
+            which is how a widget, an app, or a client's own site hooks into it.
+          </p>
+          <a class="linkline" href="/train/api/slots/">Open /train/api/slots/</a>
+        </div>
+        <div>
+          <pre class="code"><i># open slots for one session type</i>
 GET <b>/train/api/slots/</b>?session=1v1-session&amp;limit=5
 
 {
@@ -146,7 +147,9 @@ GET <b>/train/api/slots/</b>?session=1v1-session&amp;limit=5
     }
   ]
 }</pre>
-    </div>
+        </div>
+      </div>
+    </details>
   </div>
 </section>
 

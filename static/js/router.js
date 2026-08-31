@@ -16,7 +16,16 @@
   if (!main || !window.history || !window.fetch) return;
 
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var SWAP_MS = reduce ? 0 : 220;
+
+  /* The leave transition is the only reason to wait before swapping. There is
+     nothing to look at in a hidden tab — and background timers are throttled
+     to a second there, which would turn a 200ms swap into a visible stall on
+     return. So: no delay unless the page is actually on screen. */
+  function swapDelay() {
+    if (reduce) return 0;
+    if (document.visibilityState === "hidden") return 0;
+    return 200;
+  }
   var inFlight = null;
   var cache = Object.create(null);
   var SELF_CONTAINED = ["/flash/"];
@@ -118,12 +127,13 @@
     opts = opts || {};
     if (inFlight === url) return;
     inFlight = url;
+    var delay = swapDelay();
     document.documentElement.classList.add("is-routing");
-    if (SWAP_MS) main.classList.add("is-leaving");
+    if (delay) main.classList.add("is-leaving");
 
     var settled = Promise.all([
       fetchPage(url),
-      SWAP_MS ? new Promise(function (r) { window.setTimeout(r, SWAP_MS); }) : null,
+      delay ? new Promise(function (r) { window.setTimeout(r, delay); }) : null,
     ]);
 
     settled.then(function (results) {
@@ -166,6 +176,20 @@
   }
   document.addEventListener("mouseover", warm, { passive: true });
   document.addEventListener("touchstart", warm, { passive: true });
+
+  window.PF = window.PF || {};
+  window.PF.router = {
+    go: go,
+    /* Warm a set of paths into the swap cache. The curtain uses this: by the
+       time the intro finishes, all three rooms are already in memory. */
+    prefetch: function (paths) {
+      paths.forEach(function (path) {
+        if (warmed[path]) return;
+        warmed[path] = true;
+        fetchPage(path).catch(function () { /* nothing to do */ });
+      });
+    },
+  };
 
   /* ---------------------------------------------------------- swipe
      On a touch screen the three rooms sit side by side: swipe left or right

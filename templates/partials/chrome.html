@@ -10,7 +10,8 @@ Contact are sub-text to them. The signature never changes between rooms.
       <span>RENDACH</span>
     </a>
 
-    <nav class="tabs" aria-label="Worlds">
+    <nav class="tabs" aria-label="Worlds" data-tabs>
+      <span class="tabs__marker" data-tab-marker aria-hidden="true"></span>
       {% for world in worlds %}
         <a class="tab tab--{{ world.slug }}"
            href="{{ world.get_absolute_url }}"

@@ -295,71 +295,89 @@ p:last-child { margin-bottom: 0; }
 }
 .chrome.is-condensed::after { opacity: 1; }
 
-/* ---- the three worlds: the main options ---- */
+/* ---- the three worlds: the main options ----
+   A segmented rail, not a row of links. One lit marker slides between them and
+   follows the pointer, so the bar reads as a mechanism rather than a menu. */
 
 .tabs {
+  position: relative;
   display: flex;
   align-items: stretch;
-  gap: clamp(4px, 1.4vw, 16px);
+  gap: 0;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bone) 2.5%, transparent);
+  transition: padding 0.4s var(--ease), border-color 0.4s var(--ease);
 }
+
+/* the sliding jewel: sits under the active tab, follows the pointer */
+.tabs__marker {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 0;
+  width: 0;
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--marker-accent, var(--gold)) 16%, transparent),
+      color-mix(in srgb, var(--marker-accent, var(--gold)) 7%, transparent));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--marker-accent, var(--gold)) 30%, transparent),
+    0 0 26px -6px color-mix(in srgb, var(--marker-accent, var(--gold)) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1, 0.3, 1),
+    width 0.42s cubic-bezier(0.22, 1, 0.3, 1),
+    opacity 0.3s var(--ease),
+    background 0.5s var(--ease),
+    box-shadow 0.5s var(--ease),
+    top 0.4s var(--ease),
+    bottom 0.4s var(--ease);
+}
+.tabs__marker.is-on { opacity: 1; }
+/* first paint should not fly in from the left */
+.tabs__marker.is-instant { transition: opacity 0.3s var(--ease); }
 
 .tab {
   --tab-accent: var(--bone-dim);
   position: relative;
+  z-index: 1;
   display: grid;
   justify-items: center;
-  gap: 3px;
-  padding: 8px clamp(14px, 2.6vw, 30px);
+  align-content: center;
+  gap: 4px;
+  padding: 9px clamp(16px, 2.8vw, 34px);
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  font-size: clamp(1.3rem, 2.6vw, 1.95rem);
   line-height: 1;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.012em;
   color: var(--bone-dim);
   text-decoration: none;
-  transition: color 0.3s var(--ease), font-size 0.4s var(--ease), padding 0.4s var(--ease);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease), font-size 0.4s var(--ease),
+              padding 0.4s var(--ease);
 }
+.tab + .tab { box-shadow: inset 1px 0 0 var(--rule); }
+
 .tab span {
   font-family: var(--font-sans);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: 400;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--muted);
-  transition: color 0.3s var(--ease), opacity 0.35s var(--ease);
+  transition: color 0.3s var(--ease), opacity 0.3s var(--ease),
+              height 0.4s var(--ease);
 }
-/* the tick under an active world — a chapter-ring mark, not an underline */
-.tab::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -1px;
-  width: 0;
-  height: 2px;
-  background: var(--tab-accent);
-  transform: translateX(-50%);
-  transition: width 0.35s var(--ease);
-}
+
 .tab:hover { color: var(--bone); }
-.tab:hover span { color: var(--tab-accent); }
-.tab:hover::after { width: 22px; }
-/* the world's light comes up behind the tab as you reach for it */
-.tab::before {
-  content: "";
-  position: absolute;
-  inset: -2px -6px;
-  border-radius: 3px;
-  background: radial-gradient(60% 100% at 50% 100%,
-    color-mix(in srgb, var(--tab-accent) 16%, transparent), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.35s var(--ease);
-  pointer-events: none;
-}
-.tab:hover::before,
-.tab[aria-current="page"]::before { opacity: 1; }
-.tab[aria-current="page"] { color: var(--tab-accent); }
-.tab[aria-current="page"] span { color: color-mix(in srgb, var(--tab-accent) 70%, var(--muted)); }
-.tab[aria-current="page"]::after { width: 34px; }
+.tab:hover span { color: color-mix(in srgb, var(--tab-accent) 80%, var(--muted)); }
+.tab[aria-current="page"] { color: var(--bone); }
+.tab[aria-current="page"] span { color: var(--tab-accent); }
 
 .tab--create { --tab-accent: var(--glow); }
 .tab--build  { --tab-accent: var(--steel); }
@@ -370,8 +388,8 @@ p:last-child { margin-bottom: 0; }
 .subnav {
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 0.66rem;
+  gap: 16px;
+  font-size: 0.64rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   transition: opacity 0.35s var(--ease);
@@ -407,11 +425,13 @@ p:last-child { margin-bottom: 0; }
   translate: 0 -50%;
   font-size: 26px;
 }
+.chrome.is-condensed .tabs { padding: 3px; border-color: transparent; background: transparent; }
+.chrome.is-condensed .tabs__marker { top: 3px; bottom: 3px; }
 .chrome.is-condensed .tab {
-  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
-  padding-block: 6px;
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  padding: 6px clamp(13px, 2vw, 22px);
 }
-.chrome.is-condensed .tab span { opacity: 0; height: 0; }
+.chrome.is-condensed .tab span { opacity: 0; height: 0; overflow: hidden; }
 .chrome.is-condensed .subnav {
   position: absolute;
   right: 0;
@@ -1328,3 +1348,261 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
    gutter colour showing as a solid slab while they are still hidden. */
 .js .strip.rise,
 .js .laws--grid.rise { transform: none; }
+
+/* ---------------------------------------------------------------- density
+   Three ways to put a lot of important information on one screen instead of
+   five screens of scrolling. Everything here is shared; the worlds restyle it.
+
+     .panels   step through blocks in place (doctrine, an app's features)
+     .bento    varied tiles, one glance, no chaos
+     .rail     a horizontal run of items with snap
+     .fold     the summary is always visible, the depth is on request
+   ============================================================== */
+
+/* ---- panels ---- */
+
+.panels { display: grid; gap: 0; margin-top: clamp(20px, 2.6vw, 32px); }
+.panels__bar {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+}
+.panels__tab {
+  position: relative;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 10px 16px 12px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.25s var(--ease);
+}
+.panels__tab::after {
+  content: "";
+  position: absolute;
+  inset: auto 12px -1px 12px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.35s var(--ease);
+}
+.panels__tab:hover { color: var(--bone-dim); }
+.panels__tab[aria-selected="true"] { color: var(--accent); }
+.panels__tab[aria-selected="true"]::after { transform: scaleX(1); }
+
+.panels__panel { padding-top: clamp(20px, 2.6vw, 30px); }
+.panels__panel[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .panels__panel:not([hidden]) { animation: panel-in 380ms var(--ease) both; }
+}
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- bento ---- */
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(10px, 1.3vw, 16px);
+  margin-top: clamp(20px, 2.6vw, 32px);
+}
+.tile {
+  position: relative;
+  grid-column: span 6;
+  display: grid;
+  align-content: start;
+  gap: 0.55rem;
+  padding: clamp(16px, 1.9vw, 24px);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--bone) 3%, transparent),
+      transparent 60%);
+  overflow: hidden;
+  transition: border-color 0.35s var(--ease), background 0.35s var(--ease);
+}
+/* the radiant edge: the world's light caught on the top corner of a tile */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: -40% 40% 60% -20%;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  pointer-events: none;
+}
+.tile:hover { border-color: color-mix(in srgb, var(--accent) 34%, transparent); }
+.tile:hover::before { opacity: 1; }
+.tile > * { position: relative; }
+
+.tile--half { grid-column: span 3; }
+.tile--third { grid-column: span 2; }
+.tile--twothirds { grid-column: span 4; }
+.tile--full { grid-column: span 6; }
+
+.tile__label {
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.tile__figure {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+  line-height: 0.95;
+  color: var(--bone);
+}
+.tile__body { color: var(--bone-dim); font-size: 0.9rem; line-height: 1.55; margin: 0; }
+a.tile { text-decoration: none; color: inherit; }
+a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+
+@media (max-width: 900px) {
+  .tile--third { grid-column: span 3; }
+  .tile--twothirds { grid-column: span 6; }
+}
+@media (max-width: 560px) {
+  .bento { grid-template-columns: 1fr; }
+  .tile, .tile--half, .tile--third, .tile--twothirds { grid-column: span 1; }
+}
+
+/* ---- rail ---- */
+
+.rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(min(78%, 300px), 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 10px;
+  margin-top: clamp(20px, 2.6vw, 32px);
+  scrollbar-width: thin;
+}
+.rail > * { scroll-snap-align: start; }
+.rail::-webkit-scrollbar { height: 3px; }
+.rail::-webkit-scrollbar-thumb { background: var(--rule-strong); }
+@media (min-width: 900px) {
+  .rail { grid-auto-columns: minmax(0, 1fr); overflow-x: visible; }
+}
+
+/* ---- fold ---- */
+
+.fold { border-top: 1px solid var(--rule); }
+.fold > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.95rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.25s var(--ease);
+}
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary:hover { color: var(--bone-dim); }
+.fold > summary::after {
+  content: "+";
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform 0.3s var(--ease);
+}
+.fold[open] > summary { color: var(--accent); }
+.fold[open] > summary::after { transform: rotate(45deg); }
+.fold__body { padding-bottom: 1.2rem; }
+
+/* ---------------------------------------------------------------- polish
+   Small, repeated details. Each one is nearly invisible on its own; together
+   they are the difference between a page and a product. Nothing here moves on
+   its own accord — every motion is a response to the visitor. */
+
+/* A radiant bloom behind the room's opening statement: the world's light,
+   caught on the type rather than painted over it. */
+.hero__inner.center > h1,
+.hero__inner.center > .frendach {
+  position: relative;
+}
+.hero__inner.center > h1::before,
+.hero__inner.center > .frendach::before {
+  content: "";
+  position: absolute;
+  inset: -60% -14% -40%;
+  z-index: -1;
+  background: radial-gradient(closest-side,
+    color-mix(in srgb, var(--accent) 14%, transparent), transparent 78%);
+  pointer-events: none;
+}
+
+/* Buttons pick up the world's light as you reach for them. */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 180% at 50% 130%,
+    color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+.btn:hover::after { opacity: 1; }
+.btn--solid:hover { box-shadow: 0 0 34px -10px color-mix(in srgb, var(--accent) 70%, transparent); }
+
+/* The beat jewel breathes on the same rhythm as the movement behind it. */
+@media (prefers-reduced-motion: no-preference) {
+  .beat::before { animation: beat-pulse 6.2s var(--ease) infinite; }
+}
+@keyframes beat-pulse {
+  0%, 78%, 100% { box-shadow: 0 0 0 0 transparent; }
+  86% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent); }
+}
+
+/* Inline links sweep rather than blink. */
+.linkline::after { transition: transform 0.25s var(--ease); }
+.linkline:hover::after { transform: translateX(3px); }
+
+/* Slots and tiles lift on approach, and only by a hair. */
+.slot { transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease); }
+.slot:hover { transform: translateX(2px); }
+
+/* Anything the visitor can act on gets the same focus treatment. */
+.tab:focus-visible,
+.panels__tab:focus-visible,
+.tile:focus-visible,
+.slot:focus-visible { outline-offset: 2px; }
+
+/* Selection carries the room's colour. */
+::selection { background: color-mix(in srgb, var(--accent) 80%, transparent); color: var(--ink); }
+
+/* The page arrives rather than appears — one short settle on first paint,
+   never on a router swap (main handles that itself). */
+@media (prefers-reduced-motion: no-preference) {
+  /* Gated on is-fresh, which JS drops once the settle is done. Without that
+     gate the finished animation's fill would outrank the router's fade-out,
+     and every room change would swap with a hard cut. */
+  html.is-fresh.js [data-page].is-revealed > main {
+    animation: page-settle 460ms var(--ease) both;
+  }
+  html.is-curtained [data-page] > main { animation: none; }
+}
+@keyframes page-settle {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}

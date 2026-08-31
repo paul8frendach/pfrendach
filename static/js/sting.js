@@ -227,13 +227,32 @@
     }
 
     apply(sampleIntro(0), 0);
+
+    var started = false;
     var begin = function () {
+      if (started) return;
+      started = true;
       root.setAttribute("data-on", "1");
       t0 = performance.now();
       raf = requestAnimationFrame(frame);
+
+      // The visitor is watching four seconds of animation. Spend them warming
+      // the three rooms, so the first door they open is already in memory.
+      if (!standalone && window.PF && window.PF.router) {
+        var rooms = [];
+        Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (tab) {
+          var href = tab.getAttribute("href");
+          if (href) rooms.push(href);
+        });
+        window.setTimeout(function () { window.PF.router.prefetch(rooms); }, 400);
+      }
     };
+
     if (document.fonts && document.fonts.ready) {
+      // Wait for the real Fraunces so the letters seat at their true widths —
+      // but a slow or blocked font host must never hold the door shut.
       document.fonts.ready.then(begin, begin);
+      window.setTimeout(begin, 1200);
     } else {
       begin();
     }

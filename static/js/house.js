@@ -4,6 +4,12 @@
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // The first-paint settle is a one-off. Drop the gate as soon as it has run,
+  // so its fill can never outrank the router's own swap transition.
+  window.setTimeout(function () {
+    document.documentElement.classList.remove("is-fresh");
+  }, 700);
+
   /* ---------------------------------------------------------- chrome
      Full stacked nameplate at the top of a page, slim centred bar once you
      move. Hysteresis (8px on, 2px off) so a trackpad twitch cannot flutter it. */
@@ -42,6 +48,100 @@
       window.requestAnimationFrame(syncChrome);
     }, { passive: true });
     syncChrome();
+
+    // The condensation resizes the tab rail; tell the marker to re-seat after.
+    chrome.addEventListener("transitionend", function (event) {
+      if (event.target === chrome.querySelector(".chrome__inner")) {
+        document.dispatchEvent(new CustomEvent("pf:chrome-settled"));
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------- tab marker
+     One lit jewel that slides between the three worlds. It rests under the
+     active room and follows the pointer, then returns. This is the whole
+     reason the bar reads as a mechanism instead of three links. */
+
+  var tabsBar = document.querySelector("[data-tabs]");
+  if (tabsBar) {
+    var marker = tabsBar.querySelector("[data-tab-marker]");
+    var tabEls = tabsBar.querySelectorAll(".tab");
+    var settled = false;
+
+    var ACCENT = {
+      create: "var(--glow)",
+      build: "var(--steel)",
+      train: "var(--gold)",
+    };
+
+    function worldOf(tab) {
+      if (tab.classList.contains("tab--create")) return "create";
+      if (tab.classList.contains("tab--build")) return "build";
+      if (tab.classList.contains("tab--train")) return "train";
+      return null;
+    }
+
+    function moveTo(tab, instant) {
+      if (!tab) {
+        marker.classList.remove("is-on");
+        return;
+      }
+      // The rail is the offset parent, so tab.offsetLeft is already relative.
+      if (instant) marker.classList.add("is-instant");
+      marker.style.setProperty("--marker-accent", ACCENT[worldOf(tab)] || "var(--gold)");
+      marker.style.width = tab.offsetWidth + "px";
+      marker.style.transform = "translateX(" + tab.offsetLeft + "px)";
+      marker.classList.add("is-on");
+      if (instant) {
+        // Let the instant frame land before re-enabling the slide.
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            marker.classList.remove("is-instant");
+          });
+        });
+      }
+    }
+
+    function activeTab() {
+      return tabsBar.querySelector('.tab[aria-current="page"]');
+    }
+
+    function rest(instant) {
+      moveTo(activeTab(), instant);
+    }
+
+    Array.prototype.forEach.call(tabEls, function (tab) {
+      tab.addEventListener("mouseenter", function () { moveTo(tab, false); });
+      tab.addEventListener("focus", function () { moveTo(tab, false); });
+    });
+    tabsBar.addEventListener("mouseleave", function () { rest(false); });
+    tabsBar.addEventListener("focusout", function () { rest(false); });
+
+    window.addEventListener("resize", function () { rest(true); }, { passive: true });
+    document.addEventListener("pf:navigated", function () { rest(false); });
+    document.addEventListener("pf:chrome-settled", function () { rest(false); });
+
+    // The rail resizes as the chrome condenses; re-seat once that has settled.
+    tabsBar.addEventListener("transitionend", function (event) {
+      if (event.propertyName === "padding-left" || event.propertyName === "font-size") rest(false);
+    });
+
+    function seat() {
+      if (settled) return;
+      settled = true;
+      rest(true);
+    }
+    if (document.fonts && document.fonts.ready) {
+      // Type metrics decide the tab widths, so wait for the real font — but
+      // never wait forever on a slow or blocked font host.
+      Promise.race([
+        document.fonts.ready,
+        new Promise(function (r) { window.setTimeout(r, 1200); }),
+      ]).then(seat, seat);
+    } else {
+      seat();
+    }
+    rest(true);
   }
 
   /* ---------------------------------------------------------- the ground
@@ -60,12 +160,16 @@
 
   var observer = null;
 
-  /* The Build room's rack: pick an app, see its features. Tabs rather than a
-     scroll, so the whole room stays on one screen. */
-  function mountRacks() {
-    Array.prototype.forEach.call(document.querySelectorAll("[data-rack]"), function (rack) {
-      var tabs = rack.querySelectorAll(".rack__tab");
-      var panels = rack.querySelectorAll(".rack__panel");
+  /* Panels: the house answer to a long page. A block of content that would
+     otherwise be five screens of scrolling becomes one screen you step
+     through. Used by the Build rack and the Train doctrine. */
+  function mountPanels() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-panels]"), function (rack) {
+      if (rack.dataset.panelsReady === "1") return;
+      rack.dataset.panelsReady = "1";
+      var tabs = rack.querySelectorAll("[data-panel-tab]");
+      var panels = rack.querySelectorAll("[data-panel]");
+      if (!tabs.length || tabs.length !== panels.length) return;
 
       function show(index) {
         Array.prototype.forEach.call(tabs, function (tab, i) {
@@ -94,7 +198,7 @@
   }
 
   function mountPage() {
-    mountRacks();
+    mountPanels();
 
     var risers = document.querySelectorAll(".rise:not(.is-in)");
 
