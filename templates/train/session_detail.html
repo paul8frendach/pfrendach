@@ -6,10 +6,10 @@
 {% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">{{ session.get_format_display }}</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">{{ session.get_format_display }}</p>
     <h1>{{ session.name }}</h1>
     <p class="lead" style="margin-top:1.4rem;max-width:48ch">{{ session.summary }}</p>
   </div>
@@ -32,7 +32,7 @@
         <p class="lead">{{ session.description|linebreaksbr }}</p>
       {% endif %}
       {% if session.focus_points %}
-        <p class="kicker" style="margin-top:2rem">What it works on</p>
+        <p class="beat" style="margin-top:2rem">What it works on</p>
         <ul class="ticks">
           {% for point in session.focus_points %}<li>{{ point }}</li>{% endfor %}
         </ul>
@@ -43,7 +43,7 @@
 
 <section class="section" id="slots">
   <div class="shell">
-    <p class="kicker">Open times</p>
+    <p class="beat beat--center">Open times</p>
     <h2>Pick one.</h2>
     <div class="slots" style="margin-top:clamp(24px,3vw,38px)">
       {% for slot in slots %}
@@ -67,7 +67,7 @@
 {% if other_sessions %}
 <section class="section section--tight">
   <div class="shell">
-    <p class="kicker">Also</p>
+    <p class="beat beat--center">Also</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
       {% for other in other_sessions %}
         <a class="card" href="{{ other.get_absolute_url }}">

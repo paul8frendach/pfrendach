@@ -6,24 +6,30 @@
 {% block world %}create{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Create — Vision Oasis</p>
-    <h1 style="max-width:14ch">Cinema first. Useful second.</h1>
-    <p class="lead" style="margin-top:1.6rem;max-width:46ch">
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Create — Vision Oasis</p>
+    <h1 style="max-width:13ch;margin-inline:auto">Cinema first. Useful second.</h1>
+    <p class="lead" style="margin-top:1.2rem;max-width:44ch">
       Session films, brand films, stills. Made the way the training is made —
       night, grain, breath, the walk-off.
     </p>
-    <p class="slate" style="margin-top:2rem">Credited Vision Oasis</p>
+    <p class="slate" style="margin-top:1.6rem;justify-content:center">Credited Vision Oasis</p>
+    <div class="actions" style="margin-top:1.6rem">
+      <a class="btn btn--solid" href="#work">The reel</a>
+      <a class="btn btn--quiet" href="#commission">Commission</a>
+    </div>
   </div>
 </section>
 
-<section class="section">
+<hr class="tickrule shell">
+
+<section class="section" id="work">
   <div class="shell">
     <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap">
       <div>
-        <p class="kicker">Selected work</p>
+        <p class="beat">Selected work</p>
         <h2>The reel.</h2>
       </div>
       <nav class="pills" aria-label="Filter work">
@@ -63,9 +69,9 @@
 </section>
 
 {% if packages %}
-<section class="section">
+<section class="section" id="commission">
   <div class="shell">
-    <p class="kicker">The storefront</p>
+    <p class="beat">The storefront</p>
     <h2>What you can commission.</h2>
     <div class="grid grid--3" style="margin-top:clamp(26px,3.4vw,44px)">
       {% for package in packages %}

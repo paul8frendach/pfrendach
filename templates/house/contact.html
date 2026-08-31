@@ -4,10 +4,10 @@
 {% block world %}{% if picked_world %}{{ picked_world.slug }}{% else %}house{% endif %}{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Contact</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Contact</p>
     <h1 style="max-width:16ch">Tell me what you are trying to make.</h1>
     <p class="lead" style="margin-top:1.4rem;max-width:48ch">
       Films, sites, or sessions. Few clients, full attention — so be direct and

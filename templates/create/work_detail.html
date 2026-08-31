@@ -5,10 +5,10 @@
 {% block world %}create{% endblock %}
 
 {% block content %}
-<section class="hero" style="padding-bottom:0">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
     <h1>{{ piece.title }}</h1>
   </div>
 </section>
@@ -48,7 +48,7 @@
 {% if more %}
 <section class="section section--tight">
   <div class="shell">
-    <p class="kicker">Next</p>
+    <p class="beat beat--center">Next</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
       {% for other in more %}
         <a class="card" href="{{ other.get_absolute_url }}">

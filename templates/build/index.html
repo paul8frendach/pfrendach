@@ -5,39 +5,40 @@
 {% block world %}build{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Build — Web</p>
-    <h1 style="max-width:15ch">Quiet pages. Sharp objects.</h1>
-    <p class="lead" style="margin-top:1.6rem;max-width:48ch">
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Build — Web</p>
+    <h1 style="max-width:14ch;margin-inline:auto">Quiet pages. Sharp objects.</h1>
+    <p class="lead" style="margin-top:1.2rem;max-width:46ch">
       Design-to-build in one pair of hands. Personal brands and small companies,
       shipped as real software — not a theme with the colours swapped.
     </p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:2rem">
+    <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="#capabilities">What is already built</a>
       <a class="btn btn--quiet" href="{% url 'house:contact' %}?world=build">Start a build</a>
     </div>
   </div>
 </section>
 
+<hr class="tickrule shell">
+
 {% if capabilities %}
 <section class="section" id="capabilities">
   <div class="shell">
-    <p class="kicker">Capabilities</p>
+    <p class="beat">Capabilities</p>
     <h2>Pieces you do not have to pay to invent.</h2>
     <p class="lead" style="margin-top:1rem;max-width:56ch">
       These already exist and already run. On a new project they are configuration,
       not a rewrite — which is where the time and the money go.
     </p>
 
-    <div class="grid grid--2" style="margin-top:clamp(28px,3.6vw,48px)">
+    <div class="grid grid--3" style="margin-top:clamp(24px,3vw,38px)">
       {% for capability in capabilities %}
         <div class="card card--hover capability rise">
           {% if capability.glyph %}<span class="capability__glyph">{{ capability.glyph }}</span>{% endif %}
           <span class="card__title">{{ capability.title }}</span>
           <p class="card__body">{{ capability.blurb }}</p>
-          {% if capability.detail %}<p class="card__body" style="color:var(--muted)">{{ capability.detail }}</p>{% endif %}
           {% if capability.proof_project %}
             <span class="card__foot">
               <span>Running in</span>
@@ -55,7 +56,7 @@
 <section class="section">
   <div class="shell split">
     <div class="stack">
-      <p class="kicker">Worked example</p>
+      <p class="beat">Worked example</p>
       <h2>This site's own booking API.</h2>
       <p class="lead">
         The Train room runs on a small JSON API in this same codebase. Open slots,
@@ -87,7 +88,7 @@ GET <b>/train/api/slots/</b>?session=1v1-session&amp;limit=5
 {% if projects %}
 <section class="section">
   <div class="shell">
-    <p class="kicker">Selected builds</p>
+    <p class="beat">Selected builds</p>
     <h2>Shipped.</h2>
     <div class="grid grid--2" style="margin-top:clamp(28px,3.6vw,48px)">
       {% for project in projects %}

@@ -24,11 +24,15 @@
 
   <link rel="stylesheet" href="{% static 'css/house.css' %}">
   <link rel="stylesheet" href="{% static 'css/worlds.css' %}">
+  {% block curtain_css %}{% endblock %}
   {% block extra_head %}{% endblock %}
 </head>
 <body class="grain{% block body_class %}{% endblock %}">
   <a class="skip" href="#main">Skip to content</a>
 
+  {% block curtain %}{% endblock %}
+
+  <div data-page class="is-revealed">
   {% include "partials/chrome.html" %}
 
   {% if messages %}
@@ -44,8 +48,11 @@
   </main>
 
   {% include "partials/footer.html" %}
+  </div>
 
+  <script src="{% static 'js/clockwork.js' %}" defer></script>
   <script src="{% static 'js/house.js' %}" defer></script>
+  {% block curtain_js %}{% endblock %}
   {% block extra_js %}{% endblock %}
 </body>
 </html>

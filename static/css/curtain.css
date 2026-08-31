@@ -1,0 +1,157 @@
+/* =========================================================================
+   The curtain — the opening page.
+   Full screen, ink, the movement running under the wordmark. It lifts into
+   the header signature; it is not a video and there is no player.
+   ========================================================================= */
+
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: var(--ink);
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 460ms var(--ease);
+}
+.curtain[hidden] { display: none; }
+.curtain.is-lifting { opacity: 0; pointer-events: none; }
+
+.curtain__clock {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: min(150vw, 1100px);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.curtain__clock .cw { width: 100%; height: auto; display: block; }
+.curtain__clock [data-tick] { transition: stroke-opacity 80ms linear; }
+
+.curtain__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 28%, var(--ink) 78%),
+    linear-gradient(180deg, var(--ink) 0%, transparent 18%, transparent 82%, var(--ink) 100%);
+}
+
+.curtain__stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+/* --aul and --mark are driven from JS: the AUL row's width collapses and the
+   FRENDACH slot opens. One P in the DOM, ever. */
+.curtain__word {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 72, "wght" 400, "SOFT" 0, "WONK" 0;
+  font-size: clamp(3rem, 12vw, 8.5rem);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  color: var(--bone);
+  --aul: 1;
+  --mark: 0;
+}
+
+.curtain__lockup {
+  display: flex;
+  align-items: flex-end;
+  transform-style: preserve-3d;
+}
+
+.curtain__p {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  margin-right: calc(var(--aul) * -0.06em);
+  transform-origin: 58% 50%;
+  backface-visibility: visible;
+}
+
+.curtain__aul,
+.curtain__mark {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.curtain__aul  { width: calc(var(--aul) * 2.08em); }
+.curtain__mark {
+  width: calc(var(--mark) * 5.62em);
+  margin-left: calc(var(--mark) * -0.32em);   /* the locked house overlap */
+}
+.curtain__mark span:first-child { position: relative; z-index: 1; }
+
+.curtain__p,
+.curtain__aul span,
+.curtain__mark span {
+  display: inline-block;
+  white-space: nowrap;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.curtain__sub {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+}
+
+.curtain__skip {
+  position: absolute;
+  bottom: clamp(20px, 4vh, 40px);
+  left: 50%;
+  translate: -50% 0;
+  z-index: 3;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  animation: curtain-skip-in 600ms var(--ease) 1400ms forwards;
+}
+.curtain__skip:hover { color: var(--bone-dim); }
+
+@keyframes curtain-skip-in { to { opacity: 0.7; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .curtain__skip { animation: none; opacity: 0.7; }
+}
+
+/* Standalone demo on /flash/ — the sting boxed, not covering the page. */
+.flashbox {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 1.4rem;
+}
+.flashbox .curtain {
+  position: absolute;
+  z-index: 1;
+  cursor: default;
+}
+.flashbox .curtain__word { font-size: clamp(2.2rem, 8vw, 5rem); }

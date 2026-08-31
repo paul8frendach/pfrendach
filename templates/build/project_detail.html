@@ -5,10 +5,10 @@
 {% block world %}build{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">{{ project.get_stage_display }}{% if project.year %} · {{ project.year }}{% endif %}</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">{{ project.get_stage_display }}{% if project.year %} · {{ project.year }}{% endif %}</p>
     <h1>{{ project.name }}</h1>
     <p class="lead" style="margin-top:1.4rem;max-width:50ch">{{ project.tagline }}</p>
     {% if project.url %}
@@ -45,15 +45,15 @@
 
     <div class="stack">
       {% if project.problem %}
-        <p class="kicker">The problem</p>
+        <p class="beat beat--center">The problem</p>
         <p class="lead">{{ project.problem|linebreaksbr }}</p>
       {% endif %}
       {% if project.approach %}
-        <p class="kicker" style="margin-top:2.2rem">The approach</p>
+        <p class="beat" style="margin-top:2.2rem">The approach</p>
         <p>{{ project.approach|linebreaksbr }}</p>
       {% endif %}
       {% if project.outcome %}
-        <p class="kicker" style="margin-top:2.2rem">The outcome</p>
+        <p class="beat" style="margin-top:2.2rem">The outcome</p>
         <p>{{ project.outcome|linebreaksbr }}</p>
       {% endif %}
       <p style="margin-top:2rem">
@@ -66,7 +66,7 @@
 {% if more %}
 <section class="section section--tight">
   <div class="shell">
-    <p class="kicker">Also built</p>
+    <p class="beat beat--center">Also built</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
       {% for other in more %}
         <a class="card" href="{{ other.get_absolute_url }}">

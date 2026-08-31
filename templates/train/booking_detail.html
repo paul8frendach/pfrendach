@@ -6,10 +6,10 @@
 {% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Reference {{ booking.reference }}</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Reference {{ booking.reference }}</p>
     <h1>{% if booking.status == 'confirmed' %}You are in.{% elif booking.status == 'pending' %}Request received.{% else %}{{ booking.get_status_display }}.{% endif %}</h1>
     <p style="margin-top:1.4rem">
       <span class="status status--{{ booking.status }}">{{ booking.get_status_display }}</span>

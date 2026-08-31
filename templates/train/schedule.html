@@ -6,10 +6,10 @@
 {% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Schedule</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Schedule</p>
     <h1>What is open.</h1>
     <p class="lead" style="margin-top:1.4rem;max-width:52ch">
       Taking a slot sends a request with a reference. Paul confirms by hand —
@@ -22,7 +22,7 @@
   <div class="shell">
     {% for day, slots in days %}
       <div class="rise" style="margin-bottom:clamp(30px,4vw,52px)">
-        <p class="kicker">{{ day|date:"l j F" }}</p>
+        <p class="beat beat--center">{{ day|date:"l j F" }}</p>
         <div class="slots">
           {% for slot in slots %}
             <a class="slot" href="{% url 'train:book' slot.id %}">
@@ -47,7 +47,7 @@
 {% if sessions %}
 <section class="section section--tight">
   <div class="shell">
-    <p class="kicker">Session types</p>
+    <p class="beat beat--center">Session types</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
       {% for session in sessions %}
         <a class="card" href="{{ session.get_absolute_url }}">

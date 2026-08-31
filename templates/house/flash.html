@@ -4,20 +4,37 @@
 {% block title %}Sting — Paul Frendach{% endblock %}
 {% block world %}house{% endblock %}
 {% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
+{% block curtain_css %}<link rel="stylesheet" href="{% static 'css/curtain.css' %}">{% endblock %}
 
 {% block content %}
-<section class="section">
-  <div class="shell" style="text-align:center">
-    <video class="sting" style="width:min(100%,960px);margin-inline:auto"
-           autoplay muted playsinline controls
-           poster="{% static 'marks/pf-signature-sub-on-ink.png' %}">
-      <source src="{% static 'flash/' %}{{ variant }}.mp4" type="video/mp4">
-    </video>
-    <p class="meta" style="margin-top:1.6rem">
-      {{ variant }} · 10.00s · 1920×1080 · silent
-      {% if variant == 'intro' %}<a class="linkline" href="?v=outro">Outro</a>
-      {% else %}<a class="linkline" href="?v=intro">Intro</a>{% endif %}
-    </p>
+{% comment %}
+The sting drawn live, for screen-recording or checking the choreography. The
+mp4 masters stay in static/flash/ for graphics work — not played on this site.
+{% endcomment %}
+<section class="section section--tight">
+  <div class="shell center">
+    <p class="beat beat--center">Sting · {{ variant }}</p>
+    <div class="flashbox">
+      <div class="curtain" data-curtain data-standalone aria-label="Paul Frendach">
+        <div class="curtain__clock" data-clock></div>
+        <div class="curtain__vignette"></div>
+        <div class="curtain__stage">
+          <div class="curtain__word" data-word>
+            <div class="curtain__lockup">
+              <span class="curtain__p" data-p>P</span>
+              <div class="curtain__aul" data-aul><span>A</span><span>U</span><span>L</span></div>
+              <div class="curtain__mark" data-mark>
+                <span>F</span><span>R</span><span>E</span><span>N</span><span>D</span><span>A</span><span>C</span><span>H</span>
+              </div>
+            </div>
+          </div>
+          <p class="curtain__sub" data-sub>Create · Build · Train</p>
+        </div>
+      </div>
+    </div>
+    <p class="meta" style="margin-top:1.4rem">Replay by reloading. Masters for graphics live in <code>static/flash/</code>.</p>
   </div>
 </section>
 {% endblock %}
+
+{% block curtain_js %}<script src="{% static 'js/sting.js' %}" defer></script>{% endblock %}

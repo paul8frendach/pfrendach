@@ -5,10 +5,10 @@
 {% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <div class="hero__bg"></div>
-  <div class="shell hero__inner">
-    <p class="kicker">Request a session</p>
+<section class="hero hero--room">
+  <div class="dial" data-dial aria-hidden="true"></div>
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Request a session</p>
     <h1>{{ slot.session_type.name }}</h1>
     <p class="lead" style="margin-top:1.2rem">
       {{ slot.starts_at|date:"l j F" }} · {{ slot.starts_at|date:"g:i A" }} – {{ slot.ends_at|date:"g:i A" }}<br>

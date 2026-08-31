@@ -49,7 +49,9 @@
   --measure: 62ch;
   --shell: 1180px;
 
-  --step: clamp(64px, 9vw, 132px);   /* vertical rhythm between sections */
+  --step: clamp(46px, 5.4vw, 82px);  /* vertical rhythm — deliberately tight */
+  --chrome-h: 58px;                  /* condensed chrome height */
+  --chrome-tall: 168px;              /* expanded; JS measures the real one */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
@@ -252,61 +254,153 @@ p:last-child { margin-bottom: 0; }
   margin-top: 0.34em;   /* ≥ 0.28 of cap height, never on the wordmark */
 }
 
-/* ---------------------------------------------------------------- chrome */
+/* ---------------------------------------------------------------- chrome
+   Centred, and alive: at the top of a page it stands as a full stacked
+   nameplate; the moment you scroll it condenses to a slim bar with the three
+   worlds still dead-centre. About and Contact are sub-text to those three,
+   never their equals. */
 
 .chrome {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--ink) 82%, transparent);
-  backdrop-filter: saturate(140%) blur(14px);
+  background: color-mix(in srgb, var(--ink) 86%, transparent);
+  backdrop-filter: saturate(140%) blur(16px);
   border-bottom: 1px solid var(--rule);
+  transition: background 0.4s var(--ease);
 }
+
 .chrome__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding-block: 16px;
-  flex-wrap: wrap;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding-block: 18px 14px;
+  transition: gap 0.4s var(--ease), padding 0.4s var(--ease);
 }
 
-.pills {
+/* The chapter-ring hairline under the chrome — the movement, not a border. */
+.chrome::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent, color-mix(in srgb, var(--accent) 46%, transparent) 50%, transparent);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.chrome.is-condensed::after { opacity: 1; }
+
+/* ---- the three worlds: the main options ---- */
+
+.tabs {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
+  align-items: stretch;
+  gap: clamp(4px, 1.4vw, 16px);
 }
 
-.pill {
-  --pill-accent: var(--muted);
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.5em;
-  padding: 8px 15px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-size: 0.8rem;
+.tab {
+  --tab-accent: var(--bone-dim);
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 8px clamp(12px, 2.4vw, 26px);
+  font-family: var(--font-display);
   font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-decoration: none;
+  font-size: clamp(1.05rem, 2vw, 1.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
   color: var(--bone-dim);
-  transition: color 0.25s var(--ease), border-color 0.25s var(--ease),
-              background 0.25s var(--ease);
+  text-decoration: none;
+  transition: color 0.3s var(--ease), font-size 0.4s var(--ease), padding 0.4s var(--ease);
 }
-.pill span { color: var(--muted); font-size: 0.72em; letter-spacing: 0.1em; }
-.pill:hover { color: var(--bone); border-color: var(--rule-strong); }
-.pill[aria-current="page"] {
-  color: var(--pill-accent);
-  border-color: color-mix(in srgb, var(--pill-accent) 55%, transparent);
-  background: color-mix(in srgb, var(--pill-accent) 10%, transparent);
+.tab span {
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.3s var(--ease), opacity 0.35s var(--ease);
 }
-.pill[aria-current="page"] span { color: inherit; opacity: 0.7; }
-.pill--create { --pill-accent: var(--glow); }
-.pill--build  { --pill-accent: var(--steel); }
-.pill--train  { --pill-accent: var(--gold); }
-.pill--ghost { border-color: transparent; }
+/* the tick under an active world — a chapter-ring mark, not an underline */
+.tab::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  width: 0;
+  height: 2px;
+  background: var(--tab-accent);
+  transform: translateX(-50%);
+  transition: width 0.35s var(--ease);
+}
+.tab:hover { color: var(--bone); }
+.tab:hover::after { width: 14px; }
+.tab[aria-current="page"] { color: var(--tab-accent); }
+.tab[aria-current="page"] span { color: color-mix(in srgb, var(--tab-accent) 70%, var(--muted)); }
+.tab[aria-current="page"]::after { width: 26px; }
+
+.tab--create { --tab-accent: var(--glow); }
+.tab--build  { --tab-accent: var(--steel); }
+.tab--train  { --tab-accent: var(--gold); }
+
+/* ---- About / Contact: sub-text to the three ---- */
+
+.subnav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: opacity 0.35s var(--ease);
+}
+.subnav a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 3px 2px;
+  transition: color 0.25s var(--ease);
+}
+.subnav a:hover { color: var(--bone-dim); }
+.subnav a[aria-current="page"] { color: var(--bone-dim); }
+.subnav i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--muted);
+  opacity: 0.6;
+}
+
+/* ---- condensed state ---- */
+
+.chrome.is-condensed .chrome__inner {
+  gap: 0;
+  padding-block: 0;
+  min-height: var(--chrome-h);
+  align-content: center;
+}
+.chrome.is-condensed .sig {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 26px;
+}
+.chrome.is-condensed .tab {
+  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+  padding-block: 6px;
+}
+.chrome.is-condensed .tab span { opacity: 0; height: 0; }
+.chrome.is-condensed .subnav {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 0.62rem;
+}
 
 /* ---------------------------------------------------------------- buttons */
 
@@ -428,17 +522,7 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
   padding-block: clamp(56px, 11vh, 128px) var(--step);
   overflow: hidden;
 }
-.hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(120% 80% at 50% -10%,
-      color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
-    radial-gradient(80% 60% at 90% 110%,
-      color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%);
-}
+
 .hero__inner { position: relative; z-index: 1; }
 
 /* Grain. Keeps the page human rather than vector-clean. */
@@ -695,38 +779,449 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
   text-transform: uppercase;
 }
 
-/* ---------------------------------------------------------------- motion */
-
-@media (prefers-reduced-motion: no-preference) {
-  .rise {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  .rise.is-in {
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
-  }
-}
 
 /* ---------------------------------------------------------------- narrow
-   The chrome is sticky, so on a phone it has to stay short. Drop the pills'
-   secondary labels and shrink the signature to its 24px floor — never below. */
+   Phone chrome is the most audited object on the site: it is sticky, so every
+   pixel it takes is a pixel of content lost. Top state is three centred lines;
+   condensed is a single 52px bar with the mark alone and the three worlds
+   still centred. The mark never drops below its 24px floor. */
+
+@media (max-width: 860px) {
+  .chrome.is-condensed .sig { font-size: 24px; }
+  .chrome.is-condensed .subnav { display: none; }
+  .split--sticky > :first-child { position: static; }
+}
+
+@media (max-width: 860px) {
+  .doors { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 720px) {
-  .chrome__inner { padding-block: 12px; gap: 12px; }
-  .sig { font-size: 29px; }   /* mark = 24.7px — the 24px floor, not below it */
-  .pill { padding: 7px 12px; font-size: 0.72rem; letter-spacing: 0.06em; }
-  .pill span { display: none; }
-  .pills { gap: 5px; }
-  .split--sticky > :first-child { position: static; }
-  .law { grid-template-columns: 2.4rem 1fr; gap: 0.9rem; }
+  :root { --chrome-h: 52px; }
+
+  .chrome__inner { padding-block: 16px 12px; gap: 10px; }
+  .sig { font-size: 29px; }              /* mark = 24.7px — the floor, not below */
+  .tab { font-size: 1.02rem; padding: 6px 10px; gap: 2px; }
+  .tab span { font-size: 0.5rem; letter-spacing: 0.16em; }
+  .tabs { gap: 2px; }
+  .subnav { font-size: 0.6rem; gap: 10px; }
+
+  /* condensed: mark alone on the left, worlds centred, nothing else */
+  .chrome.is-condensed .sig span { display: none; }
+  .chrome.is-condensed .sig { font-size: 28px; }
+  .chrome.is-condensed .tab { font-size: 0.92rem; padding: 4px 9px; }
+
+  .law { grid-template-columns: 2.2rem 1fr; gap: 0.85rem; }
   .facts li { flex-direction: column; gap: 0.2rem; }
   .facts span { text-align: left; }
   .slot { grid-template-columns: 1fr; gap: 0.5rem; }
+  .quote { max-width: none; }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 400px) {
+  .tab { font-size: 0.94rem; padding: 6px 7px; }
+  .tab span { display: none; }
   .btn { padding: 12px 18px; font-size: 0.74rem; }
   .foot__bar { flex-direction: column; gap: 8px; }
+}
+
+/* ---------------------------------------------------------------- movement
+   The clockwork is not only the intro. These are the parts of it the pages
+   borrow: chapter-ring rules, gold hairlines, escapement ticks, the vignette. */
+
+/* A 60-tick chapter-ring rule. Used instead of a plain border between beats. */
+.tickrule {
+  height: 9px;
+  border: 0;
+  margin: 0;
+  background:
+    repeating-linear-gradient(90deg,
+      color-mix(in srgb, var(--bone) 20%, transparent) 0 1px,
+      transparent 1px 12px),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent)
+      0 100% / 100% 1px no-repeat;
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  opacity: 0.55;
+}
+
+/* The section marker: a gold hairline with a jewel, like a plate screw. */
+.beat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 1rem;
+}
+.beat::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  flex: none;
+}
+.beat::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 40%, transparent), transparent);
+}
+.beat--center { justify-content: center; }
+.beat--center::after { display: none; }
+
+/* Vignette + a faint chapter ring behind a hero. The movement, felt not read. */
+.dial {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* Each world lays its own ground under the movement: Create's night glow,
+   Build's blueprint grid, Train's pitch lines. See worlds.css. */
+.dial::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 80% at 50% -10%,
+      color-mix(in srgb, var(--accent) 11%, transparent), transparent 62%);
+}
+
+.dial svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(150vw, 1200px);
+  height: auto;
+  translate: -50% -50%;
+  opacity: 0.5;
+}
+.dial::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 30%, var(--ink) 82%),
+    linear-gradient(180deg, transparent 74%, var(--ink) 100%);
+}
+
+/* Centred composition — the default for a room's opening statement. */
+.center { text-align: center; }
+.center p, .center .lead { margin-inline: auto; }
+.center .beat, .center .kicker { justify-content: center; }
+.center .kicker::after {
+  content: "";
+  width: 26px;
+  height: 1px;
+  background: var(--accent);
+  flex: none;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.center .actions { justify-content: center; }
+
+/* Reveal on the tick: content seats rather than fades. */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { opacity: 0; transform: translateY(10px); }
+  .rise.is-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.55s var(--ease), transform 0.55s cubic-bezier(0.22, 1.2, 0.36, 1);
+  }
+}
+
+/* The curtain owns the viewport while it runs. */
+html.is-curtained,
+html.is-curtained body { overflow: hidden; }
+[data-page] { transition: opacity 0.5s var(--ease); }
+html.is-curtained [data-page] { opacity: 0; }
+[data-page].is-revealed { opacity: 1; }
+
+/* ---------------------------------------------------------------- home
+   The statement and the three doors share one screen. Nothing below the fold
+   is a surprise, and nothing above it is padding. */
+
+.hero--home {
+  display: grid;
+  align-content: center;
+  min-height: clamp(520px, calc(100svh - var(--chrome-tall)), 820px);
+  padding-block: clamp(30px, 5vh, 64px);
+}
+
+.headline {
+  font-size: clamp(2.7rem, 8vw, 5.6rem);
+  margin-inline: auto;
+  max-width: 13ch;
+}
+
+.doors {
+  display: grid;
+  gap: clamp(10px, 1.4vw, 18px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(30px, 5vh, 56px);
+  text-align: left;
+}
+
+.door {
+  --accent: var(--gold);
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  padding: clamp(18px, 2.2vw, 26px);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--bone) 2.5%, transparent);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.35s var(--ease), background 0.35s var(--ease),
+              transform 0.35s var(--ease);
+}
+.door--create { --accent: var(--glow); }
+.door--build  { --accent: var(--steel); }
+.door--train  { --accent: var(--gold); }
+
+/* the escapement tick that runs across the door on hover */
+.door::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.door:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  transform: translateY(-2px);
+}
+.door:hover::after { transform: scaleX(1); }
+
+.door__verb {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1;
+  color: var(--bone);
+}
+.door__name {
+  font-size: 0.62rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.door__line {
+  margin-top: 0.5rem;
+  color: var(--bone-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.door__cta {
+  margin-top: 0.7rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.door__cta::after { content: " →"; }
+.door:hover .door__cta { color: var(--accent); }
+
+/* ---- the live band: three rooms, one tight strip ---- */
+
+.band {
+  display: grid;
+  gap: clamp(20px, 3vw, 44px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  margin-top: clamp(22px, 3vw, 36px);
+}
+.band__col {
+  display: grid;
+  align-content: start;
+  gap: 0.7rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+}
+.band__head {
+  font-size: 1.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+.band__sub { color: var(--muted); font-size: 0.82rem; line-height: 1.5; margin: 0; }
+.band__empty { color: var(--muted); font-size: 0.82rem; margin: 0.4rem 0; }
+.band__list { display: grid; gap: 1px; margin-top: 0.3rem; }
+.band__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.55rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--bone-dim);
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+a.band__item:hover { color: var(--accent); }
+.slots--mini .slot { padding: 11px 13px; }
+.slots--mini .slot__when { font-size: 0.92rem; }
+.band__col .linkline { margin-top: 0.5rem; justify-self: start; }
+
+.quote--center {
+  border-left: 0;
+  padding-left: 0;
+  margin-inline: auto;
+  text-align: center;
+  max-width: 18ch;
+}
+.closer { position: relative; }
+
+/* ---------------------------------------------------------------- rooms
+   A room opens on a centred statement over the running movement, then goes
+   straight to work. No half-empty hero columns. */
+
+.hero {
+  position: relative;
+  padding-block: clamp(28px, 4.5vh, 56px) clamp(24px, 4vh, 48px);
+  overflow: hidden;
+}
+.hero--room {
+  display: grid;
+  align-content: center;
+  min-height: clamp(260px, calc(62svh - var(--chrome-tall)), 420px);
+}
+.hero__inner { position: relative; z-index: 1; }
+.hero__inner.center > * { margin-inline: auto; }
+.hero__inner.center .frendach { margin-inline: auto; }
+
+.tagline {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  color: var(--bone);
+  margin: 0.7rem 0 0.9rem;
+}
+
+.aside {
+  margin-top: 1.6rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* A tickrule dropped between beats is shell-width and centred. */
+hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
+
+/* Sections no longer need a top border — the tickrule does that job where a
+   division is actually wanted, so consecutive sections simply breathe. */
+.section + .section { border-top: 0; }
+
+/* The Seven Laws as a plate of jewels rather than seven full-width rows —
+   the same content in a third of the scroll. */
+.laws--grid {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.laws--grid .law {
+  display: block;
+  padding: clamp(16px, 1.8vw, 22px);
+  border: 0;
+  background: var(--ink);
+  position: relative;
+}
+.laws--grid .law::before {
+  position: absolute;
+  top: clamp(14px, 1.6vw, 20px);
+  right: clamp(14px, 1.6vw, 20px);
+  font-size: 0.9rem;
+  opacity: 0.65;
+}
+.laws--grid .law__title { padding-right: 2rem; }
+.laws--grid .law__body { font-size: 0.88rem; line-height: 1.55; }
+
+/* The offer as a team sheet: name, what it is, spec, price. One row each. */
+.tariff {
+  list-style: none;
+  margin: clamp(20px, 2.6vw, 32px) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+}
+.tariff__row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.6fr) auto auto;
+  align-items: baseline;
+  gap: clamp(12px, 2vw, 28px);
+  padding-block: clamp(14px, 1.8vw, 20px);
+  border-bottom: 1px solid var(--rule);
+}
+.tariff__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  color: var(--bone);
+  text-decoration: none;
+  line-height: 1.1;
+  transition: color 0.2s var(--ease);
+}
+.tariff__name:hover { color: var(--accent); }
+.tariff__name::after { content: " →"; color: var(--muted); font-size: 0.7em; }
+.tariff__what { color: var(--bone-dim); font-size: 0.92rem; margin: 0; max-width: none; }
+.tariff__spec {
+  color: var(--muted);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tariff .price { font-size: 1.2rem; text-align: right; min-width: 5ch; }
+
+@media (max-width: 860px) {
+  .tariff__row {
+    grid-template-columns: 1fr auto;
+    row-gap: 6px;
+  }
+  .tariff__name { grid-column: 1; }
+  .tariff .price { grid-column: 2; grid-row: 1; }
+  .tariff__what { grid-column: 1 / -1; }
+  .tariff__spec { grid-column: 1 / -1; }
+}
+
+/* ---------------------------------------------------------------- narrow, final
+   These come last on purpose: the home and room blocks above set desktop
+   grids at the same specificity, so the phone overrides have to follow them. */
+
+@media (max-width: 860px) {
+  .doors { grid-template-columns: 1fr; }
+  .hero--home { min-height: 0; }
+  .headline { max-width: 100%; }
+}
+
+@media (max-width: 720px) {
+  /* 29px keeps the condensed mark at 24.7px. At 28px it lands on 23.9 —
+     under the pack's 24px floor, which is not a rounding matter. */
+  .chrome.is-condensed .sig { font-size: 29px; }
+  .doors { gap: 8px; }
+  .door { padding: 16px 18px; }
+  .door__verb { font-size: 1.6rem; }
+  .door__line { font-size: 0.85rem; }
+  .band { gap: 26px; }
+  .laws--grid { grid-template-columns: 1fr; }
+  .hero--room { min-height: 0; }
+}
+
+@media (max-width: 480px) {
+  .chrome.is-condensed .sig { font-size: 29px; }
 }

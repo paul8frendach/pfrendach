@@ -30,9 +30,40 @@ apps/create/     Vision Oasis: Work, Package
 apps/build/      Web: Project, Capability
 templates/       base + one folder per room, plus mail bodies
 static/css/      house.css (tokens, chrome, components) · worlds.css (three skins)
+                 curtain.css (the opening page)
+static/js/       clockwork.js (the movement) · sting.js (the curtain) · house.js
 static/marks/    the locked marks — do not edit
 brand/           the locked pack: BRAND.md, DOCTRINE.md, ASSETS.md, tokens.css
 ```
+
+## The opening page
+
+The site opens on the sting, drawn live in HTML/CSS — **not** a video element.
+`static/js/clockwork.js` is a vanilla port of the studio's `logo-flash.tsx`:
+balance wheel at 1 Hz, 15-tooth escape, 16/10 train, slider-crank r=26 rod=70.
+`sting.js` runs the locked REST → HOLD choreography at 2.4x, so the visitor
+waits about four seconds rather than ten. At HOLD the lockup flies into the
+header signature and the curtain lifts — one continuous move, no cut.
+
+- Plays once per session (`sessionStorage`), and is skippable by click, key,
+  scroll or touch.
+- `prefers-reduced-motion` snaps to HOLD and lifts.
+- One P in the DOM, ever. The F seats into it at the locked −0.32em overlap.
+- `/flash/` renders the same sting boxed, for screen-recording.
+- The mp4 masters stay in `static/flash/` for graphics work. They are not
+  played on the site.
+
+The same movement runs quietly behind every room's hero (`[data-dial]`), and
+the pages borrow its parts: chapter-ring rules (`.tickrule`), jewel markers
+(`.beat`), gold hairlines, the vignette.
+
+## Chrome
+
+Centred, and it condenses. At the top of a page it stands as a stacked
+nameplate: signature, then the three worlds, then About and Contact as
+sub-text. On the first scroll it collapses to a slim bar — signature left,
+the three worlds still dead-centre. On a phone the condensed bar is 53px
+(6% of the viewport) and carries the mark alone plus the three worlds.
 
 ## The rules that are enforced in code
 

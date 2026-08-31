@@ -2,9 +2,9 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 
-from apps.build.models import Capability, Project
-from apps.create.models import Work
-from apps.train.models import Law, SessionType, Slot
+from apps.build.models import Capability
+from apps.create.models import Package, Work
+from apps.train.models import Slot
 
 from .forms import InquiryForm
 from .mail import send_templated
@@ -12,16 +12,17 @@ from .models import Milestone, SiteConfig, World
 
 
 def home(request):
-    """The landing page: sting, three doors, a slice of each room."""
+    """The landing page: the curtain, three doors, and what is live in each room."""
     return render(
         request,
         "house/home.html",
         {
             "featured_work": Work.objects.filter(is_live=True, is_featured=True)[:3],
-            "featured_projects": Project.objects.filter(is_live=True, is_featured=True)[:3],
-            "sessions": SessionType.objects.filter(is_live=True)[:3],
+            # Until there is a reel, the Create column shows what can be commissioned
+            # rather than leaving a hole on the home page.
+            "packages": Package.objects.filter(is_live=True)[:3],
+            "capabilities": Capability.objects.filter(is_live=True)[:4],
             "next_slots": Slot.objects.open().select_related("session_type")[:3],
-            "laws": Law.objects.filter(is_live=True)[:3],
         },
     )
 
@@ -32,7 +33,6 @@ def about(request):
         "house/about.html",
         {
             "milestones": Milestone.objects.filter(is_live=True, confirmed=True),
-            "capabilities": Capability.objects.filter(is_live=True)[:4],
         },
     )
 

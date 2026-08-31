@@ -16,7 +16,8 @@
 
 [data-world="create"] body { letter-spacing: 0.005em; }
 
-[data-world="create"] .hero__bg {
+[data-world="create"] .dial::before {
+  content: "";
   background:
     radial-gradient(90% 70% at 22% 0%, color-mix(in srgb, var(--glow) 14%, transparent), transparent 60%),
     radial-gradient(70% 60% at 100% 100%, color-mix(in srgb, var(--glow) 8%, transparent), transparent 68%),
@@ -76,7 +77,8 @@
   --step: clamp(58px, 8vw, 116px);   /* tighter than the house default */
 }
 
-[data-world="build"] .hero__bg {
+[data-world="build"] .dial::before {
+  content: "";
   background:
     linear-gradient(color-mix(in srgb, var(--steel) 7%, transparent) 1px, transparent 1px) 0 0 / 100% 88px,
     linear-gradient(90deg, color-mix(in srgb, var(--steel) 7%, transparent) 1px, transparent 1px) 0 0 / 88px 100%,
@@ -157,7 +159,8 @@
   --font-body-train: "Montserrat", var(--font-sans);
 }
 
-[data-world="train"] .hero__bg {
+[data-world="train"] .dial::before {
+  content: "";
   background:
     radial-gradient(110% 80% at 50% -20%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 62%),
     repeating-linear-gradient(90deg,
