@@ -1465,7 +1465,9 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
 a.tile { text-decoration: none; color: inherit; }
 a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 
-@media (max-width: 900px) {
+/* Thirds hold three across down to a genuinely narrow viewport — dropping
+   them to halves too early leaves an orphan tile and a hole beside it. */
+@media (max-width: 760px) {
   .tile--third { grid-column: span 3; }
   .tile--twothirds { grid-column: span 6; }
 }
