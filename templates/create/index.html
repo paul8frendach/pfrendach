@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Vision Oasis — film and stills{% endblock %}
+{% block description %}Vision Oasis. Cinema first, useful second. Session films, brand films, stills.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">Create — Vision Oasis</p>
+    <h1 style="max-width:14ch">Cinema first. Useful second.</h1>
+    <p class="lead" style="margin-top:1.6rem;max-width:46ch">
+      Session films, brand films, stills. Made the way the training is made —
+      night, grain, breath, the walk-off.
+    </p>
+    <p class="slate" style="margin-top:2rem">Credited Vision Oasis</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>
+        <p class="kicker">Selected work</p>
+        <h2>The reel.</h2>
+      </div>
+      <nav class="pills" aria-label="Filter work">
+        <a class="pill{% if not active_kind %} pill--create{% endif %}"
+           href="{% url 'create:index' %}"
+           {% if not active_kind %}aria-current="page"{% endif %}>All</a>
+        {% for value, label in kinds %}
+          <a class="pill{% if active_kind == value %} pill--create{% endif %}"
+             href="?kind={{ value }}"
+             {% if active_kind == value %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+
+    <div class="grid grid--2" style="margin-top:clamp(28px,3.6vw,48px)">
+      {% for piece in work %}
+        <a class="card rise" href="{{ piece.get_absolute_url }}">
+          <span class="frame{% if piece.kind == 'stills' %} frame--tall{% endif %}">
+            {% if piece.poster %}
+              <img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">
+            {% else %}
+              <span class="frame__empty">{{ piece.get_kind_display }}</span>
+            {% endif %}
+          </span>
+          <span class="card__title">{{ piece.title }}</span>
+          {% if piece.blurb %}<p class="card__body">{{ piece.blurb }}</p>{% endif %}
+          <span class="card__foot">
+            <span>{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</span>
+            <span>{% if piece.runtime %}{{ piece.runtime }}{% endif %}</span>
+          </span>
+        </a>
+      {% empty %}
+        <p class="notice">The reel is being cut. Ask to see it directly.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if packages %}
+<section class="section">
+  <div class="shell">
+    <p class="kicker">The storefront</p>
+    <h2>What you can commission.</h2>
+    <div class="grid grid--3" style="margin-top:clamp(26px,3.4vw,44px)">
+      {% for package in packages %}
+        <div class="card card--hover rise">
+          <span class="card__title">{{ package.name }}</span>
+          <p class="card__body">{{ package.summary }}</p>
+          <ul class="ticks">
+            {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
+          </ul>
+          <span class="card__foot">
+            <span>{{ package.price_label }}</span>
+            <span>{{ package.turnaround }}</span>
+          </span>
+          <a class="btn" href="{% url 'house:contact' %}?world=create">Commission this</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--tight">
+  <div class="shell" style="text-align:center">
+    <h2 style="max-width:20ch;margin-inline:auto">Never stock. Never a template.</h2>
+    <p style="margin:1.4rem auto 0;max-width:42ch;color:var(--bone-dim)">
+      One camera, one eye, and the patience to wait for the light.
+    </p>
+    <p style="margin-top:1.8rem">
+      <a class="btn btn--solid" href="{% url 'house:contact' %}?world=create">Start a film</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

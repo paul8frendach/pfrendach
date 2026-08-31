@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Book {{ slot.session_type.name }} — FRENDACH{% endblock %}
+{% block world %}train{% endblock %}
+{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">Request a session</p>
+    <h1>{{ slot.session_type.name }}</h1>
+    <p class="lead" style="margin-top:1.2rem">
+      {{ slot.starts_at|date:"l j F" }} · {{ slot.starts_at|date:"g:i A" }} – {{ slot.ends_at|date:"g:i A" }}<br>
+      {{ slot.location }}
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <ul class="facts">
+        <li><b>Session</b><span>{{ slot.session_type.get_format_display }}</span></li>
+        <li><b>Length</b><span>{{ slot.session_type.duration_minutes }} min</span></li>
+        <li><b>Rate</b><span>{{ slot.session_type.price_label }}</span></li>
+        <li><b>Seats left</b><span>{{ slot.seats_left }} of {{ slot.capacity }}</span></li>
+      </ul>
+      <p class="notice">
+        This is a request, not a confirmed booking. You get a reference now and a
+        yes or no from Paul after.
+      </p>
+    </div>
+
+    <form class="form form--wide" method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+          <p class="notice notice--bad">{{ error }}</p>
+        {% endfor %}
+      {% endif %}
+      {{ form.company }}
+
+      {% include "partials/field.html" with field=form.player_name %}
+      <div class="form__row">
+        {% include "partials/field.html" with field=form.player_age %}
+        {% include "partials/field.html" with field=form.position %}
+      </div>
+      {% include "partials/field.html" with field=form.club_or_school %}
+      {% include "partials/field.html" with field=form.contact_name %}
+      <div class="form__row">
+        {% include "partials/field.html" with field=form.email %}
+        {% include "partials/field.html" with field=form.phone %}
+      </div>
+      {% include "partials/field.html" with field=form.goal %}
+      {% include "partials/field.html" with field=form.consent %}
+
+      <div>
+        <button class="btn btn--solid" type="submit">Send the request</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}

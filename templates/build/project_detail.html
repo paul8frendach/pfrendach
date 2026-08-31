@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} — Build{% endblock %}
+{% block description %}{{ project.tagline }}{% endblock %}
+{% block world %}build{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">{{ project.get_stage_display }}{% if project.year %} · {{ project.year }}{% endif %}</p>
+    <h1>{{ project.name }}</h1>
+    <p class="lead" style="margin-top:1.4rem;max-width:50ch">{{ project.tagline }}</p>
+    {% if project.url %}
+      <p style="margin-top:1.8rem">
+        <a class="btn" href="{{ project.url }}" rel="noopener" target="_blank">Visit the site</a>
+      </p>
+    {% endif %}
+  </div>
+</section>
+
+{% if project.shot %}
+<section class="section--tight" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="shell">
+    <div class="frame"><img src="{{ project.shot.url }}" alt="{{ project.name }}"></div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <ul class="facts">
+        <li><b>Role</b><span>{{ project.role }}</span></li>
+        {% if project.year %}<li><b>Year</b><span>{{ project.year }}</span></li>{% endif %}
+        <li><b>Stage</b><span>{{ project.get_stage_display }}</span></li>
+      </ul>
+      {% if project.stack_items %}
+        <p class="meta">Stack</p>
+        <span class="chips">
+          {% for item in project.stack_items %}<span class="chip">{{ item }}</span>{% endfor %}
+        </span>
+      {% endif %}
+    </div>
+
+    <div class="stack">
+      {% if project.problem %}
+        <p class="kicker">The problem</p>
+        <p class="lead">{{ project.problem|linebreaksbr }}</p>
+      {% endif %}
+      {% if project.approach %}
+        <p class="kicker" style="margin-top:2.2rem">The approach</p>
+        <p>{{ project.approach|linebreaksbr }}</p>
+      {% endif %}
+      {% if project.outcome %}
+        <p class="kicker" style="margin-top:2.2rem">The outcome</p>
+        <p>{{ project.outcome|linebreaksbr }}</p>
+      {% endif %}
+      <p style="margin-top:2rem">
+        <a class="linkline" href="{% url 'build:index' %}">All builds</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+{% if more %}
+<section class="section section--tight">
+  <div class="shell">
+    <p class="kicker">Also built</p>
+    <div class="grid grid--3" style="margin-top:1.6rem">
+      {% for other in more %}
+        <a class="card" href="{{ other.get_absolute_url }}">
+          <span class="card__title">{{ other.name }}</span>
+          <p class="card__body">{{ other.tagline }}</p>
+          <span class="card__foot"><span>{{ other.role }}</span><span aria-hidden="true">→</span></span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

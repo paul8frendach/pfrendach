@@ -1,0 +1,41 @@
+{% load static %}
+<footer class="foot">
+  <div class="shell">
+    <div class="foot__grid">
+      <div>
+        <a class="sig sig--sm" href="{% url 'house:home' %}" aria-label="Paul Frendach">
+          <img src="{% static 'marks/pf-house.svg' %}" alt="">
+          <span>RENDACH</span>
+        </a>
+        <p class="subtitle">Create · Build · Train</p>
+      </div>
+
+      <div class="foot__links">
+        <span class="meta">Rooms</span>
+        {% for world in worlds %}
+          <a href="{{ world.get_absolute_url }}">{{ world.verb }} — {{ world.name }}</a>
+        {% endfor %}
+      </div>
+
+      <div class="foot__links">
+        <span class="meta">House</span>
+        <a href="{% url 'house:about' %}">About</a>
+        <a href="{% url 'house:contact' %}">Contact</a>
+        <a href="{% url 'train:schedule' %}">Book a session</a>
+      </div>
+
+      <div class="foot__links">
+        <span class="meta">Elsewhere</span>
+        {% if site.instagram_url %}<a href="{{ site.instagram_url }}" rel="me noopener">Instagram</a>{% endif %}
+        {% if site.youtube_url %}<a href="{{ site.youtube_url }}" rel="me noopener">YouTube</a>{% endif %}
+        {% if site.github_url %}<a href="{{ site.github_url }}" rel="me noopener">GitHub</a>{% endif %}
+        <a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>
+      </div>
+    </div>
+
+    <div class="foot__bar">
+      <span>Paul Frendach · {{ site.location }}</span>
+      <span>{{ site.footer_line }}</span>
+    </div>
+  </div>
+</footer>

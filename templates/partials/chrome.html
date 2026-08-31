@@ -1,0 +1,24 @@
+{% load static %}
+{# Persistent chrome. The signature never changes between rooms. #}
+<header class="chrome">
+  <div class="shell chrome__inner">
+    <a class="sig" href="{% url 'house:home' %}" aria-label="Paul Frendach — home">
+      <img src="{% static 'marks/pf-house.svg' %}" alt="">
+      <span>RENDACH</span>
+    </a>
+
+    <nav class="pills" aria-label="Worlds">
+      {% for world in worlds %}
+        <a class="pill pill--{{ world.slug }}"
+           href="{{ world.get_absolute_url }}"
+           {% if current_world == world.slug %}aria-current="page"{% endif %}>
+          {{ world.verb }} <span>{{ world.name }}</span>
+        </a>
+      {% endfor %}
+      <a class="pill pill--ghost" href="{% url 'house:about' %}"
+         {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
+      <a class="pill pill--ghost" href="{% url 'house:contact' %}"
+         {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
+    </nav>
+  </div>
+</header>

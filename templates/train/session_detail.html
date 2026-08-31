@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ session.name }} — FRENDACH{% endblock %}
+{% block description %}{{ session.summary }}{% endblock %}
+{% block world %}train{% endblock %}
+{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">{{ session.get_format_display }}</p>
+    <h1>{{ session.name }}</h1>
+    <p class="lead" style="margin-top:1.4rem;max-width:48ch">{{ session.summary }}</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <ul class="facts">
+        <li><b>Length</b><span>{{ session.duration_minutes }} minutes</span></li>
+        <li><b>Players</b><span>{{ session.capacity }} per slot</span></li>
+        <li><b>Rate</b><span>{{ session.price_label }}</span></li>
+        {% if session.requires_film %}<li><b>Film</b><span>Included</span></li>{% endif %}
+      </ul>
+      <a class="btn btn--solid" href="#slots">Take a time</a>
+    </div>
+
+    <div class="stack">
+      {% if session.description %}
+        <p class="lead">{{ session.description|linebreaksbr }}</p>
+      {% endif %}
+      {% if session.focus_points %}
+        <p class="kicker" style="margin-top:2rem">What it works on</p>
+        <ul class="ticks">
+          {% for point in session.focus_points %}<li>{{ point }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section" id="slots">
+  <div class="shell">
+    <p class="kicker">Open times</p>
+    <h2>Pick one.</h2>
+    <div class="slots" style="margin-top:clamp(24px,3vw,38px)">
+      {% for slot in slots %}
+        <a class="slot" href="{% url 'train:book' slot.id %}">
+          <span>
+            <span class="slot__when">{{ slot.starts_at|date:"l j F · g:i A" }}</span><br>
+            <span class="slot__where">{{ slot.location }}{% if slot.note %} · {{ slot.note }}{% endif %}</span>
+          </span>
+          <span class="slot__seats">{{ slot.seats_left }} left</span>
+        </a>
+      {% empty %}
+        <p class="notice">
+          Nothing open for this one yet.
+          <a href="{% url 'house:contact' %}?world=train">Ask and a time will be made.</a>
+        </p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if other_sessions %}
+<section class="section section--tight">
+  <div class="shell">
+    <p class="kicker">Also</p>
+    <div class="grid grid--3" style="margin-top:1.6rem">
+      {% for other in other_sessions %}
+        <a class="card" href="{{ other.get_absolute_url }}">
+          <span class="card__title">{{ other.name }}</span>
+          <p class="card__body">{{ other.summary }}</p>
+          <span class="card__foot"><span>{{ other.price_label }}</span><span aria-hidden="true">→</span></span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

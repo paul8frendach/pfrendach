@@ -1,0 +1,60 @@
+/* Paul Frendach — house tokens. Worlds change --accent only. */
+
+:root {
+  --ink: #0b0d0c;
+  --ink-2: #161816;
+  --bone: #f4f1ea;
+  --bone-dim: #c9c3b6;
+  --gold: #e8c36a;
+  --glow: #c6e04a; /* Create / Vision Oasis only */
+  --steel: #8fb4c4; /* Build only */
+  --muted: #8a8578;
+
+  --accent: var(--gold); /* house default = Train */
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  --mark-overlap: -0.32em; /* F into mirrored P */
+  --rendach-gap: 0.05em; /* F-arm to R */
+  --rendach-track: 0.02em;
+}
+
+[data-world="create"] {
+  --accent: var(--glow);
+}
+[data-world="build"] {
+  --accent: var(--steel);
+}
+[data-world="train"] {
+  --accent: var(--gold);
+}
+
+/* Header signature — copy this. Do not recolor the mark per world. */
+.sig {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--rendach-gap);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 72, "wght" 400, "SOFT" 0, "WONK" 0;
+  font-size: 28px;
+  line-height: 0.9;
+  letter-spacing: var(--rendach-track);
+  color: var(--bone);
+  text-decoration: none;
+}
+.sig img {
+  height: 1.14em;
+  width: auto;
+  display: block;
+  translate: 0 0.02em;
+}
+
+/* Live-type mark (prefer SVG in chrome) */
+.mark .p {
+  display: inline-block;
+  transform: scaleX(-1);
+  margin-right: var(--mark-overlap);
+}

@@ -1,0 +1,12 @@
+New inquiry — {{ inquiry.name }}
+
+Room:    {% if inquiry.world %}{{ inquiry.world.verb }} — {{ inquiry.world.name }}{% else %}The house{% endif %}
+Email:   {{ inquiry.email }}
+Phone:   {{ inquiry.phone|default:"—" }}
+Budget:  {% if inquiry.budget %}${{ inquiry.budget }}{% else %}—{% endif %}
+Subject: {{ inquiry.subject|default:"—" }}
+
+{{ inquiry.message }}
+
+--
+Sent from {{ site.contact_email }}

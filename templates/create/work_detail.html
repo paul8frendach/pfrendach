@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}{{ piece.title }} — Vision Oasis{% endblock %}
+{% block description %}{{ piece.blurb|default:piece.title }}{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block content %}
+<section class="hero" style="padding-bottom:0">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
+    <h1>{{ piece.title }}</h1>
+  </div>
+</section>
+
+<section class="section--tight" style="padding-top:clamp(28px,4vw,48px)">
+  <div class="shell">
+    <div class="frame">
+      {% if piece.video_url %}
+        <iframe src="{{ piece.video_url }}" title="{{ piece.title }}"
+                allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      {% elif piece.poster %}
+        <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
+      {% else %}
+        <span class="frame__empty">{{ piece.get_kind_display }}</span>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split">
+    <div class="stack">
+      <ul class="facts">
+        {% if piece.client %}<li><b>For</b><span>{{ piece.client }}</span></li>{% endif %}
+        {% if piece.runtime %}<li><b>Runtime</b><span>{{ piece.runtime }}</span></li>{% endif %}
+        <li><b>Credit</b><span>{{ piece.credit }}</span></li>
+      </ul>
+      <p class="slate">Vision Oasis</p>
+    </div>
+    <div class="stack">
+      {% if piece.description %}<p class="lead">{{ piece.description|linebreaksbr }}</p>{% endif %}
+      <a class="linkline" href="{% url 'create:index' %}">All work</a>
+    </div>
+  </div>
+</section>
+
+{% if more %}
+<section class="section section--tight">
+  <div class="shell">
+    <p class="kicker">Next</p>
+    <div class="grid grid--3" style="margin-top:1.6rem">
+      {% for other in more %}
+        <a class="card" href="{{ other.get_absolute_url }}">
+          <span class="frame">
+            {% if other.poster %}<img src="{{ other.poster.url }}" alt="{{ other.title }}" loading="lazy">
+            {% else %}<span class="frame__empty">{{ other.get_kind_display }}</span>{% endif %}
+          </span>
+          <span class="card__title">{{ other.title }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

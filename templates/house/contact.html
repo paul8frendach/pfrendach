@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — Paul Frendach{% endblock %}
+{% block world %}{% if picked_world %}{{ picked_world.slug }}{% else %}house{% endif %}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">Contact</p>
+    <h1 style="max-width:16ch">Tell me what you are trying to make.</h1>
+    <p class="lead" style="margin-top:1.4rem;max-width:48ch">
+      Films, sites, or sessions. Few clients, full attention — so be direct and
+      it will come back direct.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <ul class="facts">
+        <li><b>Email</b><span><a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a></span></li>
+        <li><b>Based</b><span>{{ site.location }}</span></li>
+        <li><b>Booking</b><span><a href="{% url 'train:schedule' %}">Training schedule</a></span></li>
+      </ul>
+      <p class="notice">{{ site.booking_note }}</p>
+    </div>
+
+    <form class="form form--wide" method="post" novalidate>
+      {% csrf_token %}
+      {% for error in form.non_field_errors %}<p class="notice notice--bad">{{ error }}</p>{% endfor %}
+      {{ form.company }}
+
+      <div class="form__row">
+        {% include "partials/field.html" with field=form.name %}
+        {% include "partials/field.html" with field=form.email %}
+      </div>
+      <div class="form__row">
+        {% include "partials/field.html" with field=form.phone %}
+        {% include "partials/field.html" with field=form.world %}
+      </div>
+      {% include "partials/field.html" with field=form.subject %}
+      {% include "partials/field.html" with field=form.budget %}
+      {% include "partials/field.html" with field=form.message %}
+
+      <div><button class="btn btn--solid" type="submit">Send it</button></div>
+    </form>
+  </div>
+</section>
+{% endblock %}

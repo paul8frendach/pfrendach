@@ -1,0 +1,18 @@
+Session request {{ booking.reference }}
+
+Session: {{ slot.session_type.name }} ({{ slot.session_type.get_format_display }})
+When:    {{ slot.starts_at }}
+Where:   {{ slot.location }}
+Seats:   {{ slot.seats_left }} of {{ slot.capacity }} left after this
+
+Player:  {{ booking.player_name }}{% if booking.player_age %} ({{ booking.player_age }}){% endif %}
+Club:    {{ booking.club_or_school|default:"—" }}
+Position:{{ booking.position|default:"—" }}
+Contact: {{ booking.contact_name|default:"—" }}
+Email:   {{ booking.email }}
+Phone:   {{ booking.phone|default:"—" }}
+
+Goal:
+{{ booking.goal|default:"—" }}
+
+Confirm or decline it in the admin.

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paul Frendach — Create · Build · Train{% endblock %}
+{% block world %}house{% endblock %}
+
+{% block content %}
+
+{# ---------------------------------------------------------------- hero #}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <div class="split" style="align-items:center">
+      <div class="stack">
+        <p class="kicker">{{ site.kicker }}</p>
+        <h1>{{ site.headline }}</h1>
+        <p class="lead">{{ site.lead }}</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn--solid" href="{% url 'train:schedule' %}">Book a session</a>
+          <a class="btn btn--quiet" href="{% url 'build:index' %}">See the work</a>
+        </div>
+      </div>
+
+      <div>
+        {% if site.show_intro_sting %}
+          {# The locked sting. Muted, looping, no controls — it is a mark, not media. #}
+          <video class="sting" autoplay muted loop playsinline
+                 poster="{% static 'marks/pf-signature-sub-on-ink.png' %}"
+                 aria-label="Paul Frendach signature animation">
+            <source src="{% static 'flash/intro.mp4' %}" type="video/mp4">
+          </video>
+        {% else %}
+          <img class="sting" src="{% static 'marks/pf-signature-sub-on-ink.png' %}"
+               alt="Paul Frendach — Create · Build · Train">
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- doors #}
+<section class="section">
+  <div class="shell">
+    <p class="kicker">Three rooms</p>
+    <h2>One person. Three trades.</h2>
+    <p class="lead" style="margin-top:1rem">
+      The mark stays. Everything else changes when you walk through a door.
+    </p>
+
+    <div class="grid grid--3" style="margin-top:clamp(30px,4vw,54px)">
+      {% for world in worlds %}
+        <a class="card door door--{{ world.slug }} rise" href="{{ world.get_absolute_url }}">
+          <span class="door__name">{{ world.name }}</span>
+          <span class="door__verb">{{ world.verb }}</span>
+          <p class="card__body">{{ world.card_line }}</p>
+          <span class="card__foot">
+            <span>{{ world.descriptor }}</span>
+            <span aria-hidden="true">→</span>
+          </span>
+        </a>
+      {% empty %}
+        <p class="notice">No worlds are live yet. Add them in the admin.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- train slice #}
+{% if laws or next_slots %}
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <p class="kicker" style="--accent:var(--gold)">Train — FRENDACH</p>
+      <h2>Love the process.</h2>
+      <p class="lead">{{ site.booking_note }}</p>
+      <a class="linkline" style="--accent:var(--gold)" href="{% url 'train:index' %}">The doctrine</a>
+    </div>
+
+    <div class="stack">
+      {% if laws %}
+        <ol class="laws" style="--accent:var(--gold)">
+          {% for law in laws %}
+            <li class="law rise">
+              <div>
+                <p class="law__title">{{ law.title }}</p>
+                <p class="law__body">{{ law.body }}</p>
+              </div>
+            </li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+
+      {% if next_slots %}
+        <p class="meta" style="margin-top:1.6rem">Next open</p>
+        <div class="slots" style="--accent:var(--gold)">
+          {% for slot in next_slots %}
+            <a class="slot" href="{% url 'train:book' slot.id %}">
+              <span>
+                <span class="slot__when">{{ slot.starts_at|date:"D j M · g:i A" }}</span><br>
+                <span class="slot__where">{{ slot.session_type.name }} · {{ slot.location }}</span>
+              </span>
+              <span class="slot__seats">{{ slot.seats_left }} left</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------- create slice #}
+{% if featured_work %}
+<section class="section">
+  <div class="shell">
+    <p class="kicker" style="--accent:var(--glow)">Create — Vision Oasis</p>
+    <h2>The lens.</h2>
+    <div class="grid grid--3" style="margin-top:clamp(26px,3.4vw,44px)">
+      {% for piece in featured_work %}
+        <a class="card rise" style="--accent:var(--glow)" href="{{ piece.get_absolute_url }}">
+          <span class="frame">
+            {% if piece.poster %}
+              <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
+            {% else %}
+              <span class="frame__empty">{{ piece.get_kind_display }}</span>
+            {% endif %}
+          </span>
+          <span class="card__title">{{ piece.title }}</span>
+          <span class="card__foot"><span>{{ piece.year }}</span><span>{{ piece.credit }}</span></span>
+        </a>
+      {% endfor %}
+    </div>
+    <p style="margin-top:2rem">
+      <a class="linkline" style="--accent:var(--glow)" href="{% url 'create:index' %}">All work</a>
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------- build slice #}
+{% if featured_projects %}
+<section class="section">
+  <div class="shell">
+    <p class="kicker" style="--accent:var(--steel)">Build — Web</p>
+    <h2>Quiet pages. Sharp objects.</h2>
+    <div class="grid grid--3" style="margin-top:clamp(26px,3.4vw,44px)">
+      {% for project in featured_projects %}
+        <a class="card rise" style="--accent:var(--steel)" href="{{ project.get_absolute_url }}">
+          <span class="card__title">{{ project.name }}</span>
+          <p class="card__body">{{ project.tagline }}</p>
+          <span class="card__foot"><span>{{ project.role }}</span><span>{{ project.year }}</span></span>
+        </a>
+      {% endfor %}
+    </div>
+    <p style="margin-top:2rem">
+      <a class="linkline" style="--accent:var(--steel)" href="{% url 'build:index' %}">What I can build you</a>
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------- close #}
+<section class="section section--tight">
+  <div class="shell" style="text-align:center">
+    <img src="{% static 'marks/pf-house-bone.png' %}" alt=""
+         style="height:46px;width:auto;margin:0 auto;opacity:.9">
+    <p class="subtitle" style="margin-top:1.2rem">Create · Build · Train</p>
+    <p style="margin:1.6rem auto 0;max-width:40ch;color:var(--bone-dim)">
+      Few clients. Full attention. If you want something made properly, say so.
+    </p>
+    <p style="margin-top:1.8rem">
+      <a class="btn" href="{% url 'house:contact' %}">Start a conversation</a>
+    </p>
+  </div>
+</section>
+
+{% endblock %}

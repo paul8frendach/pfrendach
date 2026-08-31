@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About — Paul Frendach{% endblock %}
+{% block world %}house{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">About</p>
+    <img src="{% static 'marks/pf-paul-signature-bone.png' %}"
+         alt="Paul Frendach" style="width:min(100%,560px);height:auto;margin-bottom:1.6rem">
+    <p class="lead" style="max-width:52ch">
+      Maryland. Youngest of four. Played soccer growing up, then in college.
+      Now: films, interfaces, and sessions, made by one pair of hands.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div>
+      <p class="kicker">The short version</p>
+      <blockquote class="quote">
+        This is a game. Use it to build a life.
+      </blockquote>
+    </div>
+    <div class="stack">
+      <p class="lead">
+        Soccer offered order when the rest of life did not. The field was the place
+        things made sense, and that is still how the work gets made — a set of
+        constraints, worked at until it comes right.
+      </p>
+      <p>
+        Central midfielder. DeMatha Catholic, then Baltimore Celtic, then Maryland,
+        then Temple. He has been the best player on teams and he has been the one
+        watching. Both are in how he coaches and both are in how he builds.
+      </p>
+      <p>
+        Favourite player growing up was Ronaldinho — which is the whole point.
+        Joy is not the opposite of standards.
+      </p>
+      <p>
+        Three trades, one house: <a class="linkline" href="{% url 'create:index' %}">Create</a>
+        under Vision Oasis, <a class="linkline" href="{% url 'build:index' %}">Build</a> on the web,
+        and <a class="linkline" href="{% url 'train:index' %}">Train</a> as FRENDACH.
+      </p>
+    </div>
+  </div>
+</section>
+
+{% if milestones %}
+<section class="section">
+  <div class="shell split">
+    <div>
+      <p class="kicker">The record</p>
+      <h2>Played it, not just watched it.</h2>
+    </div>
+    <ul class="facts">
+      {% for milestone in milestones %}
+        <li>
+          <b>{{ milestone.title }}{% if milestone.detail %} <span style="color:var(--muted)">— {{ milestone.detail }}</span>{% endif %}</b>
+          <span>{{ milestone.year }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% if capabilities %}
+<section class="section">
+  <div class="shell">
+    <p class="kicker">What that means for you</p>
+    <h2>Things already built.</h2>
+    <div class="grid grid--2" style="margin-top:clamp(26px,3.4vw,44px)">
+      {% for capability in capabilities %}
+        <div class="card card--hover rise" style="--accent:var(--steel)">
+          <span class="card__title">{{ capability.title }}</span>
+          <p class="card__body">{{ capability.blurb }}</p>
+        </div>
+      {% endfor %}
+    </div>
+    <p style="margin-top:2rem"><a class="linkline" style="--accent:var(--steel)" href="{% url 'build:index' %}">The Build room</a></p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--tight">
+  <div class="shell" style="text-align:center">
+    <p class="subtitle">Create · Build · Train</p>
+    <p style="margin:1.2rem auto 0;max-width:40ch;color:var(--bone-dim)">{{ site.footer_line }}</p>
+    <p style="margin-top:1.8rem"><a class="btn" href="{% url 'house:contact' %}">Say hello</a></p>
+  </div>
+</section>
+{% endblock %}

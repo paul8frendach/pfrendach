@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule — FRENDACH{% endblock %}
+{% block description %}Open training slots. Booking sends a request; nothing is confirmed until Paul confirms it.{% endblock %}
+{% block world %}train{% endblock %}
+{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner">
+    <p class="kicker">Schedule</p>
+    <h1>What is open.</h1>
+    <p class="lead" style="margin-top:1.4rem;max-width:52ch">
+      Taking a slot sends a request with a reference. Paul confirms by hand —
+      a small roster is the point.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    {% for day, slots in days %}
+      <div class="rise" style="margin-bottom:clamp(30px,4vw,52px)">
+        <p class="kicker">{{ day|date:"l j F" }}</p>
+        <div class="slots">
+          {% for slot in slots %}
+            <a class="slot" href="{% url 'train:book' slot.id %}">
+              <span>
+                <span class="slot__when">{{ slot.starts_at|date:"g:i A" }} — {{ slot.session_type.name }}</span><br>
+                <span class="slot__where">{{ slot.location }} · {{ slot.session_type.duration_minutes }} min · {{ slot.session_type.price_label }}</span>
+              </span>
+              <span class="slot__seats">{{ slot.seats_left }} left</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% empty %}
+      <p class="notice">
+        Nothing open at the moment.
+        <a href="{% url 'house:contact' %}?world=train">Send a note and a time will be made.</a>
+      </p>
+    {% endfor %}
+  </div>
+</section>
+
+{% if sessions %}
+<section class="section section--tight">
+  <div class="shell">
+    <p class="kicker">Session types</p>
+    <div class="grid grid--3" style="margin-top:1.6rem">
+      {% for session in sessions %}
+        <a class="card" href="{{ session.get_absolute_url }}">
+          <span class="card__title">{{ session.name }}</span>
+          <p class="card__body">{{ session.summary }}</p>
+          <span class="card__foot"><span>{{ session.price_label }}</span><span>{{ session.duration_minutes }} min</span></span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

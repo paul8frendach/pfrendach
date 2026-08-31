@@ -1,0 +1,228 @@
+/* =========================================================================
+   World skins. Same chrome, same mark, three atmospheres.
+   Everything here is scoped to [data-world]; the house file stays neutral.
+   ========================================================================= */
+
+/* ============================ CREATE — Vision Oasis =====================
+   Night, grain, breath, walk-off. Cinema first, useful second.
+   Wide letterboxed frames, long leading, quiet type, slow reveals.
+   ======================================================================== */
+
+[data-world="create"] {
+  --panel: color-mix(in srgb, var(--glow) 3%, var(--ink-2));
+  --font-world: var(--font-display);
+  --step: clamp(76px, 10vw, 156px);   /* more air than the house default */
+}
+
+[data-world="create"] body { letter-spacing: 0.005em; }
+
+[data-world="create"] .hero__bg {
+  background:
+    radial-gradient(90% 70% at 22% 0%, color-mix(in srgb, var(--glow) 14%, transparent), transparent 60%),
+    radial-gradient(70% 60% at 100% 100%, color-mix(in srgb, var(--glow) 8%, transparent), transparent 68%),
+    linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--ink) 90%, black) 100%);
+}
+
+/* Letterbox: the Create room shows work in 2.39:1 wherever it can. */
+[data-world="create"] .frame { aspect-ratio: 2.39 / 1; border-radius: 0; }
+[data-world="create"] .frame--tall { aspect-ratio: 4 / 5; }
+[data-world="create"] .frame--square { aspect-ratio: 1; }
+
+[data-world="create"] .card {
+  border-radius: 0;
+  border-color: transparent;
+  background: transparent;
+  padding: 0;
+  gap: 1rem;
+}
+[data-world="create"] .card::before { display: none; }
+[data-world="create"] a.card:hover { transform: none; }
+[data-world="create"] a.card:hover .frame { border-color: var(--glow); }
+[data-world="create"] a.card:hover .frame img { transform: scale(1.03); }
+[data-world="create"] .card .frame img {
+  transition: transform 0.9s var(--ease);
+}
+[data-world="create"] .card__title {
+  font-size: 1.5rem;
+  font-variation-settings: "opsz" 72, "wght" 400, "SOFT" 0, "WONK" 1;
+}
+
+/* Vision Oasis credit line — a slate, not a logo. */
+[data-world="create"] .slate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+[data-world="create"] .slate::before {
+  content: "";
+  width: 6px; height: 6px;
+  background: var(--glow);
+  border-radius: 50%;
+}
+
+[data-world="create"] .grain::after { opacity: 0.06; }
+
+/* ============================ BUILD — Web ===============================
+   Precise, cooler, still elegant. Blueprint grid, mono meta, sharp objects.
+   ======================================================================== */
+
+[data-world="build"] {
+  --panel: color-mix(in srgb, var(--steel) 3%, var(--ink-2));
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  --step: clamp(58px, 8vw, 116px);   /* tighter than the house default */
+}
+
+[data-world="build"] .hero__bg {
+  background:
+    linear-gradient(color-mix(in srgb, var(--steel) 7%, transparent) 1px, transparent 1px) 0 0 / 100% 88px,
+    linear-gradient(90deg, color-mix(in srgb, var(--steel) 7%, transparent) 1px, transparent 1px) 0 0 / 88px 100%,
+    radial-gradient(100% 80% at 50% 0%, color-mix(in srgb, var(--steel) 11%, transparent), transparent 60%);
+  mask-image: linear-gradient(180deg, black, transparent 88%);
+}
+
+[data-world="build"] .meta,
+[data-world="build"] .card__foot,
+[data-world="build"] .slot__where,
+[data-world="build"] .field > label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+[data-world="build"] .card { border-radius: 0; }
+[data-world="build"] .card::before {
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+[data-world="build"] a.card:hover::before,
+[data-world="build"] .card--hover:hover::before { transform: scaleX(1); }
+
+/* Stack chips — the actual tools, printed plainly. */
+[data-world="build"] .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+[data-world="build"] .chip {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 4px 9px;
+  border: 1px solid var(--rule);
+  color: var(--bone-dim);
+  border-radius: 2px;
+}
+
+/* Capability cards carry a number in the corner like a spec sheet. */
+[data-world="build"] .capability { position: relative; }
+[data-world="build"] .capability__glyph {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--steel);
+  letter-spacing: 0.08em;
+}
+
+[data-world="build"] .btn { border-radius: 0; }
+[data-world="build"] .field input,
+[data-world="build"] .field textarea,
+[data-world="build"] .field select { border-radius: 0; font-family: var(--font-mono); font-size: 0.88rem; }
+
+/* Code sample — the API in the Build room is shown, not described. */
+[data-world="build"] .code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.7;
+  background: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 18px 20px;
+  overflow-x: auto;
+  color: var(--bone-dim);
+  white-space: pre;
+  tab-size: 2;
+}
+[data-world="build"] .code b { color: var(--steel); font-weight: 400; }
+[data-world="build"] .code i { color: var(--muted); font-style: normal; }
+
+/* ============================ TRAIN — FRENDACH ==========================
+   The session. Pitch lines, numbers, weight. Anton/Oswald live in here only —
+   never in the house chrome.
+   ======================================================================== */
+
+[data-world="train"] {
+  --panel: color-mix(in srgb, var(--gold) 3%, var(--ink-2));
+  --font-condensed: "Oswald", "Anton", ui-sans-serif, sans-serif;
+  --font-body-train: "Montserrat", var(--font-sans);
+}
+
+[data-world="train"] .hero__bg {
+  background:
+    radial-gradient(110% 80% at 50% -20%, color-mix(in srgb, var(--gold) 13%, transparent), transparent 62%),
+    repeating-linear-gradient(90deg,
+      transparent 0 118px,
+      color-mix(in srgb, var(--bone) 2.5%, transparent) 118px 119px);
+}
+
+/* The one place Anton is allowed: the FRENDACH word as a soccer artifact. */
+[data-world="train"] .frendach {
+  font-family: "Anton", var(--font-condensed);
+  font-weight: 400;
+  font-size: clamp(3.2rem, 13vw, 9.5rem);
+  line-height: 0.86;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--bone);
+  margin: 0;
+}
+[data-world="train"] .frendach small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.1em;
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  margin-top: 1.4em;
+}
+
+[data-world="train"] .eyebrow,
+[data-world="train"] .card__foot,
+[data-world="train"] .slot__seats {
+  font-family: var(--font-condensed);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+
+[data-world="train"] .law__title {
+  font-family: var(--font-condensed);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 1.15rem;
+}
+[data-world="train"] .law::before {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 1.6rem;
+}
+[data-world="train"] .law__body { font-family: var(--font-body-train); font-weight: 300; }
+
+/* Session cards read like a team sheet. */
+[data-world="train"] .card__title {
+  font-family: var(--font-condensed);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+[data-world="train"] .price {
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+}
+
+/* Pitch line under section heads — a chalk mark, not a border. */
+[data-world="train"] .section > .shell > .kicker::before { width: 40px; height: 2px; }
+
+[data-world="train"] .slot__when { font-family: var(--font-condensed); font-weight: 500; letter-spacing: 0.02em; }

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Thanks — Paul Frendach{% endblock %}
+{% block world %}house{% endblock %}
+{% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="hero__bg"></div>
+  <div class="shell hero__inner" style="text-align:center">
+    <img src="{% static 'marks/pf-house-bone.png' %}" alt=""
+         style="height:60px;width:auto;margin:0 auto 2rem;opacity:.9">
+    <h1>That landed.</h1>
+    <p class="lead" style="margin:1.4rem auto 0;max-width:40ch">
+      It goes straight to Paul, not to a queue. Expect a real reply.
+    </p>
+    <p style="margin-top:2rem">
+      <a class="btn btn--quiet" href="{% url 'house:home' %}">Back to the house</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

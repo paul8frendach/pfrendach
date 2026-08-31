@@ -1,0 +1,51 @@
+{% load static %}<!doctype html>
+<html lang="en" data-world="{% block world %}{{ current_world }}{% endblock %}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Paul Frendach{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.lead }}{% endblock %}">
+  <meta name="theme-color" content="#0B0D0C">
+
+  <link rel="icon" href="{% static 'marks/pf-house.svg' %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static 'marks/pf-app-icon-180.png' %}">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Paul Frendach">
+  <meta property="og:title" content="{% block og_title %}Paul Frendach — Create · Build · Train{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ site.lead }}{% endblock %}">
+  <meta property="og:image" content="{{ site_url }}{% static 'marks/pf-banner-1500.png' %}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@72,400..700,0,0..1&family=Outfit:wght@300;400;500&display=swap">
+  {% block world_fonts %}{% endblock %}
+
+  <link rel="stylesheet" href="{% static 'css/house.css' %}">
+  <link rel="stylesheet" href="{% static 'css/worlds.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="grain{% block body_class %}{% endblock %}">
+  <a class="skip" href="#main">Skip to content</a>
+
+  {% include "partials/chrome.html" %}
+
+  {% if messages %}
+    <div class="shell" style="padding-top:20px">
+      {% for message in messages %}
+        <p class="notice{% if message.tags == 'error' %} notice--bad{% endif %}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% include "partials/footer.html" %}
+
+  <script src="{% static 'js/house.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

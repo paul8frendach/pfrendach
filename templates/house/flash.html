@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sting — Paul Frendach{% endblock %}
+{% block world %}house{% endblock %}
+{% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell" style="text-align:center">
+    <video class="sting" style="width:min(100%,960px);margin-inline:auto"
+           autoplay muted playsinline controls
+           poster="{% static 'marks/pf-signature-sub-on-ink.png' %}">
+      <source src="{% static 'flash/' %}{{ variant }}.mp4" type="video/mp4">
+    </video>
+    <p class="meta" style="margin-top:1.6rem">
+      {{ variant }} · 10.00s · 1920×1080 · silent
+      {% if variant == 'intro' %}<a class="linkline" href="?v=outro">Outro</a>
+      {% else %}<a class="linkline" href="?v=intro">Intro</a>{% endif %}
+    </p>
+  </div>
+</section>
+{% endblock %}

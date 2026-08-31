@@ -1,0 +1,15 @@
+FRENDACH — request received
+
+Reference: {{ booking.reference }}
+
+{{ slot.session_type.name }}
+{{ slot.starts_at }}
+{{ slot.location }}
+
+This is a request, not a confirmed session. Paul reads each one himself and
+you will get a yes or a no. Keep the reference.
+
+Love the process.
+
+--
+{{ site.contact_email }}
