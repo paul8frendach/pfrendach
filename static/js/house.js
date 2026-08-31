@@ -36,6 +36,14 @@
       document.documentElement.style.setProperty("--cond", String(cond));
       chrome.classList.toggle("is-condensed", cond > 0.6);
       document.dispatchEvent(new CustomEvent("pf:cond"));
+
+      /* How far through the page you are, in the room's own colour. The one
+         piece of chrome that answers "where am I" rather than "where can I go". */
+      var doc = document.documentElement;
+      var travel = doc.scrollHeight - window.innerHeight;
+      doc.style.setProperty(
+        "--scrollp", travel > 40 ? Math.min(1, y / travel).toFixed(4) : "0"
+      );
     }
 
     /* The crest's natural height decides how far it has to collapse, and the

@@ -95,6 +95,24 @@ The effect on the deepest pages, measured on a 390×844 phone:
 | Build | 5.0 | 4.2 |
 | Create | 5.4 | 4.6 |
 
+## Alignment
+
+One rule, enforced in the stylesheet rather than remembered per page:
+
+> **A row of peers never wraps into a ragged stack.** Either they sit in one
+> row at their natural widths, or the row scrolls, or they stack at *equal*
+> width. A stack of matched blocks reads as a choice; a ragged one reads as a
+> bug.
+
+- `.actions` — buttons sit in one row, and below 560px stack at equal width,
+  capped at 340px. Never two different-width buttons on two lines.
+- `.panels__bar`, `.chips-nav`, `.tabs`, Build's rack list — `nowrap` with
+  horizontal scroll and a fade at the trailing edge, so a rail that scrolls
+  looks like one.
+- `.headrow` — flips to a full-width column below 700px, and its note
+  re-aligns left. Inline `text-align:right` is banned by a test, because a
+  media query cannot undo it once the row has stacked.
+
 ## The three rooms
 
 They share the chrome, the mark and the movement. Everything else changes.
@@ -106,6 +124,13 @@ They share the chrome, the mark and the movement. Everything else changes.
 | Type | Fraunces with WONK on | Fraunces + mono annotations | Anton and Oswald, inside Train only |
 | Shape | A contact sheet: film strip, burned-in slates, 2.39:1 plates | A drawing office: spec blocks, square corners | A locker bank: brushed plates, rivets, kit numbers |
 | Content | Methods, the reel, what a small business can commission | Apps and the features inside them, off-the-shelf pieces | Doctrine, the Seven Laws, the offer, open slots |
+| Section label | An italic serif slate with a diamond | `[ BRACKETED MONO ]` | A stencilled gold plate |
+| Button | A line of type over a rule | Hard square, mono, small | A heavy slab in condensed caps |
+| Heading scale | Largest, loose, WONK on | Smallest — the information outranks the announcement | Condensed caps, heavy |
+
+Colour alone does not make a different world. Each room restyles the three
+things you meet on every page — how a section announces itself, what a button
+is, and how a heading behaves — so the same HTML reads as three trades.
 
 Build's rack is tabs, not a scroll: pick an app on the left, its shipped
 features render on the right, and the room stays on one screen.

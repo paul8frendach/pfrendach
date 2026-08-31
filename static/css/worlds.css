@@ -416,9 +416,12 @@
     border-right: 0;
     border-bottom: 1px solid var(--rule);
     grid-auto-flow: column;
-    grid-auto-columns: minmax(46%, 1fr);
+    grid-auto-columns: minmax(52%, 1fr);
     overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
+  [data-world="build"] .rack__list::-webkit-scrollbar { display: none; }
   [data-world="build"] .rack__tab { border-bottom: 0; border-right: 1px solid var(--rule); }
   [data-world="build"] .ledger__row {
     grid-template-columns: 1.8rem 1fr;
@@ -666,4 +669,168 @@
 
 @media (max-width: 420px) {
   [data-world="create"] .strip { grid-template-columns: 1fr; }
+}
+
+/* ========================================================================
+   Realm signatures.
+
+   Colour alone does not make a different world — the *shapes* have to change.
+   Below, each room restyles the three things you meet on every page: how a
+   section announces itself (.beat), what a button is, and how a heading
+   behaves. Same HTML, three different trades.
+   ======================================================================== */
+
+/* ---------------- CREATE: editorial cinema ----------------
+   Nothing is boxed. A section announces itself like a slate; a button is a
+   line of type over a rule, the way a caption sits under a plate. Headings run
+   large and loose with WONK on, and they lead from the left even where the
+   house would centre them. */
+
+[data-world="create"] .beat {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  gap: 0.6rem;
+}
+[data-world="create"] .beat::before {
+  width: 5px;
+  height: 5px;
+  border: 0;
+  background: var(--glow);
+  border-radius: 0;
+  rotate: 45deg;
+}
+[data-world="create"] .beat::after {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--glow) 30%, transparent), transparent 72%);
+}
+
+[data-world="create"] .btn {
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--glow) 55%, transparent);
+  border-radius: 0;
+  padding: 8px 2px 9px;
+  background: none;
+  color: var(--bone);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+[data-world="create"] .btn::after { inset: auto 0 -1px 0; height: 1px; background: var(--glow); }
+[data-world="create"] .btn:hover { background: none; color: var(--glow); }
+[data-world="create"] .btn--solid {
+  background: none;
+  color: var(--glow);
+  border-bottom-width: 2px;
+}
+[data-world="create"] .btn--solid:hover { color: var(--bone); box-shadow: none; }
+[data-world="create"] .btn--quiet { color: var(--bone-dim); border-bottom-color: var(--rule-strong); }
+
+[data-world="create"] h1, [data-world="create"] h2 { letter-spacing: -0.028em; }
+[data-world="create"] h2 { font-size: clamp(2.2rem, 5.2vw, 4rem); }
+[data-world="create"] .lead { font-size: clamp(1.1rem, 1.75vw, 1.4rem); line-height: 1.62; }
+[data-world="create"] .section > .shell > .beat + h2 { margin-top: 0.2rem; }
+
+/* ---------------- BUILD: a technical console ----------------
+   Labels are bracketed and monospaced. Buttons are hard, small and square.
+   Headings are the smallest of the three rooms, because here the information
+   outranks the announcement. */
+
+[data-world="build"] .beat {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  gap: 0.55rem;
+}
+[data-world="build"] .beat::before {
+  content: "[";
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  color: var(--steel);
+  font-family: var(--font-mono);
+  animation: none;
+}
+[data-world="build"] .beat::after {
+  content: "]" ;
+  flex: none;
+  height: auto;
+  background: none;
+  color: var(--steel);
+  font-family: var(--font-mono);
+}
+[data-world="build"] .beat--center { justify-content: center; }
+[data-world="build"] .beat--center::after { display: inline; }
+
+[data-world="build"] .btn {
+  border-radius: 0;
+  padding: 11px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+[data-world="build"] h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); letter-spacing: -0.01em; }
+[data-world="build"] .lead { font-size: clamp(0.98rem, 1.3vw, 1.1rem); line-height: 1.6; }
+[data-world="build"] .linkline {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+/* ---------------- TRAIN: an athletic block ----------------
+   A section announces itself on a stencilled plate. Buttons are heavy slabs in
+   condensed caps. Rules are thick. Nothing is delicate in a locker room. */
+
+[data-world="train"] .beat {
+  font-family: var(--font-condensed);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  gap: 0;
+  color: var(--ink);
+}
+[data-world="train"] .beat::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border: 0;
+  margin: 0;
+  animation: none;
+}
+[data-world="train"] .beat > * { display: contents; }
+[data-world="train"] .beat {
+  background: var(--gold);
+  padding: 4px 12px 5px;
+  align-self: start;
+  width: max-content;
+  max-width: 100%;
+}
+[data-world="train"] .beat::after { display: none; }
+[data-world="train"] .beat--center { margin-inline: auto; }
+
+[data-world="train"] .btn {
+  border-radius: 0;
+  border-width: 2px;
+  padding: 13px 26px;
+  font-family: var(--font-condensed);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+}
+[data-world="train"] h2 { font-size: clamp(1.9rem, 4.6vw, 3.2rem); }
+[data-world="train"] .tickrule { opacity: 0.8; height: 12px; }
+[data-world="train"] .linkline {
+  font-family: var(--font-condensed);
+  font-weight: 500;
+  letter-spacing: 0.14em;
 }

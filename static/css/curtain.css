@@ -10,6 +10,13 @@
   z-index: 200;
   display: grid;
   place-items: center;
+  /* A splash screen has to survive a phone's browser chrome appearing and
+     disappearing mid-animation. dvh tracks the live viewport; svh is the
+     fallback floor so the word is never clipped at the moment of the reveal. */
+  height: 100svh;
+  height: 100dvh;
+  width: 100vw;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
   background: var(--ink);
   isolation: isolate;
   overflow: hidden;
@@ -22,7 +29,8 @@
 .curtain__clock {
   position: absolute;
   inset: 50% auto auto 50%;
-  width: min(150vw, 1100px);
+  width: max(150vh, 132vw);
+  max-width: 1180px;
   translate: -50% -50%;
   pointer-events: none;
 }
@@ -44,7 +52,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.6rem;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* --aul and --mark are driven from JS: the AUL row's width collapses and the
@@ -58,7 +69,10 @@
   font-weight: 400;
   font-optical-sizing: auto;
   font-variation-settings: "opsz" 72, "wght" 400, "SOFT" 0, "WONK" 0;
-  font-size: clamp(3rem, 12vw, 8.5rem);
+  /* Sized off the viewport width so the finished lockup — mark plus RENDACH,
+     the widest pose in the sequence — always fits with margin to spare. The
+     ceiling keeps it from becoming a billboard on a wide desktop. */
+  font-size: min(13.2vw, 7.4rem);
   line-height: 0.9;
   letter-spacing: 0.02em;
   color: var(--bone);
@@ -155,3 +169,16 @@
   cursor: default;
 }
 .flashbox .curtain__word { font-size: clamp(2.2rem, 8vw, 5rem); }
+
+
+/* On a phone the movement is the backdrop, not the subject: pull it back so
+   the wordmark reads as a splash rather than competing with the gears. */
+@media (max-width: 720px) {
+  .curtain__clock { width: max(120vh, 168vw); opacity: 0.75; }
+  .curtain__stage { gap: 1.15rem; }
+  .curtain__sub { font-size: 0.6rem; letter-spacing: 0.34em; }
+}
+
+@media (max-width: 400px) {
+  .curtain__sub { letter-spacing: 0.26em; }
+}

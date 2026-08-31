@@ -273,7 +273,11 @@ p:last-child { margin-bottom: 0; }
   left: 0;
   right: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--ink) calc(58% + 30% * var(--cond)), transparent);
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--accent) 4%, transparent),
+      transparent 62%),
+    color-mix(in srgb, var(--ink) calc(58% + 30% * var(--cond)), transparent);
   backdrop-filter: saturate(150%) blur(calc(6px + 12px * var(--cond)));
   border-bottom: 1px solid color-mix(in srgb, var(--bone) calc(4% + 10% * var(--cond)), transparent);
 }
@@ -283,6 +287,25 @@ p:last-child { margin-bottom: 0; }
 .chrome__inner {
   display: grid;
   padding-block: calc(16px - 8px * var(--cond)) calc(13px - 6px * var(--cond));
+}
+
+:root { --scrollp: 0; }
+
+/* How far through the room you are, in that room's colour. */
+.chrome__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  transform-origin: left;
+  transform: scaleX(var(--scrollp));
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--accent) 45%, transparent),
+    var(--accent));
+  box-shadow: 0 0 12px -2px color-mix(in srgb, var(--accent) 80%, transparent);
+  opacity: calc(0.25 + 0.75 * var(--cond));
+  pointer-events: none;
 }
 
 /* the chapter-ring hairline: appears as the bar tightens */
@@ -342,10 +365,13 @@ p:last-child { margin-bottom: 0; }
 .tabs {
   position: relative;
   display: flex;
+  flex-wrap: nowrap;
   align-items: stretch;
   gap: clamp(10px, 4vw, 62px);
   padding: 4px 0 9px;
+  max-width: 100%;
 }
+.tab { flex: none; }
 
 .tabs__marker {
   position: absolute;
@@ -824,7 +850,7 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -998,12 +1024,28 @@ html.is-routing { cursor: progress; }
   background: var(--accent);
   flex: none;
 }
+/* House rule for rows of peers: they are never allowed to wrap into a ragged
+   stack of different widths. Either they sit in one row at equal width, or —
+   when there is genuinely no room — they stack at equal width, full bleed.
+   A stack of matched blocks reads as a choice; a ragged one reads as a bug. */
 .actions {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, max-content);
   gap: 12px;
-  flex-wrap: wrap;
+  justify-content: start;
 }
 .center .actions { justify-content: center; }
+.actions > .btn { justify-content: center; }
+
+@media (max-width: 560px) {
+  .actions {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    width: min(100%, 340px);
+  }
+  .center .actions { margin-inline: auto; }
+}
 
 /* Reveal on the tick: content seats rather than fades. Gated on html.js so a
    failed or blocked script can never leave the page blank. */
@@ -1306,7 +1348,17 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
    Filters and small toggles inside a room. Not chrome — the chrome's tabs are
    the only navigation that gets to look like navigation. */
 
-.chips-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  max-width: 100%;
+}
+.chips-nav::-webkit-scrollbar { display: none; }
+.chip-link { flex: none; }
 .chip-link {
   display: inline-flex;
   align-items: center;
@@ -1335,6 +1387,14 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+}
+/* When it does wrap, the second part takes the full width and starts at the
+   left margin — never a half-width orphan floated against the right edge. */
+.headrow > * { min-width: 0; }
+.headrow__note { max-width: 26ch; text-align: right; margin: 0; }
+@media (max-width: 700px) {
+  .headrow { flex-direction: column; align-items: stretch; gap: 12px; }
+  .headrow__note { text-align: left; max-width: none; }
 }
 .cards {
   display: grid;
@@ -1377,8 +1437,24 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
 .panels__bar {
   display: flex;
   gap: 2px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
   border-bottom: 1px solid var(--rule);
+}
+.panels__bar::-webkit-scrollbar { display: none; }
+.panels__tab { flex: none; }
+
+/* A rail that scrolls has to look like it scrolls: the last tab fades out at
+   the edge rather than being guillotined by the viewport. */
+.panels, .chips-nav-wrap { position: relative; }
+.panels__bar,
+.chips-nav {
+  mask-image: linear-gradient(90deg, black calc(100% - 34px), transparent);
+}
+@media (min-width: 900px) {
+  .panels__bar, .chips-nav { mask-image: none; }
 }
 .panels__tab {
   position: relative;

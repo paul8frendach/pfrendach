@@ -147,3 +147,33 @@ class ChromeContractTests(TestCase):
         tabs = html[html.index('class="tabs"'):html.index("</nav>", html.index('class="tabs"'))]
         self.assertNotIn("About", tabs)
         self.assertNotIn("Contact", tabs)
+
+
+class AlignmentContractTests(TestCase):
+    """Rows of peers must never wrap into a ragged stack. The templates hold up
+    their end by not hard-coding alignment that a narrow screen cannot undo."""
+
+    @classmethod
+    def setUpTestData(cls):
+        for slug, verb, name in [
+            ("create", "Create", "Vision Oasis"),
+            ("build", "Build", "Web"),
+            ("train", "Train", "FRENDACH"),
+        ]:
+            World.objects.create(
+                slug=slug, verb=verb, name=name, descriptor="x",
+                headline="h", lead="l", card_line="c",
+            )
+
+    def test_no_inline_text_align_right_survives_into_a_stack(self):
+        # An inline right-align cannot be undone by a media query, so a stacked
+        # row would keep it and read as broken. Use a class instead.
+        for name in ["house:home", "train:index", "create:index", "build:index"]:
+            with self.subTest(page=name):
+                html = self.client.get(reverse(name)).content.decode()
+                self.assertNotIn("text-align:right", html.replace(" ", ""))
+
+    def test_button_rows_are_marked_as_peer_groups(self):
+        # .actions carries the equal-width rule; loose buttons would escape it.
+        html = self.client.get(reverse("train:index")).content.decode()
+        self.assertIn('class="actions"', html)
