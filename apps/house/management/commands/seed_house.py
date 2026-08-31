@@ -14,8 +14,8 @@ from datetime import time, timedelta
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from apps.build.models import Capability, Project
-from apps.create.models import Package, Work
+from apps.build.models import Capability, Feature, Project
+from apps.create.models import Method, Package, Work
 from apps.house.models import Milestone, SiteConfig, World
 from apps.train.models import Law, SessionType, Slot
 
@@ -178,6 +178,41 @@ PACKAGES = [
     },
 ]
 
+METHODS = [
+    {
+        "name": "The look",
+        "kicker": "01",
+        "blurb": "Before a camera comes out: what this place actually feels like, and which hour of the day says it.",
+        "detail": "A reference set and a shot list, so the shoot day is spent shooting.",
+        "gear": "References, shot list, location scout",
+        "sort": 10,
+    },
+    {
+        "name": "The shoot",
+        "kicker": "02",
+        "blurb": "One camera, natural light where possible, and the patience to wait for the moment rather than stage it.",
+        "detail": "Long lenses for the real thing, wide for the room. Sound recorded properly, not as an afterthought.",
+        "gear": "Mirrorless body, primes, gimbal, drone, lav + shotgun",
+        "sort": 20,
+    },
+    {
+        "name": "The cut",
+        "kicker": "03",
+        "blurb": "Story before effects. The edit is where a day of footage becomes ninety seconds someone finishes watching.",
+        "detail": "Grade, sound design and a mix that survives a phone speaker.",
+        "gear": "Resolve, grade, sound design, -14 LUFS mix",
+        "sort": 30,
+    },
+    {
+        "name": "The delivery",
+        "kicker": "04",
+        "blurb": "Cut for where it is going: a wide film for the site, verticals for the feed, stills for everything else.",
+        "detail": "Every crop framed on purpose, not exported from the same timeline and hoped for.",
+        "gear": "16:9, 4:5, 9:16, stills set",
+        "sort": 40,
+    },
+]
+
 CAPABILITIES = [
     {
         "title": "Booking and confirmation",
@@ -244,6 +279,16 @@ PROJECTS = [
 ]
 
 
+FEATURES = [
+    ("paulfrendach-com", "The curtain", "The locked sting drawn live in HTML and CSS, not played from a video file. Lifts into the header signature.", "~4s, once per session"),
+    ("paulfrendach-com", "Three worlds, one stylesheet", "A data attribute swaps accent, texture and rhythm. A new room costs a template, not a rebuild.", "1 CSS system"),
+    ("paulfrendach-com", "Seamless routing", "Links swap the page body only. The background movement never restarts and prefetch makes a room change instant.", "No reload"),
+    ("paulfrendach-com", "Booking and confirmation", "Session types, open slots, seat limits, a reference for the client and a decision for the owner.", "Seat-safe under load"),
+    ("paulfrendach-com", "Read-only JSON API", "Sessions, open slots and booking status as public endpoints, ready for a widget or an app.", "3 endpoints"),
+    ("paulfrendach-com", "An admin he can use", "Live switches on everything, so nothing ships before he says so — including unconfirmed honours.", "0 code edits to publish"),
+]
+
+
 class Command(BaseCommand):
     help = "Load the locked house content. Safe to run repeatedly."
 
@@ -286,13 +331,26 @@ class Command(BaseCommand):
 
         for data in PACKAGES:
             Package.objects.update_or_create(slug=data["slug"], defaults=data)
+        for data in METHODS:
+            Method.objects.update_or_create(name=data["name"], defaults=data)
         for data in CAPABILITIES:
             Capability.objects.update_or_create(title=data["title"], defaults=data)
         for data in PROJECTS:
             Project.objects.update_or_create(slug=data["slug"], defaults=data)
+        for index, (slug, title, blurb, metric) in enumerate(FEATURES):
+            project = Project.objects.filter(slug=slug).first()
+            if project is None:
+                continue
+            Feature.objects.update_or_create(
+                project=project,
+                title=title,
+                defaults={"blurb": blurb, "metric": metric, "sort": (index + 1) * 10},
+            )
         self.stdout.write(
             self.style.SUCCESS(
                 f"Create packages: {Package.objects.count()} · "
+                f"Methods: {Method.objects.count()} · "
+                f"Features: {Feature.objects.count()} · "
                 f"Capabilities: {Capability.objects.count()} · "
                 f"Projects: {Project.objects.count()} · "
                 f"Work: {Work.objects.count()}"

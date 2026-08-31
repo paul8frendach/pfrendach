@@ -2,12 +2,10 @@
 
 {% block title %}{{ booking.reference }} — FRENDACH{% endblock %}
 {% block world %}train{% endblock %}
-{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 {% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
 
 {% block content %}
 <section class="hero hero--room">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">Reference {{ booking.reference }}</p>
     <h1>{% if booking.status == 'confirmed' %}You are in.{% elif booking.status == 'pending' %}Request received.{% else %}{{ booking.get_status_display }}.{% endif %}</h1>

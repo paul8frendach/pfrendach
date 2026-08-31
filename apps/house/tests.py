@@ -71,3 +71,39 @@ class HousePagesTests(TestCase):
     def test_robots_and_sitemap(self):
         self.assertEqual(self.client.get("/robots.txt").status_code, 200)
         self.assertEqual(self.client.get("/sitemap.xml").status_code, 200)
+
+
+class SeamlessNavigationTests(TestCase):
+    """The router swaps [data-main] only. If that contract breaks, navigation
+    silently falls back to full reloads and the background restarts."""
+
+    @classmethod
+    def setUpTestData(cls):
+        for slug, verb, name in [
+            ("create", "Create", "Vision Oasis"),
+            ("build", "Build", "Web"),
+            ("train", "Train", "FRENDACH"),
+        ]:
+            World.objects.create(
+                slug=slug, verb=verb, name=name, descriptor="x",
+                headline="h", lead="l", card_line="c",
+            )
+
+    def test_every_page_exposes_a_swappable_main_and_a_world(self):
+        for name in ["house:home", "house:about", "house:contact", "train:index",
+                     "train:schedule", "create:index", "build:index"]:
+            with self.subTest(page=name):
+                response = self.client.get(reverse(name))
+                self.assertContains(response, "data-main")
+                self.assertContains(response, 'data-world="')
+
+    def test_the_ground_is_mounted_once_outside_main(self):
+        html = self.client.get(reverse("house:home")).content.decode()
+        self.assertEqual(html.count("data-ground"), 1)
+        self.assertLess(html.index("data-ground"), html.index("data-main"))
+
+    def test_train_type_kit_is_loaded_globally_not_per_page(self):
+        # Loading it per page would make a room swap fetch fonts mid-transition.
+        for name in ["house:home", "build:index", "train:index"]:
+            with self.subTest(page=name):
+                self.assertContains(self.client.get(reverse(name)), "family=Anton")

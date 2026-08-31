@@ -57,6 +57,38 @@ The same movement runs quietly behind every room's hero (`[data-dial]`), and
 the pages borrow its parts: chapter-ring rules (`.tickrule`), jewel markers
 (`.beat`), gold hairlines, the vignette.
 
+## Moving between rooms
+
+`static/js/router.js` swaps `[data-main]` and nothing else. The chrome stays
+put, the background movement keeps running (the same DOM node, never
+re-mounted), and `--accent` is a registered custom property so gold, glow and
+steel *morph* into each other instead of cutting.
+
+- Links prefetch on hover or touch, so a room change is usually instant.
+- On a touch screen, swipe left/right to move between the three rooms.
+- Anything unexpected — a bad status, a missing `[data-main]` — falls back to
+  an ordinary browser navigation rather than trapping the visitor.
+- `/flash/` is excluded: it loads its own script, and only `main` is swapped.
+- Pages containing a CSRF token are never cached.
+
+## The three rooms
+
+They share the chrome, the mark and the movement. Everything else changes.
+
+| | Create — Vision Oasis | Build — Web | Train — FRENDACH |
+|---|---|---|---|
+| Accent | Glow `#C6E04A` | Steel `#8FB4C4` | Gold `#E8C36A` |
+| Ground | Night glow, heavier grain | Blueprint grid | Locker seams, a chalked touchline |
+| Type | Fraunces with WONK on | Fraunces + mono annotations | Anton and Oswald, inside Train only |
+| Shape | A contact sheet: film strip, burned-in slates, 2.39:1 plates | A drawing office: spec blocks, square corners | A locker bank: brushed plates, rivets, kit numbers |
+| Content | Methods, the reel, what a small business can commission | Apps and the features inside them, off-the-shelf pieces | Doctrine, the Seven Laws, the offer, open slots |
+
+Build's rack is tabs, not a scroll: pick an app on the left, its shipped
+features render on the right, and the room stays on one screen.
+
+Work in Create can carry an Instagram post or reel — paste the public URL and
+the embed is derived from it (`Work.instagram_embed`).
+
 ## Chrome
 
 Centred, and it condenses. At the top of a page it stands as a stacked

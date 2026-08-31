@@ -3,11 +3,9 @@
 {% block title %}{{ session.name }} — FRENDACH{% endblock %}
 {% block description %}{{ session.summary }}{% endblock %}
 {% block world %}train{% endblock %}
-{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 
 {% block content %}
 <section class="hero hero--room">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">{{ session.get_format_display }}</p>
     <h1>{{ session.name }}</h1>

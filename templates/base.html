@@ -17,10 +17,20 @@
   <meta property="og:image" content="{{ site_url }}{% static 'marks/pf-banner-1500.png' %}">
   <meta name="twitter:card" content="summary_large_image">
 
+  {% comment %}
+  Set synchronously, before any content paints: reveal-on-scroll starts hidden,
+  and it must only ever do that when there is JavaScript around to unhide it.
+  {% endcomment %}
+  <script>document.documentElement.classList.add("js");</script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@72,400..700,0,0..1&family=Outfit:wght@300;400;500&display=swap">
-  {% block world_fonts %}{% endblock %}
+  {% comment %}
+  One payload for the whole house. Anton, Oswald and Montserrat are the Train
+  kit and are only ever applied inside [data-world="train"] — loading them here
+  simply means a room swap never has to fetch type mid-transition.
+  {% endcomment %}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@72,400..700,0,0..1&family=Outfit:wght@300;400;500&family=Anton&family=Oswald:wght@300;500;600&family=Montserrat:wght@300;400;500&display=swap">
 
   <link rel="stylesheet" href="{% static 'css/house.css' %}">
   <link rel="stylesheet" href="{% static 'css/worlds.css' %}">
@@ -31,6 +41,14 @@
   <a class="skip" href="#main">Skip to content</a>
 
   {% block curtain %}{% endblock %}
+
+  {% comment %}
+  The ground: one clockwork movement behind the whole site, mounted once and
+  never re-mounted. The router swaps main only, so this keeps running across
+  every room change.
+  {% endcomment %}
+  <div class="ground" data-ground aria-hidden="true"></div>
+  <div class="ground__wash" aria-hidden="true"></div>
 
   <div data-page class="is-revealed">
   {% include "partials/chrome.html" %}
@@ -43,7 +61,7 @@
     </div>
   {% endif %}
 
-  <main id="main">
+  <main id="main" data-main data-url-name="{{ request.resolver_match.url_name }}">
     {% block content %}{% endblock %}
   </main>
 
@@ -52,6 +70,7 @@
 
   <script src="{% static 'js/clockwork.js' %}" defer></script>
   <script src="{% static 'js/house.js' %}" defer></script>
+  <script src="{% static 'js/router.js' %}" defer></script>
   {% block curtain_js %}{% endblock %}
   {% block extra_js %}{% endblock %}
 </body>

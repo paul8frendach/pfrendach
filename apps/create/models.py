@@ -29,6 +29,15 @@ class Work(TimeStamped, Published):
     description = models.TextField(blank=True)
     poster = models.ImageField(upload_to="create/posters/", blank=True)
     video_url = models.URLField(blank=True, help_text="Vimeo / YouTube embed or file URL.")
+    instagram_url = models.URLField(
+        blank=True,
+        help_text="Public Instagram post or reel URL. Embedded on the work page.",
+    )
+    aspect = models.CharField(
+        max_length=8,
+        choices=[("wide", "2.39:1"), ("video", "16:9"), ("tall", "4:5"), ("square", "1:1")],
+        default="wide",
+    )
     runtime = models.CharField(max_length=20, blank=True, help_text="e.g. 1:42")
     credit = models.CharField(max_length=120, default="Vision Oasis")
     is_featured = models.BooleanField(default=False)
@@ -42,6 +51,13 @@ class Work(TimeStamped, Published):
 
     def get_absolute_url(self) -> str:
         return reverse("create:work_detail", args=[self.slug])
+
+    @property
+    def instagram_embed(self) -> str:
+        """Instagram's own embed endpoint. Empty when no post is attached."""
+        if not self.instagram_url:
+            return ""
+        return self.instagram_url.split("?")[0].rstrip("/") + "/embed"
 
 
 class Package(TimeStamped, Published):
@@ -71,3 +87,28 @@ class Package(TimeStamped, Published):
         if self.price_from is None:
             return self.price_note or "On request"
         return f"From ${int(self.price_from)}"
+
+
+class Method(TimeStamped, Published):
+    """
+    How the work gets made. The Create room is a shop window for content
+    production, so the methods are the offer as much as the reel is.
+    """
+
+    name = models.CharField(max_length=80)
+    kicker = models.CharField(max_length=40, blank=True, help_text="e.g. 01 / Pre")
+    blurb = models.CharField(max_length=220)
+    detail = models.TextField(blank=True)
+    gear = models.CharField(
+        max_length=160, blank=True, help_text="Comma separated. What it is shot on."
+    )
+
+    class Meta:
+        ordering = ("sort", "name")
+
+    def __str__(self) -> str:
+        return self.name
+
+    @property
+    def gear_items(self) -> list[str]:
+        return [item.strip() for item in self.gear.split(",") if item.strip()]

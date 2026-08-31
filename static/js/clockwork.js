@@ -206,9 +206,14 @@
       return sc;
     }
 
+    // `rate` slows the whole movement down for ambient use. The escapement
+    // still snaps tooth to tooth; it just does it every few seconds instead of
+    // twice a second, so the page breathes rather than fidgets.
+    var rate = typeof opts.rate === "number" ? opts.rate : 1;
+
     function loop(now) {
       if (stopped) return;
-      drive(now / 1000, 0);
+      drive((now / 1000) * rate, 0);
       raf = requestAnimationFrame(loop);
     }
 

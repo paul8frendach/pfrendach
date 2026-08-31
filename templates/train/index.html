@@ -4,12 +4,10 @@
 {% block title %}FRENDACH — Soccer Training{% endblock %}
 {% block description %}FRENDACH. Soccer training in Maryland. Small roster, high school first, film as part of the method.{% endblock %}
 {% block world %}train{% endblock %}
-{% block world_fonts %}{% include "partials/train_fonts.html" %}{% endblock %}
 
 {% block content %}
 
 <section class="hero hero--room">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">Train — FRENDACH</p>
     <h1 class="frendach">Frendach<small>Soccer Training</small></h1>
@@ -69,9 +67,9 @@
   <div class="shell">
     <p class="beat">The seven laws</p>
     <h2>What the session is built on.</h2>
-    <ol class="laws laws--grid" style="margin-top:clamp(22px,3vw,36px)">
+    <ol class="laws laws--grid rise" style="margin-top:clamp(22px,3vw,36px)">
       {% for law in laws %}
-        <li class="law rise">
+        <li class="law">
           <p class="law__title">{{ law.title }}</p>
           <p class="law__body">{{ law.body }}</p>
         </li>

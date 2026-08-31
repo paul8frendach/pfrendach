@@ -1,68 +1,99 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Vision Oasis — film and stills{% endblock %}
-{% block description %}Vision Oasis. Cinema first, useful second. Session films, brand films, stills.{% endblock %}
+{% block title %}Vision Oasis — content for small business{% endblock %}
+{% block description %}Vision Oasis. Session films, brand films and stills for small businesses. Cinema first, useful second.{% endblock %}
 {% block world %}create{% endblock %}
 
 {% block content %}
+
 <section class="hero hero--room">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">Create — Vision Oasis</p>
-    <h1 style="max-width:13ch;margin-inline:auto">Cinema first. Useful second.</h1>
-    <p class="lead" style="margin-top:1.2rem;max-width:44ch">
-      Session films, brand films, stills. Made the way the training is made —
-      night, grain, breath, the walk-off.
+    <h1 class="oasis-head">Cinema first.<br>Useful second.</h1>
+    <p class="lead" style="margin-top:1.1rem;max-width:46ch">
+      Content for small businesses that refuses to look like content. Session
+      films, brand films, stills — made the way the training is made: night,
+      grain, breath, the walk-off.
     </p>
-    <p class="slate" style="margin-top:1.6rem;justify-content:center">Credited Vision Oasis</p>
-    <div class="actions" style="margin-top:1.6rem">
+    <div class="actions" style="margin-top:1.4rem">
       <a class="btn btn--solid" href="#work">The reel</a>
-      <a class="btn btn--quiet" href="#commission">Commission</a>
+      <a class="btn btn--quiet" href="#commission">Commission a film</a>
     </div>
+    <p class="slate" style="margin-top:1.6rem;justify-content:center">Credited Vision Oasis</p>
   </div>
 </section>
 
 <hr class="tickrule shell">
 
+{% comment %}
+The methods are the wonder: how a thing gets made, laid out as a strip you read
+left to right, like a contact sheet.
+{% endcomment %}
+{% if methods %}
+<section class="section section--tight" id="methods">
+  <div class="shell">
+    <p class="beat">How it gets made</p>
+    <h2>The methods.</h2>
+    <div class="strip rise">
+      {% for method in methods %}
+        <article class="frameshot">
+          <span class="frameshot__no">{{ method.kicker|default:forloop.counter }}</span>
+          <h3 class="frameshot__title">{{ method.name }}</h3>
+          <p class="frameshot__blurb">{{ method.blurb }}</p>
+          {% if method.detail %}<p class="frameshot__detail">{{ method.detail }}</p>{% endif %}
+          {% if method.gear_items %}
+            <span class="frameshot__gear">
+              {% for item in method.gear_items %}<span>{{ item }}</span>{% endfor %}
+            </span>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <section class="section" id="work">
   <div class="shell">
-    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap">
+    <div class="headrow">
       <div>
         <p class="beat">Selected work</p>
         <h2>The reel.</h2>
       </div>
-      <nav class="pills" aria-label="Filter work">
-        <a class="pill{% if not active_kind %} pill--create{% endif %}"
-           href="{% url 'create:index' %}"
+      <nav class="chips-nav" aria-label="Filter work">
+        <a class="chip-link" href="{% url 'create:index' %}"
            {% if not active_kind %}aria-current="page"{% endif %}>All</a>
         {% for value, label in kinds %}
-          <a class="pill{% if active_kind == value %} pill--create{% endif %}"
-             href="?kind={{ value }}"
+          <a class="chip-link" href="?kind={{ value }}"
              {% if active_kind == value %}aria-current="page"{% endif %}>{{ label }}</a>
         {% endfor %}
       </nav>
     </div>
 
-    <div class="grid grid--2" style="margin-top:clamp(28px,3.6vw,48px)">
+    <div class="reel">
       {% for piece in work %}
-        <a class="card rise" href="{{ piece.get_absolute_url }}">
-          <span class="frame{% if piece.kind == 'stills' %} frame--tall{% endif %}">
+        <a class="plate rise" href="{{ piece.get_absolute_url }}">
+          <span class="frame frame--{{ piece.aspect }}">
             {% if piece.poster %}
               <img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">
             {% else %}
               <span class="frame__empty">{{ piece.get_kind_display }}</span>
             {% endif %}
+            <span class="plate__burn">{{ piece.get_kind_display }}{% if piece.runtime %} · {{ piece.runtime }}{% endif %}</span>
           </span>
-          <span class="card__title">{{ piece.title }}</span>
-          {% if piece.blurb %}<p class="card__body">{{ piece.blurb }}</p>{% endif %}
-          <span class="card__foot">
-            <span>{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</span>
-            <span>{% if piece.runtime %}{{ piece.runtime }}{% endif %}</span>
+          <span class="plate__title">{{ piece.title }}</span>
+          {% if piece.blurb %}<span class="plate__blurb">{{ piece.blurb }}</span>{% endif %}
+          <span class="plate__foot">
+            <span>{% if piece.client %}{{ piece.client }}{% else %}{{ piece.credit }}{% endif %}</span>
+            <span>{{ piece.year }}</span>
           </span>
         </a>
       {% empty %}
-        <p class="notice">The reel is being cut. Ask to see it directly.</p>
+        <p class="notice">
+          The reel is being cut.
+          <a href="{% url 'house:contact' %}?world=create">Ask to see it directly.</a>
+        </p>
       {% endfor %}
     </div>
   </div>
@@ -71,9 +102,14 @@
 {% if packages %}
 <section class="section" id="commission">
   <div class="shell">
-    <p class="beat">The storefront</p>
+    <p class="beat">For small business</p>
     <h2>What you can commission.</h2>
-    <div class="grid grid--3" style="margin-top:clamp(26px,3.4vw,44px)">
+    <p class="lead" style="margin-top:0.8rem;max-width:52ch">
+      You are not buying footage. You are buying an hour of someone's attention
+      on what your place actually looks like when it is working.
+    </p>
+
+    <div class="cards" style="margin-top:clamp(24px,3vw,38px)">
       {% for package in packages %}
         <div class="card card--hover rise">
           <span class="card__title">{{ package.name }}</span>
@@ -94,14 +130,14 @@
 {% endif %}
 
 <section class="section section--tight">
-  <div class="shell" style="text-align:center">
+  <div class="shell center">
     <h2 style="max-width:20ch;margin-inline:auto">Never stock. Never a template.</h2>
-    <p style="margin:1.4rem auto 0;max-width:42ch;color:var(--bone-dim)">
+    <p style="margin:1.2rem auto 0;max-width:42ch;color:var(--bone-dim)">
       One camera, one eye, and the patience to wait for the light.
     </p>
-    <p style="margin-top:1.8rem">
+    <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="{% url 'house:contact' %}?world=create">Start a film</a>
-    </p>
+    </div>
   </div>
 </section>
 {% endblock %}

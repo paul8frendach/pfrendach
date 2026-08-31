@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 
-from .models import Package, Work
+from .models import Method, Package, Work
 
 
 def index(request):
@@ -16,6 +16,7 @@ def index(request):
             "kinds": Work.Kind.choices,
             "active_kind": kind,
             "packages": Package.objects.filter(is_live=True),
+            "methods": Method.objects.filter(is_live=True),
         },
     )
 

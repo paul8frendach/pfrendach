@@ -37,3 +37,28 @@ class CreateTests(TestCase):
     def test_work_detail_credits_vision_oasis(self):
         response = self.client.get(reverse("create:work_detail", args=["night-session"]))
         self.assertContains(response, "Vision Oasis")
+
+
+class MethodTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        World.objects.create(
+            slug="create", verb="Create", name="Vision Oasis", descriptor="d",
+            headline="h", lead="l", card_line="c",
+        )
+
+    def test_methods_render_with_their_gear(self):
+        from apps.create.models import Method
+
+        Method.objects.create(name="The shoot", kicker="02", blurb="b", gear="Primes, gimbal")
+        response = self.client.get(reverse("create:index"))
+        self.assertContains(response, "The shoot")
+        self.assertContains(response, "Primes")
+
+    def test_instagram_embed_url_is_derived_not_stored(self):
+        piece = Work.objects.create(
+            title="Reel", slug="reel-x",
+            instagram_url="https://www.instagram.com/reel/ABC123/?igsh=xyz",
+        )
+        self.assertEqual(piece.instagram_embed, "https://www.instagram.com/reel/ABC123/embed")
+        self.assertEqual(Work.objects.create(title="No IG", slug="no-ig").instagram_embed, "")

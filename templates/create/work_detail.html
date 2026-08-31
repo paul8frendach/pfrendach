@@ -6,7 +6,6 @@
 
 {% block content %}
 <section class="hero hero--room" style="padding-bottom:0">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
     <h1>{{ piece.title }}</h1>
@@ -15,16 +14,29 @@
 
 <section class="section--tight" style="padding-top:clamp(28px,4vw,48px)">
   <div class="shell">
-    <div class="frame">
-      {% if piece.video_url %}
-        <iframe src="{{ piece.video_url }}" title="{{ piece.title }}"
-                allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      {% elif piece.poster %}
-        <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
-      {% else %}
-        <span class="frame__empty">{{ piece.get_kind_display }}</span>
-      {% endif %}
-    </div>
+    {% if piece.instagram_embed %}
+      {% comment %}
+      Instagram serves its own embed. It is sandboxed in its own frame, sized
+      4:5 like a reel, and it is never the only thing on the page — the poster
+      and the words still carry the work if the embed is blocked.
+      {% endcomment %}
+      <div class="ig">
+        <iframe src="{{ piece.instagram_embed }}" title="{{ piece.title }} on Instagram"
+                loading="lazy" scrolling="no" allowtransparency="true"
+                referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+    {% else %}
+      <div class="frame frame--{{ piece.aspect }}">
+        {% if piece.video_url %}
+          <iframe src="{{ piece.video_url }}" title="{{ piece.title }}"
+                  allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        {% elif piece.poster %}
+          <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
+        {% else %}
+          <span class="frame__empty">{{ piece.get_kind_display }}</span>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
 </section>
 
@@ -33,6 +45,9 @@
     <div class="stack">
       <ul class="facts">
         {% if piece.client %}<li><b>For</b><span>{{ piece.client }}</span></li>{% endif %}
+        {% if piece.instagram_url %}
+          <li><b>Instagram</b><span><a href="{{ piece.instagram_url }}" rel="noopener" target="_blank">View post</a></span></li>
+        {% endif %}
         {% if piece.runtime %}<li><b>Runtime</b><span>{{ piece.runtime }}</span></li>{% endif %}
         <li><b>Credit</b><span>{{ piece.credit }}</span></li>
       </ul>

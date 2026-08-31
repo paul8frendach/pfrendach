@@ -68,3 +68,26 @@ class Capability(TimeStamped, Published):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Feature(TimeStamped, Published):
+    """
+    One shipped feature inside an app. The Build room is judged on these, not
+    on screenshots — so they carry their own weight and their own proof.
+    """
+
+    project = models.ForeignKey(
+        Project, on_delete=models.CASCADE, related_name="features"
+    )
+    title = models.CharField(max_length=100)
+    blurb = models.CharField(max_length=220)
+    detail = models.TextField(blank=True)
+    metric = models.CharField(
+        max_length=60, blank=True, help_text="One hard number, if there is one."
+    )
+
+    class Meta:
+        ordering = ("sort", "title")
+
+    def __str__(self) -> str:
+        return f"{self.project.name} — {self.title}"

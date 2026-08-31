@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Package, Work
+from .models import Method, Package, Work
 
 
 @admin.register(Work)
@@ -10,6 +10,12 @@ class WorkAdmin(admin.ModelAdmin):
     list_filter = ("kind", "is_live", "is_featured")
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ("title", "client", "blurb")
+
+
+@admin.register(Method)
+class MethodAdmin(admin.ModelAdmin):
+    list_display = ("name", "kicker", "is_live", "sort")
+    list_editable = ("is_live", "sort")
 
 
 @admin.register(Package)

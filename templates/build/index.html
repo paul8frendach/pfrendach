@@ -1,21 +1,21 @@
 {% extends "base.html" %}
 
-{% block title %}Build — web development{% endblock %}
-{% block description %}Django sites, booking systems, media pipelines. Design and build in one pair of hands.{% endblock %}
+{% block title %}Build — web apps and the features inside them{% endblock %}
+{% block description %}Django web apps, booking systems, media pipelines. Design and build in one pair of hands.{% endblock %}
 {% block world %}build{% endblock %}
 
 {% block content %}
+
 <section class="hero hero--room">
-  <div class="dial" data-dial aria-hidden="true"></div>
   <div class="shell hero__inner center">
     <p class="beat beat--center">Build — Web</p>
     <h1 style="max-width:14ch;margin-inline:auto">Quiet pages. Sharp objects.</h1>
-    <p class="lead" style="margin-top:1.2rem;max-width:46ch">
-      Design-to-build in one pair of hands. Personal brands and small companies,
-      shipped as real software — not a theme with the colours swapped.
+    <p class="lead" style="margin-top:1.1rem;max-width:48ch">
+      Design-to-build in one pair of hands. Real software for small companies
+      and personal brands — not a theme with the colours swapped.
     </p>
-    <div class="actions" style="margin-top:1.6rem">
-      <a class="btn btn--solid" href="#capabilities">What is already built</a>
+    <div class="actions" style="margin-top:1.4rem">
+      <a class="btn btn--solid" href="#apps">The apps</a>
       <a class="btn btn--quiet" href="{% url 'house:contact' %}?world=build">Start a build</a>
     </div>
   </div>
@@ -23,45 +23,110 @@
 
 <hr class="tickrule shell">
 
-{% if capabilities %}
-<section class="section" id="capabilities">
+{% comment %}
+The rack: pick an app on the left, its shipped features render on the right.
+Everything stays on one screen instead of becoming a scroll.
+{% endcomment %}
+<section class="section" id="apps">
   <div class="shell">
-    <p class="beat">Capabilities</p>
-    <h2>Pieces you do not have to pay to invent.</h2>
-    <p class="lead" style="margin-top:1rem;max-width:56ch">
-      These already exist and already run. On a new project they are configuration,
-      not a rewrite — which is where the time and the money go.
+    <p class="beat">Shipped</p>
+    <h2>The apps, and what is inside them.</h2>
+
+    <div class="rack" data-rack>
+      <div class="rack__list" role="tablist" aria-label="Projects">
+        {% for project in projects %}
+          <button class="rack__tab" type="button" role="tab"
+                  id="rack-tab-{{ project.slug }}"
+                  aria-controls="rack-panel-{{ project.slug }}"
+                  aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+            <span class="rack__tab-name">{{ project.name }}</span>
+            <span class="rack__tab-meta">{{ project.get_stage_display }}{% if project.year %} · {{ project.year }}{% endif %}</span>
+          </button>
+        {% empty %}
+          <p class="notice">Nothing published yet.</p>
+        {% endfor %}
+      </div>
+
+      <div class="rack__panels">
+        {% for project in projects %}
+          <div class="rack__panel" role="tabpanel"
+               id="rack-panel-{{ project.slug }}"
+               aria-labelledby="rack-tab-{{ project.slug }}"
+               {% if not forloop.first %}hidden{% endif %}>
+
+            <div class="rack__head">
+              <div>
+                <h3 class="rack__title">{{ project.name }}</h3>
+                <p class="rack__tagline">{{ project.tagline }}</p>
+              </div>
+              <a class="linkline" href="{{ project.get_absolute_url }}">Case</a>
+            </div>
+
+            {% if project.stack_items %}
+              <span class="chips">
+                {% for item in project.stack_items %}<span class="chip">{{ item }}</span>{% endfor %}
+              </span>
+            {% endif %}
+
+            <div class="specs">
+              {% for feature in project.features.all %}
+                {% if feature.is_live %}
+                  <article class="spec">
+                    <h4 class="spec__title">{{ feature.title }}</h4>
+                    <p class="spec__blurb">{{ feature.blurb }}</p>
+                    {% if feature.metric %}<span class="spec__metric">{{ feature.metric }}</span>{% endif %}
+                  </article>
+                {% endif %}
+              {% empty %}
+                <article class="spec">
+                  <p class="spec__blurb">{{ project.problem|default:project.tagline }}</p>
+                </article>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if capabilities %}
+<section class="section section--tight" id="capabilities">
+  <div class="shell">
+    <p class="beat">Off the shelf</p>
+    <h2>Pieces you do not pay to invent.</h2>
+    <p class="lead" style="margin-top:0.7rem;max-width:56ch">
+      These already exist and already run. On a new project they are
+      configuration, not a rewrite — which is where the time and money go.
     </p>
 
-    <div class="grid grid--3" style="margin-top:clamp(24px,3vw,38px)">
+    <ul class="ledger">
       {% for capability in capabilities %}
-        <div class="card card--hover capability rise">
-          {% if capability.glyph %}<span class="capability__glyph">{{ capability.glyph }}</span>{% endif %}
-          <span class="card__title">{{ capability.title }}</span>
-          <p class="card__body">{{ capability.blurb }}</p>
+        <li class="ledger__row rise">
+          <span class="ledger__no">{{ capability.glyph|default:forloop.counter }}</span>
+          <span class="ledger__name">{{ capability.title }}</span>
+          <span class="ledger__what">{{ capability.blurb }}</span>
           {% if capability.proof_project %}
-            <span class="card__foot">
-              <span>Running in</span>
-              <a class="linkline" href="{{ capability.proof_project.get_absolute_url }}">{{ capability.proof_project.name }}</a>
-            </span>
+            <a class="ledger__proof" href="{{ capability.proof_project.get_absolute_url }}">{{ capability.proof_project.name }}</a>
+          {% else %}
+            <span class="ledger__proof ledger__proof--none">—</span>
           {% endif %}
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 </section>
 {% endif %}
 
-{# The booking API in the Train room is real. Show it rather than claim it. #}
-<section class="section">
+<section class="section section--tight">
   <div class="shell split">
     <div class="stack">
       <p class="beat">Worked example</p>
-      <h2>This site's own booking API.</h2>
+      <h2>This site's booking API.</h2>
       <p class="lead">
-        The Train room runs on a small JSON API in this same codebase. Open slots,
-        session types, and booking status are readable endpoints — which is how a
-        booking widget, an app, or a client's own site would hook into it.
+        The Train room runs on a small JSON API in this same codebase. Open
+        slots, session types and booking status are readable endpoints — which
+        is how a widget, an app, or a client's own site hooks into it.
       </p>
       <a class="linkline" href="/train/api/slots/">Open /train/api/slots/</a>
     </div>
@@ -85,45 +150,16 @@ GET <b>/train/api/slots/</b>?session=1v1-session&amp;limit=5
   </div>
 </section>
 
-{% if projects %}
-<section class="section">
-  <div class="shell">
-    <p class="beat">Selected builds</p>
-    <h2>Shipped.</h2>
-    <div class="grid grid--2" style="margin-top:clamp(28px,3.6vw,48px)">
-      {% for project in projects %}
-        <a class="card rise" href="{{ project.get_absolute_url }}">
-          {% if project.shot %}
-            <span class="frame"><img src="{{ project.shot.url }}" alt="{{ project.name }}" loading="lazy"></span>
-          {% endif %}
-          <span class="card__title">{{ project.name }}</span>
-          <p class="card__body">{{ project.tagline }}</p>
-          {% if project.stack_items %}
-            <span class="chips">
-              {% for item in project.stack_items|slice:":5" %}<span class="chip">{{ item }}</span>{% endfor %}
-            </span>
-          {% endif %}
-          <span class="card__foot">
-            <span>{{ project.role }}</span>
-            <span>{{ project.get_stage_display }}{% if project.year %} · {{ project.year }}{% endif %}</span>
-          </span>
-        </a>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-{% endif %}
-
 <section class="section section--tight">
-  <div class="shell" style="text-align:center">
+  <div class="shell center">
     <h2 style="max-width:22ch;margin-inline:auto">One person, the whole stack, no handoff loss.</h2>
-    <p style="margin:1.4rem auto 0;max-width:46ch;color:var(--bone-dim)">
-      Brief, design, build, deploy. The same hands the whole way, which is why the
-      details survive.
+    <p style="margin:1.2rem auto 0;max-width:46ch;color:var(--bone-dim)">
+      Brief, design, build, deploy. The same hands the whole way, which is why
+      the details survive.
     </p>
-    <p style="margin-top:1.8rem">
+    <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="{% url 'house:contact' %}?world=build">Start a build</a>
-    </p>
+    </div>
   </div>
 </section>
 {% endblock %}

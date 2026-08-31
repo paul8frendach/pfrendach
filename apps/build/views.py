@@ -8,7 +8,7 @@ def index(request):
         request,
         "build/index.html",
         {
-            "projects": Project.objects.filter(is_live=True),
+            "projects": Project.objects.filter(is_live=True).prefetch_related("features"),
             "capabilities": Capability.objects.filter(is_live=True),
         },
     )
