@@ -107,3 +107,43 @@ class SeamlessNavigationTests(TestCase):
         for name in ["house:home", "build:index", "train:index"]:
             with self.subTest(page=name):
                 self.assertContains(self.client.get(reverse(name)), "family=Anton")
+
+
+class ChromeContractTests(TestCase):
+    """The chrome is fixed, so its expanded height has to be held in the flow by
+    a spacer. Without that, collapsing the bar changes the document height,
+    which shifts the scroll, which re-runs the collapse — the judder."""
+
+    @classmethod
+    def setUpTestData(cls):
+        for slug, verb, name in [
+            ("create", "Create", "Vision Oasis"),
+            ("build", "Build", "Web"),
+            ("train", "Train", "FRENDACH"),
+        ]:
+            World.objects.create(
+                slug=slug, verb=verb, name=name, descriptor="x",
+                headline="h", lead="l", card_line="c",
+            )
+
+    def test_fixed_chrome_always_ships_its_spacer(self):
+        for name in ["house:home", "train:index", "create:index", "build:index", "house:contact"]:
+            with self.subTest(page=name):
+                self.assertContains(self.client.get(reverse(name)), "chrome__spacer")
+
+    def test_signature_appears_twice_for_the_crossfade(self):
+        # Crest and mini. One collapses, the other fades in; neither moves.
+        html = self.client.get(reverse("house:home")).content.decode()
+        self.assertIn("sig--crest", html)
+        self.assertIn("sig--mini", html)
+        self.assertEqual(html.count("marks/pf-house.svg"), 4)  # crest, mini, footer, favicon
+
+    def test_about_and_contact_are_furniture_not_worlds(self):
+        html = self.client.get(reverse("house:home")).content.decode()
+        # They live in the subnav, never in the tab rail.
+        subnav = html[html.index('class="subnav"'):html.index("</nav>", html.index('class="subnav"'))]
+        self.assertIn("About", subnav)
+        self.assertIn("Contact", subnav)
+        tabs = html[html.index('class="tabs"'):html.index("</nav>", html.index('class="tabs"'))]
+        self.assertNotIn("About", tabs)
+        self.assertNotIn("Contact", tabs)

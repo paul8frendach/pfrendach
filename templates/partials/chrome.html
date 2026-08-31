@@ -1,32 +1,51 @@
 {% load static %}
 {% comment %}
-Persistent chrome. Centred. The three worlds are the options; About and
-Contact are sub-text to them. The signature never changes between rooms.
+Persistent chrome. Two rows that never re-position: a crest that collapses as
+you scroll, and a rail whose tabs stay dead-centre throughout. The signature
+exists twice — large in the crest, small at the rail's left — and they
+cross-fade, so nothing ever jumps from one layout to another.
 {% endcomment %}
 <header class="chrome" data-chrome>
   <div class="shell chrome__inner">
-    <a class="sig" href="{% url 'house:home' %}" aria-label="Paul Frendach — home">
-      <img src="{% static 'marks/pf-house.svg' %}" alt="">
-      <span>RENDACH</span>
-    </a>
 
-    <nav class="tabs" aria-label="Worlds" data-tabs>
-      <span class="tabs__marker" data-tab-marker aria-hidden="true"></span>
-      {% for world in worlds %}
-        <a class="tab tab--{{ world.slug }}"
-           href="{{ world.get_absolute_url }}"
-           {% if current_world == world.slug %}aria-current="page"{% endif %}>
-          {{ world.verb }}<span>{{ world.name }}</span>
-        </a>
-      {% endfor %}
-    </nav>
+    <div class="chrome__crest">
+      <a class="sig sig--crest" href="{% url 'house:home' %}" aria-label="Paul Frendach — home">
+        <img src="{% static 'marks/pf-house.svg' %}" alt="">
+        <span>RENDACH</span>
+      </a>
+    </div>
 
-    <nav class="subnav" aria-label="More">
-      <a href="{% url 'house:about' %}"
-         {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
-      <i aria-hidden="true"></i>
-      <a href="{% url 'house:contact' %}"
-         {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
-    </nav>
+    <div class="chrome__rail">
+      <a class="sig sig--mini" href="{% url 'house:home' %}" tabindex="-1" aria-hidden="true">
+        <img src="{% static 'marks/pf-house.svg' %}" alt="">
+        <span>RENDACH</span>
+      </a>
+
+      <nav class="tabs" aria-label="Worlds" data-tabs>
+        <span class="tabs__marker" data-tab-marker aria-hidden="true"></span>
+        {% for world in worlds %}
+          <a class="tab tab--{{ world.slug }}"
+             href="{{ world.get_absolute_url }}"
+             {% if current_world == world.slug %}aria-current="page"{% endif %}>
+            {{ world.verb }}<span>{{ world.name }}</span>
+          </a>
+        {% endfor %}
+      </nav>
+
+      <nav class="subnav" aria-label="More">
+        <a href="{% url 'house:about' %}"
+           {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
+        <a href="{% url 'house:contact' %}"
+           {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
+      </nav>
+    </div>
+
   </div>
 </header>
+{% comment %}
+The chrome is fixed, so collapsing it cannot change the document height. This
+spacer holds its expanded height in the flow instead — without it, shrinking
+the bar shifts the scroll position, which re-runs the shrink, which shifts it
+again. That feedback loop is what a juddering sticky header actually is.
+{% endcomment %}
+<div class="chrome__spacer" aria-hidden="true"></div>

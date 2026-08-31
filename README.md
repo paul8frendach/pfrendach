@@ -121,12 +121,49 @@ sub-text. On the first scroll it collapses to a slim bar — signature left,
 the three worlds still dead-centre. On a phone the condensed bar is 53px
 (6% of the viewport) and carries the mark alone plus the three worlds.
 
-The three worlds sit in a segmented rail with one lit jewel that slides
-between them. It rests under the active room, follows the pointer, and takes
-that room's colour — which is what makes the bar read as a mechanism rather
-than three links. It re-seats after fonts load, on resize, after the chrome
-condenses, and after every room change, because tab widths are decided by
-type metrics and those arrive late.
+The three worlds sit in a wide open rail with one lit jewel sliding beneath
+them. It rests under the active room, follows the pointer, and takes that
+room's colour. It re-seats after fonts load, on resize, all the way along the
+condensation ramp, and after every room change — tab widths are decided by
+type metrics, and those arrive late.
+
+About and Contact are furniture, not worlds: off the centre axis, at the
+rail's right edge, in the quietest type on the page, and retired to the footer
+entirely on a phone.
+
+### Why it does not judder
+
+Two rules, and both are load-bearing:
+
+1. **The chrome is `position: fixed`, with `.chrome__spacer` holding its
+   expanded height in the flow.** A sticky bar that changes height changes the
+   document height, which shifts the scroll position, which re-runs the
+   collapse. That feedback loop *is* the judder.
+2. **Condensation is one continuous variable, `--cond` (0 to 1 over 90px of
+   scroll), not a class toggle.** Every dimension in the bar is expressed in
+   terms of it. The signature exists twice — large in the crest, small at the
+   rail's left — and they cross-fade, so no element ever jumps between two
+   layouts.
+
+## Presence
+
+The page should feel like it knows someone is there, the way a painted portrait
+follows you across a room — and never like it is chasing the cursor.
+
+Two variables are published once per frame, eased rather than snapped:
+`--px`/`--py` (pointer across the viewport) and `--pdx`/`--pdy` (the same,
+signed from centre). A single delegated listener writes `--mx`/`--my` on
+whatever the pointer is over. Nothing else listens.
+
+What reads them: the movement leans a few pixels toward the viewer; the
+world's light follows the pointer across the ground; Build's blueprint grid
+shifts like a sheet on a desk; tiles and cards light from wherever the cursor
+sits on them. All of it is gated on `(hover: hover) and (pointer: fine)` and on
+reduced-motion, and every variable defaults to centre — a touch device or a
+failed script leaves the page composed, not broken.
+
+The one motion nobody triggers directly: opening a room sweeps that world's
+light across the ground once.
 
 ## The rules that are enforced in code
 

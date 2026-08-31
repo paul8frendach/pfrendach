@@ -16,31 +16,56 @@
 
   var chrome = document.querySelector("[data-chrome]");
   if (chrome) {
-    var condensed = false;
     var pending = false;
+    var lastCond = -1;
+    var crest = chrome.querySelector(".chrome__crest");
+    var CONDENSE_OVER = 90;   // px of scroll to go from full crest to slim rail
 
+    /* One continuous value, not a class toggle. Every dimension in the chrome
+       is expressed in terms of it, so the bar tightens with the scroll instead
+       of snapping between two layouts. */
     function syncChrome() {
       pending = false;
       var y = window.scrollY || document.documentElement.scrollTop;
-      if (!condensed && y > 8) {
-        condensed = true;
-        chrome.classList.add("is-condensed");
-      } else if (condensed && y <= 2) {
-        condensed = false;
-        chrome.classList.remove("is-condensed");
-      }
+      var cond = Math.min(1, Math.max(0, y / CONDENSE_OVER));
+      // Quantise to 3dp: enough for a smooth ramp, few enough style writes
+      // that we are not thrashing the compositor on every scroll frame.
+      cond = Math.round(cond * 1000) / 1000;
+      if (cond === lastCond) return;
+      lastCond = cond;
+      document.documentElement.style.setProperty("--cond", String(cond));
+      chrome.classList.toggle("is-condensed", cond > 0.6);
+      document.dispatchEvent(new CustomEvent("pf:cond"));
     }
 
-    // Publish the expanded chrome height so the hero can size itself to
-    // exactly one screen without hard-coding a number that will drift.
+    /* The crest's natural height decides how far it has to collapse, and the
+       expanded chrome height decides how tall a room's opening screen can be.
+       Both are measured, never hard-coded, so they cannot drift. */
     function measure() {
-      if (chrome.classList.contains("is-condensed")) return;
+      var held = document.documentElement.style.getPropertyValue("--cond");
+      document.documentElement.style.setProperty("--cond", "0");
+      if (crest) {
+        crest.style.height = "auto";
+        document.documentElement.style.setProperty(
+          "--crest-h", crest.offsetHeight + "px"
+        );
+        crest.style.height = "";
+      }
+      // Rounded up: a fractional spacer height leaves a hairline of content
+      // showing above the bar on some device pixel ratios.
       document.documentElement.style.setProperty(
-        "--chrome-tall", chrome.offsetHeight + "px"
+        "--chrome-tall", Math.ceil(chrome.getBoundingClientRect().height) + "px"
       );
+      document.documentElement.style.setProperty("--cond", held || "0");
     }
     measure();
-    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("resize", function () {
+      measure();
+      syncChrome();
+    }, { passive: true });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(measure, measure);
+    }
 
     window.addEventListener("scroll", function () {
       if (pending) return;
@@ -49,12 +74,7 @@
     }, { passive: true });
     syncChrome();
 
-    // The condensation resizes the tab rail; tell the marker to re-seat after.
-    chrome.addEventListener("transitionend", function (event) {
-      if (event.target === chrome.querySelector(".chrome__inner")) {
-        document.dispatchEvent(new CustomEvent("pf:chrome-settled"));
-      }
-    });
+
   }
 
   /* ---------------------------------------------------------- tab marker
@@ -119,12 +139,11 @@
 
     window.addEventListener("resize", function () { rest(true); }, { passive: true });
     document.addEventListener("pf:navigated", function () { rest(false); });
-    document.addEventListener("pf:chrome-settled", function () { rest(false); });
 
-    // The rail resizes as the chrome condenses; re-seat once that has settled.
-    tabsBar.addEventListener("transitionend", function (event) {
-      if (event.propertyName === "padding-left" || event.propertyName === "font-size") rest(false);
-    });
+
+    /* Tab widths shrink continuously as the chrome tightens, so the marker has
+       to track that ramp rather than wait for a transition that never fires. */
+    document.addEventListener("pf:cond", function () { rest(true); });
 
     function seat() {
       if (settled) return;
@@ -154,6 +173,70 @@
     ground.dataset.mounted = "1";
     window.PF.clockwork.mount(ground, { autorun: true, rate: 0.16, noGlow: true });
   }
+
+  /* ---------------------------------------------------------- presence
+     The page should feel like it knows someone is there — the way a painted
+     portrait follows you across a room — without ever chasing the cursor in a
+     way you would notice as an effect.
+
+     Two variables, published once per frame:
+       --px / --py   pointer position across the viewport, 0 to 1
+       --pdx / --pdy the same as a signed offset from centre, -1 to 1
+
+     Everything reactive reads those. No element gets its own listener, and a
+     device without a pointer simply leaves them at centre. */
+
+  if (!reduced && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    var px = 0.5, py = 0.5;
+    var tx = 0.5, ty = 0.5;
+    var presenceRaf = 0;
+
+    function presenceFrame() {
+      // Ease toward the pointer rather than snapping to it: the lag is what
+      // separates "the room is aware of you" from "the page is twitching".
+      px += (tx - px) * 0.075;
+      py += (ty - py) * 0.075;
+      var root = document.documentElement.style;
+      root.setProperty("--px", px.toFixed(4));
+      root.setProperty("--py", py.toFixed(4));
+      root.setProperty("--pdx", ((px - 0.5) * 2).toFixed(4));
+      root.setProperty("--pdy", ((py - 0.5) * 2).toFixed(4));
+
+      if (Math.abs(tx - px) > 0.0005 || Math.abs(ty - py) > 0.0005) {
+        presenceRaf = requestAnimationFrame(presenceFrame);
+      } else {
+        presenceRaf = 0;
+      }
+    }
+
+    window.addEventListener("pointermove", function (event) {
+      tx = event.clientX / window.innerWidth;
+      ty = event.clientY / window.innerHeight;
+      if (!presenceRaf) presenceRaf = requestAnimationFrame(presenceFrame);
+    }, { passive: true });
+
+    /* A spotlight that follows the cursor across whatever it is over. One
+       delegated listener for the whole page, positions written as element
+       variables so the CSS decides what, if anything, to do with them. */
+    document.addEventListener("pointermove", function (event) {
+      var lit = event.target.closest ? event.target.closest("[data-lit], .tile, .card, .door, .rack__tab") : null;
+      if (!lit) return;
+      var box = lit.getBoundingClientRect();
+      lit.style.setProperty("--mx", (((event.clientX - box.left) / box.width) * 100).toFixed(1) + "%");
+      lit.style.setProperty("--my", (((event.clientY - box.top) / box.height) * 100).toFixed(1) + "%");
+    }, { passive: true });
+  }
+
+  /* A room change sweeps the new world's light across the ground. It is the
+     only motion on the site that happens without the visitor causing it —
+     and they did cause it, by opening the door. */
+  document.addEventListener("pf:navigated", function () {
+    var ground = document.querySelector("[data-ground]");
+    if (!ground || reduced) return;
+    ground.classList.remove("is-sweeping");
+    void ground.offsetWidth;          // restart the animation
+    ground.classList.add("is-sweeping");
+  });
 
   /* ---------------------------------------------------------- reveals
      Re-run after every swap, since the router replaces main's contents. */

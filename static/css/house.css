@@ -258,87 +258,116 @@ p:last-child { margin-bottom: 0; }
 }
 
 /* ---------------------------------------------------------------- chrome
-   Centred, and alive: at the top of a page it stands as a full stacked
-   nameplate; the moment you scroll it condenses to a slim bar with the three
-   worlds still dead-centre. About and Contact are sub-text to those three,
-   never their equals. */
+   Condensation is driven by one continuous variable, --cond (0 at the top of
+   the page, 1 once you have moved). Nothing switches position or display: the
+   crest collapses, a small signature cross-fades in at the rail's left, and
+   the tabs stay dead-centre the whole way. That is why it does not glitch.
+
+   Everything reads --cond. Nothing here toggles a class mid-scroll. */
+
+:root { --cond: 0; }
 
 .chrome {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--ink) 86%, transparent);
-  backdrop-filter: saturate(140%) blur(16px);
-  border-bottom: 1px solid var(--rule);
-  transition: background 0.4s var(--ease);
+  background: color-mix(in srgb, var(--ink) calc(58% + 30% * var(--cond)), transparent);
+  backdrop-filter: saturate(150%) blur(calc(6px + 12px * var(--cond)));
+  border-bottom: 1px solid color-mix(in srgb, var(--bone) calc(4% + 10% * var(--cond)), transparent);
 }
+
+.chrome__spacer { height: var(--chrome-tall, 130px); }
 
 .chrome__inner {
-  position: relative;
   display: grid;
-  justify-items: center;
-  gap: 10px;
-  padding-block: 18px 14px;
-  transition: gap 0.4s var(--ease), padding 0.4s var(--ease);
+  padding-block: calc(16px - 8px * var(--cond)) calc(13px - 6px * var(--cond));
 }
 
-/* The chapter-ring hairline under the chrome — the movement, not a border. */
+/* the chapter-ring hairline: appears as the bar tightens */
 .chrome::after {
   content: "";
   position: absolute;
   inset: auto 0 -1px 0;
   height: 1px;
   background: linear-gradient(90deg,
-    transparent, color-mix(in srgb, var(--accent) 46%, transparent) 50%, transparent);
-  opacity: 0;
-  transition: opacity 0.5s var(--ease);
+    transparent, color-mix(in srgb, var(--accent) 52%, transparent) 50%, transparent);
+  opacity: var(--cond);
 }
-.chrome.is-condensed::after { opacity: 1; }
+
+/* ---- the crest: collapses, never jumps ---- */
+
+.chrome__crest {
+  display: grid;
+  justify-items: center;
+  height: calc(var(--crest-h, 40px) * (1 - var(--cond)));
+  margin-bottom: calc(11px * (1 - var(--cond)));
+  opacity: calc(1 - var(--cond) * 1.35);
+  overflow: hidden;
+  transform-origin: 50% 0;
+  transform: scale(calc(1 - 0.12 * var(--cond)));
+}
+
+/* ---- the rail: tabs dead-centre, furniture pinned to the edges ---- */
+
+.chrome__rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+}
+
+.sig--crest { font-size: 34px; }
+
+.sig--mini {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 27px;
+  opacity: var(--cond);
+  pointer-events: none;
+  transform: translateX(calc(-10px * (1 - var(--cond))));
+}
+/* Only clickable once it is actually visible — an invisible link over the
+   left edge of the rail would otherwise swallow pointer events at the top. */
+.chrome.is-condensed .sig--mini { pointer-events: auto; }
 
 /* ---- the three worlds: the main options ----
-   A segmented rail, not a row of links. One lit marker slides between them and
-   follows the pointer, so the bar reads as a mechanism rather than a menu. */
+   Wide and open. No box: the rail is a run of names with a soft lit jewel
+   sliding beneath, which reads far less blocky than a segmented control. */
 
 .tabs {
   position: relative;
   display: flex;
   align-items: stretch;
-  gap: 0;
-  padding: 5px;
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--bone) 2.5%, transparent);
-  transition: padding 0.4s var(--ease), border-color 0.4s var(--ease);
+  gap: clamp(10px, 4vw, 62px);
+  padding: 4px 0 9px;
 }
 
-/* the sliding jewel: sits under the active tab, follows the pointer */
 .tabs__marker {
   position: absolute;
-  top: 5px;
-  bottom: 5px;
   left: 0;
+  bottom: 0;
+  height: 2px;
   width: 0;
-  border-radius: 3px;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--marker-accent, var(--gold)) 16%, transparent),
-      color-mix(in srgb, var(--marker-accent, var(--gold)) 7%, transparent));
+  border-radius: 2px;
+  background: var(--marker-accent, var(--gold));
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--marker-accent, var(--gold)) 30%, transparent),
-    0 0 26px -6px color-mix(in srgb, var(--marker-accent, var(--gold)) 55%, transparent);
+    0 0 14px 0 color-mix(in srgb, var(--marker-accent, var(--gold)) 70%, transparent),
+    0 -14px 30px -8px color-mix(in srgb, var(--marker-accent, var(--gold)) 45%, transparent);
   opacity: 0;
   pointer-events: none;
   transition:
-    transform 0.42s cubic-bezier(0.22, 1, 0.3, 1),
-    width 0.42s cubic-bezier(0.22, 1, 0.3, 1),
+    transform 0.46s cubic-bezier(0.22, 1, 0.3, 1),
+    width 0.46s cubic-bezier(0.22, 1, 0.3, 1),
     opacity 0.3s var(--ease),
-    background 0.5s var(--ease),
-    box-shadow 0.5s var(--ease),
-    top 0.4s var(--ease),
-    bottom 0.4s var(--ease);
+    background 0.6s var(--ease),
+    box-shadow 0.6s var(--ease);
 }
 .tabs__marker.is-on { opacity: 1; }
-/* first paint should not fly in from the left */
 .tabs__marker.is-instant { transition: opacity 0.3s var(--ease); }
 
 .tab {
@@ -348,30 +377,45 @@ p:last-child { margin-bottom: 0; }
   display: grid;
   justify-items: center;
   align-content: center;
-  gap: 4px;
-  padding: 9px clamp(16px, 2.8vw, 34px);
+  gap: calc(5px * (1 - var(--cond)));
+  padding: 4px 2px;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.3rem, 2.6vw, 1.95rem);
+  font-size: calc(clamp(1.35rem, 2.5vw, 2rem) - 0.35rem * var(--cond));
   line-height: 1;
   letter-spacing: -0.012em;
   color: var(--bone-dim);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.3s var(--ease), font-size 0.4s var(--ease),
-              padding 0.4s var(--ease);
+  transition: color 0.3s var(--ease);
 }
-.tab + .tab { box-shadow: inset 1px 0 0 var(--rule); }
+
+/* the world's light rises behind a tab you are reaching for */
+.tab::before {
+  content: "";
+  position: absolute;
+  inset: -6px -22px -9px;
+  background: radial-gradient(55% 100% at 50% 100%,
+    color-mix(in srgb, var(--tab-accent) 20%, transparent), transparent 72%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+.tab:hover::before,
+.tab[aria-current="page"]::before { opacity: 1; }
 
 .tab span {
   font-family: var(--font-sans);
-  font-size: 0.58rem;
+  font-size: 0.57rem;
   font-weight: 400;
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--muted);
-  transition: color 0.3s var(--ease), opacity 0.3s var(--ease),
-              height 0.4s var(--ease);
+  /* collapses with the crest rather than snapping away */
+  height: calc(0.9em * (1 - var(--cond)));
+  opacity: calc(1 - var(--cond) * 1.6);
+  overflow: hidden;
+  transition: color 0.3s var(--ease);
 }
 
 .tab:hover { color: var(--bone); }
@@ -383,62 +427,30 @@ p:last-child { margin-bottom: 0; }
 .tab--build  { --tab-accent: var(--steel); }
 .tab--train  { --tab-accent: var(--gold); }
 
-/* ---- About / Contact: sub-text to the three ---- */
+/* ---- About / Contact: furniture, not navigation ----
+   Off the centre axis entirely, at the rail's right edge, in the quietest
+   type on the page. Present when wanted, invisible until then. */
 
 .subnav {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 0.64rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  transition: opacity 0.35s var(--ease);
-}
-.subnav a {
-  color: var(--muted);
-  text-decoration: none;
-  padding: 3px 2px;
-  transition: color 0.25s var(--ease);
-}
-.subnav a:hover { color: var(--bone-dim); }
-.subnav a[aria-current="page"] { color: var(--bone-dim); }
-.subnav i {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--muted);
-  opacity: 0.6;
-}
-
-/* ---- condensed state ---- */
-
-.chrome.is-condensed .chrome__inner {
-  gap: 0;
-  padding-block: 0;
-  min-height: var(--chrome-h);
-  align-content: center;
-}
-.chrome.is-condensed .sig {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  translate: 0 -50%;
-  font-size: 26px;
-}
-.chrome.is-condensed .tabs { padding: 3px; border-color: transparent; background: transparent; }
-.chrome.is-condensed .tabs__marker { top: 3px; bottom: 3px; }
-.chrome.is-condensed .tab {
-  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-  padding: 6px clamp(13px, 2vw, 22px);
-}
-.chrome.is-condensed .tab span { opacity: 0; height: 0; overflow: hidden; }
-.chrome.is-condensed .subnav {
   position: absolute;
   right: 0;
   top: 50%;
   translate: 0 -50%;
-  font-size: 0.62rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
 }
+.subnav a {
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color 0.3s var(--ease);
+}
+.subnav a:hover { color: var(--bone-dim); }
+.subnav a[aria-current="page"] { color: var(--accent); }
 
 /* ---------------------------------------------------------------- buttons */
 
@@ -825,8 +837,6 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
    still centred. The mark never drops below its 24px floor. */
 
 @media (max-width: 860px) {
-  .chrome.is-condensed .sig { font-size: 24px; }
-  .chrome.is-condensed .subnav { display: none; }
   .split--sticky > :first-child { position: static; }
 }
 
@@ -842,17 +852,21 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
     --step: clamp(30px, 7vw, 46px);
   }
 
-  .chrome__inner { padding-block: 16px 12px; gap: 10px; }
-  .sig { font-size: 29px; }              /* mark = 24.7px — the floor, not below */
-  .tab { font-size: 1.02rem; padding: 6px 10px; gap: 2px; }
-  .tab span { font-size: 0.5rem; letter-spacing: 0.16em; }
-  .tabs { gap: 2px; }
-  .subnav { font-size: 0.6rem; gap: 10px; }
+  .chrome__inner { padding-block: calc(14px - 6px * var(--cond)) calc(11px - 5px * var(--cond)); }
+  .sig--crest { font-size: 30px; }
+  .tab { font-size: calc(1.18rem - 0.2rem * var(--cond)); }
+  .tab span { font-size: 0.48rem; letter-spacing: 0.16em; }
+  .tabs { gap: clamp(14px, 6vw, 30px); }
 
-  /* condensed: mark alone on the left, worlds centred, nothing else */
-  .chrome.is-condensed .sig span { display: none; }
-  .chrome.is-condensed .sig { font-size: 28px; }
-  .chrome.is-condensed .tab { font-size: 0.92rem; padding: 4px 9px; }
+  /* On a phone the rail has no room for furniture. The mini signature keeps
+     only the mark (an approved lockup on its own) and About/Contact retire to
+     the footer — they are furniture, and the footer is where furniture lives. */
+  .sig--mini span {
+    max-width: calc(6ch * (1 - var(--cond)));
+    opacity: calc(1 - var(--cond) * 1.8);
+    overflow: hidden;
+  }
+  .subnav { display: none; }
 
   .law { grid-template-columns: 2.2rem 1fr; gap: 0.85rem; }
   .facts li { flex-direction: column; gap: 0.2rem; }
@@ -1274,9 +1288,9 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
 }
 
 @media (max-width: 720px) {
-  /* 29px keeps the condensed mark at 24.7px. At 28px it lands on 23.9 —
-     under the pack's 24px floor, which is not a rounding matter. */
-  .chrome.is-condensed .sig { font-size: 29px; }
+  /* 29px keeps the mark at 24.7px. At 28px it lands on 23.9 — under the
+     pack's 24px floor, which is not a rounding matter. */
+  .sig--mini { font-size: 29px; }
   .doors { gap: 8px; }
   .door { padding: 16px 18px; }
   .door__verb { font-size: 1.6rem; }
@@ -1286,9 +1300,7 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
   .hero--room { min-height: 0; }
 }
 
-@media (max-width: 480px) {
-  .chrome.is-condensed .sig { font-size: 29px; }
-}
+
 
 /* ---------------------------------------------------------------- chips
    Filters and small toggles inside a room. Not chrome — the chrome's tabs are
@@ -1607,4 +1619,72 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 @keyframes page-settle {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------------------------------------- presence
+   Everything below reads --px/--py (pointer across the viewport) or --mx/--my
+   (pointer across one element). Both default to centre, so a touch device or a
+   failed script leaves the page composed rather than broken. */
+
+:root { --px: 0.5; --py: 0.5; --pdx: 0; --pdy: 0; }
+
+/* The movement leans toward whoever is looking at it. A few pixels, no more —
+   enough to register, never enough to notice as an effect. */
+.ground .cw {
+  translate:
+    calc(-50% + var(--pdx) * 14px)
+    calc(-50% + var(--pdy) * 10px);
+}
+
+/* The world's light follows the pointer across the page. */
+.ground__wash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(38% 42% at calc(var(--px) * 100%) calc(var(--py) * 100%),
+    color-mix(in srgb, var(--accent) 7%, transparent), transparent 70%);
+  transition: background 120ms linear;
+}
+
+/* A tile lit from wherever the cursor is on it. */
+.tile, .card, .door { --mx: 50%; --my: 0%; }
+.tile::after, .card::after, .door::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(240px circle at var(--mx) var(--my),
+    color-mix(in srgb, var(--accent) 11%, transparent), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+  pointer-events: none;
+}
+.tile:hover::after, .card:hover::after { opacity: 1; }
+/* the door already runs an escapement tick along its base; keep that */
+.door::after {
+  inset: auto 0 0 0;
+  height: 2px;
+  background: var(--accent);
+  opacity: 1;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease);
+}
+.door:hover::after { transform: scaleX(1); }
+
+/* The room-change sweep: the new world's light crosses the ground once. */
+.ground.is-sweeping::before {
+  content: "";
+  position: absolute;
+  inset: -20% -40%;
+  background: linear-gradient(105deg,
+    transparent 38%,
+    color-mix(in srgb, var(--accent) 16%, transparent) 50%,
+    transparent 62%);
+  animation: world-sweep 900ms cubic-bezier(0.3, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+@keyframes world-sweep {
+  from { transform: translateX(-46%); opacity: 0; }
+  35%  { opacity: 1; }
+  to   { transform: translateX(46%); opacity: 0; }
 }
