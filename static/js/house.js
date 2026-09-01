@@ -61,9 +61,33 @@
       }
       // Rounded up: a fractional spacer height leaves a hairline of content
       // showing above the bar on some device pixel ratios.
+      // Rounded up: a fractional spacer height leaves a hairline of content
+      // showing above the bar on some device pixel ratios.
       document.documentElement.style.setProperty(
         "--chrome-tall", Math.ceil(chrome.getBoundingClientRect().height) + "px"
       );
+
+      /* Reserve room on both sides of the rail for whichever piece of chrome
+         furniture is wider. Symmetric, so the tabs stay centred; measured, so
+         it holds when the signature or the links change length. */
+      var rail = chrome.querySelector(".chrome__rail");
+      if (rail) {
+        var furniture = rail.querySelectorAll(".sig--mini, .subnav");
+        var widest = 0;
+        Array.prototype.forEach.call(furniture, function (el) {
+          widest = Math.max(widest, el.getBoundingClientRect().width);
+        });
+        var pad = widest > 0 ? Math.ceil(widest + 18) : 0;
+        // Never reserve so much that the tabs themselves have to shrink.
+        var room = rail.getBoundingClientRect().width;
+        var tabsWidth = 0;
+        Array.prototype.forEach.call(rail.querySelectorAll(".tab"), function (t) {
+          tabsWidth += t.getBoundingClientRect().width;
+        });
+        if (pad * 2 + tabsWidth > room) pad = Math.max(0, Math.floor((room - tabsWidth) / 2));
+        document.documentElement.style.setProperty("--rail-pad", pad + "px");
+      }
+
       document.documentElement.style.setProperty("--cond", held || "0");
     }
     measure();

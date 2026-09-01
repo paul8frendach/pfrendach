@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Enquiry sent — FRENDACH{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="hero hero--room">
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Sent</p>
+    <h1>It reached him.</h1>
+    <p class="lead" style="margin-top:1.4rem;max-width:44ch">
+      Your enquiry is in Paul's coaching software, not an inbox he might miss.
+      He answers these himself, so give him a day.
+    </p>
+    {% if lead_id %}
+      <p class="meta" style="margin-top:1rem">Reference {{ lead_id }}</p>
+    {% endif %}
+    <div class="actions">
+      <a class="btn btn--solid" href="{% url 'train:index' %}">Back to Train</a>
+      <a class="btn btn--quiet" href="{% url 'train:schedule' %}">See open times</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

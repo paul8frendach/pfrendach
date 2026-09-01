@@ -10,48 +10,55 @@
     <p class="beat beat--center">Schedule</p>
     <h1>What is open.</h1>
     <p class="lead" style="margin-top:1.4rem;max-width:52ch">
-      Taking a slot sends a request with a reference. Paul confirms by hand —
-      a small roster is the point.
+      These are Paul's real open times. Taking one sends an enquiry naming it,
+      and he confirms by hand — a small roster is the point.
     </p>
   </div>
 </section>
 
 <section class="section">
   <div class="shell">
+    {% comment %}
+    Day labels come from The LAB already formatted in the coach's timezone.
+    Re-deriving a date here would move an evening session onto the next day.
+    {% endcomment %}
     {% for day, slots in days %}
       <div class="rise" style="margin-bottom:clamp(30px,4vw,52px)">
-        <p class="beat beat--center">{{ day|date:"l j F" }}</p>
+        <p class="beat beat--center">{{ day }}</p>
         <div class="slots">
           {% for slot in slots %}
-            <a class="slot" href="{% url 'train:book' slot.id %}">
+            <a class="slot" href="{{ slot.url }}">
               <span>
-                <span class="slot__when">{{ slot.starts_at|date:"g:i A" }} — {{ slot.session_type.name }}</span><br>
-                <span class="slot__where">{{ slot.location }} · {{ slot.session_type.duration_minutes }} min · {{ slot.session_type.price_label }}</span>
+                <span class="slot__when">{{ slot.time_label }} — {{ slot.service_name }}</span><br>
+                <span class="slot__where">{{ slot.location }}</span>
               </span>
-              <span class="slot__seats">{{ slot.seats_left }} left</span>
+              <span class="slot__seats" aria-hidden="true">→</span>
             </a>
           {% endfor %}
         </div>
       </div>
     {% empty %}
       <p class="notice">
-        Nothing open at the moment.
-        <a href="{% url 'house:contact' %}?world=train">Send a note and a time will be made.</a>
+        {% if notice %}{{ notice }}{% else %}Nothing open at the moment.{% endif %}
+        <a href="{% url 'train:enquire' %}">Send a note and a time will be made.</a>
       </p>
     {% endfor %}
   </div>
 </section>
 
-{% if sessions %}
+{% if services %}
 <section class="section section--tight">
   <div class="shell">
     <p class="beat beat--center">Session types</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
-      {% for session in sessions %}
-        <a class="card" href="{{ session.get_absolute_url }}">
-          <span class="card__title">{{ session.name }}</span>
-          <p class="card__body">{{ session.summary }}</p>
-          <span class="card__foot"><span>{{ session.price_label }}</span><span>{{ session.duration_minutes }} min</span></span>
+      {% for service in services %}
+        <a class="card" href="{{ service.url }}">
+          <span class="card__title">{{ service.name }}</span>
+          <p class="card__body">{{ service.summary }}</p>
+          <span class="card__foot">
+            <span>{{ service.price_label }}</span>
+            <span>{% if service.duration_minutes %}{{ service.duration_minutes }} min{% endif %}</span>
+          </span>
         </a>
       {% endfor %}
     </div>

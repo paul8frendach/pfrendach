@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ service.name }} — FRENDACH{% endblock %}
+{% block description %}{{ service.summary }}{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+{% if service %}
+<section class="hero hero--room">
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">{{ service.format_display }}</p>
+    <h1>{{ service.name }}</h1>
+    {% if service.summary %}
+      <p class="lead" style="margin-top:1.4rem;max-width:48ch">{{ service.summary }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      <ul class="facts">
+        {% if service.duration_minutes %}
+          <li><b>Length</b><span>{{ service.duration_minutes }} minutes</span></li>
+        {% endif %}
+        {% if service.max_athletes %}
+          <li><b>Players</b><span>Up to {{ service.max_athletes }}</span></li>
+        {% endif %}
+        <li>
+          <b>Rate</b>
+          <span>
+            {{ service.price_label }}
+            {% if service.price_note %}<small class="price__note">{{ service.price_note }}</small>{% endif %}
+          </span>
+        </li>
+      </ul>
+
+      <a class="btn btn--solid" href="{% url 'train:enquire' %}?service={{ service.id }}">
+        Ask about this
+      </a>
+
+      {% comment %}
+      An enquiry is the honest verb here. Until availability and payment move
+      onto the API, a "Book" button would promise a calendar this page cannot
+      draw — and The LAB itself reports this service as enquiry-only.
+      {% endcomment %}
+      <p class="notice">
+        This sends an enquiry, not a confirmed booking. Paul replies by hand —
+        a small roster is the point, not a bottleneck.
+      </p>
+    </div>
+
+    <div class="stack">
+      {% if service.summary %}
+        <p class="lead">{{ service.summary|linebreaksbr }}</p>
+      {% endif %}
+      <p class="meta">
+        Rates and availability are kept in Paul's coaching software and read
+        here directly, so what you see is what he has set.
+      </p>
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="hero hero--room">
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Train — FRENDACH</p>
+    <h1>Sessions</h1>
+    <p class="notice" style="margin-top:1.4rem">{{ services_notice }}</p>
+    <div class="actions">
+      <a class="btn btn--solid" href="{% url 'train:enquire' %}">Ask directly</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if other_services %}
+<section class="section section--tight">
+  <div class="shell">
+    <p class="beat beat--center">Also</p>
+    <div class="grid grid--3" style="margin-top:1.6rem">
+      {% for other in other_services %}
+        <a class="card" href="{{ other.url }}">
+          <span class="card__title">{{ other.name }}</span>
+          <p class="card__body">{{ other.summary }}</p>
+          <span class="card__foot"><span>{{ other.price_label }}</span><span aria-hidden="true">→</span></span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

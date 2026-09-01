@@ -339,12 +339,17 @@ p:last-child { margin-bottom: 0; }
 
 /* ---- the rail: tabs dead-centre, furniture pinned to the edges ---- */
 
+/* The tabs are centred between two absolutely-positioned pieces of furniture
+   (the small signature on the left, About/Contact on the right). Padding equal
+   to the wider of the two is reserved on BOTH sides, measured in JS, so the
+   rail stays optically centred and a tab can never slide underneath either. */
 .chrome__rail {
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 44px;
+  padding-inline: var(--rail-pad, 0px);
 }
 
 .sig--crest { font-size: 34px; }
@@ -462,20 +467,28 @@ p:last-child { margin-bottom: 0; }
    Off the centre axis entirely, at the rail's right edge, in the quietest
    type on the page. Present when wanted, invisible until then. */
 
-/* The room's own reading of the time. Deliberately the smallest, quietest
-   thing in the chrome: you notice it on the second visit, not the first. */
+/* The room's own reading of the time. Pinned to the corner of the viewport,
+   never the chrome — the smallest, quietest thing on the page. */
 .readout {
-  position: absolute;
-  left: 0;
-  bottom: -2px;
+  position: fixed;
+  left: max(14px, env(safe-area-inset-left));
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 40;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.56rem;
+  font-size: 0.58rem;
   letter-spacing: 0.14em;
-  color: color-mix(in srgb, var(--accent) 52%, transparent);
+  color: color-mix(in srgb, var(--accent) 46%, transparent);
   white-space: nowrap;
   pointer-events: none;
-  opacity: calc(1 - var(--cond));
+  user-select: none;
+  /* Only while you are at the top of a page, where there is room for it. The
+     moment you scroll it is gone, so it can never sit over something you are
+     reading. Same ramp as the chrome, so the two move as one. */
+  opacity: calc(1 - var(--cond) * 1.4);
   transition: color 0.6s var(--ease);
+}
+@media (max-width: 720px) {
+  .readout { font-size: 0.52rem; }
 }
 
 .subnav {
@@ -1318,6 +1331,23 @@ hr.tickrule.shell { margin-inline: auto; margin-block: 0; }
   white-space: nowrap;
 }
 .tariff .price { font-size: 1.2rem; text-align: right; min-width: 5ch; }
+
+/* A price range needs to say what it varies with, or a parent reads the low
+   number and stops. Sits under the figure, never beside it — the tariff row is
+   already at its narrowest on a phone. */
+.price__note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--muted);
+  font-weight: 400;
+  max-width: 18ch;
+  margin-left: auto;
+}
+.facts .price__note { margin-left: 0; text-align: left; }
 
 @media (max-width: 860px) {
   .tariff__row {

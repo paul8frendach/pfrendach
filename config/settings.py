@@ -7,6 +7,7 @@ never by editing this file.
 
 from pathlib import Path
 import os
+import sys
 
 from dotenv import load_dotenv
 
@@ -39,6 +40,43 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 SITE_DOMAIN = os.environ.get("SITE_DOMAIN", "paulfrendach.com")
 SITE_URL = os.environ.get("SITE_URL", "http://127.0.0.1:8000")
 
+# ---------------------------------------------------------------- The LAB
+#
+# The Train room is a wrapper over The LAB's public API: the coach's services,
+# prices and intake form live in their LAB account, and this site renders them.
+# Both values come from the coach, not from us — LAB_API_KEY is issued by them
+# in Settings -> API keys and can be revoked without anyone here being told.
+#
+# Unset is a supported state. Every LAB call is wrapped, and the Train room
+# degrades to an honest "ask directly" rather than a stack trace, so a dev box
+# with no key still renders the site.
+LAB_API_BASE = os.environ.get("LAB_API_BASE", "")
+LAB_API_KEY = os.environ.get("LAB_API_KEY", "")
+LAB_TIMEOUT = float(os.environ.get("LAB_TIMEOUT", "10"))
+# Trap: Cloudflare answers a default library User-Agent with an HTML 403 rather
+# than our JSON, so the client names itself on every request.
+LAB_USER_AGENT = os.environ.get("LAB_USER_AGENT", f"{SITE_DOMAIN}/1.0 (+LAB API client)")
+# Services and the intake form are read on nearly every Train page view and
+# change when the coach edits them, which is rarely.
+LAB_CACHE_SECONDS = int(os.environ.get("LAB_CACHE_SECONDS", "120"))
+# A `lab_live_` key writes into the coach's REAL account: a real lead, a real
+# chat thread, a real email to them. Reads are always allowed; writes with a
+# live key have to be armed deliberately, so a dev box pointed at production
+# cannot quietly fill their inbox with "asdf". Test keys are unaffected — that
+# is what they are for.
+LAB_ALLOW_LIVE_WRITES = env_bool("LAB_ALLOW_LIVE_WRITES", False)
+
+# The test suite must never reach The LAB, and above all must never reach it
+# with a live key: `apps/house` renders every room to check the chrome, which
+# means an ordinary `manage.py test` would otherwise fire real requests at a
+# real coach's account using whatever is in .env. Blanking the config here
+# makes every unmocked call fail instantly and locally; tests that exercise the
+# client override these settings explicitly.
+if "test" in sys.argv:
+    LAB_API_BASE = ""
+    LAB_API_KEY = ""
+    LAB_ALLOW_LIVE_WRITES = False
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -48,6 +86,7 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     "django.contrib.staticfiles",
     "apps.house",
+    "apps.lab",
     "apps.train",
     "apps.create",
     "apps.build",

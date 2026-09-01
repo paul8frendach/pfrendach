@@ -1,0 +1,106 @@
+{
+  "_comment": [
+    "What this coach offers, as the website intends to sell it.",
+    "This file is the source of truth for the SITE. The LAB is the source of",
+    "truth for the ACCOUNT. `manage.py lab_catalogue` reports where the two",
+    "disagree, and what to go and ask when a service is described too thinly",
+    "for The LAB to hold it.",
+    "Copy this file per coach. Nothing in it is specific to the code."
+  ],
+  "coach": "paulfrendach",
+  "services": [
+    {
+      "key": "soccer-training",
+      "title": "Soccer Training",
+      "type": "Training",
+      "sport": "Soccer",
+      "description": "Private training.",
+      "duration_minutes": 60,
+      "pricing_mode": "rate",
+      "is_per_athlete": true,
+      "hourly_rate": "70.00",
+      "locations": [
+        "Don Henderson Field (Swarthmore)"
+      ]
+    },
+    {
+      "key": "1v1-session",
+      "title": "1v1 Session",
+      "type": "Training",
+      "sport": "Soccer",
+      "description": "One player, one hour, full attention. The ball never stops moving.",
+      "duration_minutes": 60,
+      "pricing_mode": "fixed",
+      "is_per_athlete": true,
+      "tiers": [
+        {
+          "athletes": 1,
+          "price": "85.00"
+        }
+      ],
+      "locations": [
+        "Don Henderson Field (Swarthmore)"
+      ]
+    },
+    {
+      "key": "small-group",
+      "title": "Small Group",
+      "type": "Training",
+      "sport": "Soccer",
+      "description": "Three or four players. Competitive reps, real tempo, nowhere to hide.",
+      "duration_minutes": 75,
+      "pricing_mode": "tiered",
+      "is_per_athlete": true,
+      "durations": [
+        75
+      ],
+      "tiers": [
+        {
+          "athletes": 2,
+          "price": "90.00"
+        },
+        {
+          "athletes": 3,
+          "price": "135.00"
+        },
+        {
+          "athletes": 4,
+          "price": "180.00"
+        }
+      ],
+      "locations": [
+        "Don Henderson Field (Swarthmore)"
+      ]
+    },
+    {
+      "key": "film-session",
+      "title": "Film Session",
+      "type": "Training",
+      "sport": "Soccer",
+      "description": "Filmed training, then the clips back with the reasons attached.",
+      "duration_minutes": 90,
+      "pricing_mode": "fixed",
+      "is_per_athlete": true,
+      "tiers": [
+        {
+          "athletes": 1,
+          "price": "150.00"
+        }
+      ],
+      "locations": [
+        "Don Henderson Field (Swarthmore)"
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "key": "six-week-block",
+      "title": "Six-Week Block",
+      "service_key": "1v1-session",
+      "sessions": 6,
+      "price": "459.00",
+      "valid_weeks": 12,
+      "description": "One session a week for six weeks, with work set for the hours in between."
+    }
+  ]
+}

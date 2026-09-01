@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load house_tags %}
+
+{% block title %}Start training — FRENDACH{% endblock %}
+{% block description %}Tell Paul about the player and a time will be made.{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block extra_js %}<script src="{% asset 'js/lab-intake.js' %}" defer></script>{% endblock %}
+
+{% block content %}
+<section class="hero hero--room">
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">{% if service %}{{ service.name }}{% else %}Train — FRENDACH{% endif %}</p>
+    <h1>Start training</h1>
+    <p class="lead" style="margin-top:1.2rem;max-width:46ch">
+      Tell him about the player. He reads every one of these himself.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell split split--sticky">
+    <div class="stack">
+      {% if service %}
+        <ul class="facts">
+          <li><b>Asking about</b><span>{{ service.name }}</span></li>
+          {% if service.duration_minutes %}
+            <li><b>Length</b><span>{{ service.duration_minutes }} minutes</span></li>
+          {% endif %}
+          <li><b>Rate</b><span>{{ service.price_label }}</span></li>
+        </ul>
+      {% endif %}
+      <p class="notice">
+        This is an enquiry, not a confirmed booking. It reaches Paul's coaching
+        software directly, and he answers from there.
+      </p>
+    </div>
+
+    {% if form %}
+      {% comment %}
+      Nothing on this form is written in this repo. The questions come from
+      Paul's own intake configuration over the API, so one he adds there shows
+      up here on the next page load with no deploy.
+      {% endcomment %}
+      <form class="form form--wide" method="post" novalidate data-lab-intake>
+        {% csrf_token %}
+        {% if service %}<input type="hidden" name="service" value="{{ service.id }}">{% endif %}
+        <input type="hidden" name="athlete_count" value="{{ athlete_count }}">
+
+        {% for error in form.non_field_errors %}
+          <p class="notice notice--bad">{{ error }}</p>
+        {% endfor %}
+
+        <p class="beat">Who you are</p>
+        {% for field in form.payer_fields %}
+          {% include "partials/field.html" with field=field %}
+        {% endfor %}
+
+        {% for block in form.athlete_blocks %}
+          <p class="beat" style="margin-top:2rem">{{ block.heading }}</p>
+          <div data-athlete-block>
+            <div class="form__row">
+              {% for field in block.name_fields %}
+                {% include "partials/field.html" with field=field %}
+              {% endfor %}
+            </div>
+
+            {% if block.age %}
+              {# All three ways to give an age are rendered. The LAB stores
+                 exactly one, chosen by age_type; the script shows only that
+                 one, and with JavaScript off any of them still works. #}
+              <div class="field">
+                <label for="{{ block.age.type.id_for_label }}">{{ block.age.type.label }}</label>
+                {{ block.age.type }}
+              </div>
+              <div data-age="range">{% include "partials/field.html" with field=block.age.range %}</div>
+              <div data-age="year">{% include "partials/field.html" with field=block.age.year %}</div>
+              <div data-age="birthday">{% include "partials/field.html" with field=block.age.birthday %}</div>
+            {% endif %}
+
+            {% for field in block.fields %}
+              {% include "partials/field.html" with field=field %}
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        {% if athlete_count < max_athletes %}
+          <div style="margin-top:1rem">
+            <button class="btn btn--quiet" type="submit" name="add_athlete" value="1"
+                    formnovalidate>Add another player</button>
+          </div>
+        {% endif %}
+
+        <p class="beat" style="margin-top:2rem">Anything else</p>
+        {% for field in form.general_fields %}
+          {% include "partials/field.html" with field=field %}
+        {% endfor %}
+
+        <div style="margin-top:1.4rem">
+          <button class="btn btn--solid" type="submit">Send it</button>
+        </div>
+      </form>
+    {% else %}
+      <div class="stack">
+        <p class="notice">{{ notice }}</p>
+        <a class="btn btn--solid" href="{% url 'house:contact' %}?world=train">Ask directly</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

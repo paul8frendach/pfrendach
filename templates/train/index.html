@@ -18,7 +18,7 @@
     </p>
     <div class="actions">
       <a class="btn btn--solid" href="{% url 'train:schedule' %}">Open sessions</a>
-      <a class="btn btn--quiet" href="#offer">Ways to train</a>
+      <a class="btn btn--quiet" href="{% url 'train:enquire' %}">Start training</a>
     </div>
   </div>
 </section>
@@ -153,30 +153,52 @@ price and the next available time in the same glance.
     <div class="bento">
       <div class="tile tile--twothirds">
         <span class="tile__label">Sessions</span>
+        {% comment %}
+        The tariff is The LAB's answer. Prices are printed, never computed here:
+        what a session costs depends on the coach's packages, floors and travel,
+        and a number worked out on this side would be one their own checkout
+        then contradicts.
+        {% endcomment %}
         <ul class="tariff">
-          {% for session in sessions %}
+          {% for service in services %}
             <li class="tariff__row">
-              <a class="tariff__name" href="{{ session.get_absolute_url }}">{{ session.name }}</a>
-              <p class="tariff__what">{{ session.summary }}</p>
-              <span class="tariff__spec">{{ session.duration_minutes }} min · {{ session.get_format_display }}</span>
-              <span class="price">{{ session.price_label }}</span>
+              <a class="tariff__name" href="{{ service.url }}">{{ service.name }}</a>
+              <p class="tariff__what">{{ service.summary }}</p>
+              <span class="tariff__spec">
+                {% if service.duration_minutes %}{{ service.duration_minutes }} min · {% endif %}{{ service.format_display }}
+              </span>
+              <span class="price">
+                {{ service.price_label }}
+                {% if service.price_note %}<small class="price__note">{{ service.price_note }}</small>{% endif %}
+              </span>
             </li>
           {% empty %}
-            <li class="tariff__row"><p class="tariff__what">Sessions are being set. Ask directly.</p></li>
+            <li class="tariff__row">
+              <p class="tariff__what">{{ services_notice|default:"Sessions are being set. Ask directly." }}</p>
+            </li>
           {% endfor %}
         </ul>
+        {% if services and services_notice %}
+          <p class="notice">{{ services_notice }}</p>
+        {% endif %}
       </div>
 
       <div class="tile tile--third">
         <span class="tile__label">Next open</span>
         <div class="slots slots--mini">
-          {% for slot in next_slots|slice:":3" %}
-            <a class="slot" href="{% url 'train:book' slot.id %}">
+          {% comment %}
+          Real times from the coach's calendar. The LAB sends their LOCAL time
+          with the offset attached and names the zone separately, so these are
+          printed as given — reformatting them in the server's timezone is how
+          a 6pm session becomes a 10pm one on a website.
+          {% endcomment %}
+          {% for slot in next_slots %}
+            <a class="slot" href="{{ slot.url }}">
               <span>
-                <span class="slot__when">{{ slot.starts_at|date:"D j M · g:i A" }}</span><br>
-                <span class="slot__where">{{ slot.session_type.name }}</span>
+                <span class="slot__when">{{ slot.day_label }} · {{ slot.time_label }}</span><br>
+                <span class="slot__where">{{ slot.location|default:slot.service_name }}</span>
               </span>
-              <span class="slot__seats">{{ slot.seats_left }}</span>
+              <span class="slot__seats" aria-hidden="true">→</span>
             </a>
           {% empty %}
             <p class="tile__body">Nothing open right now.</p>
@@ -184,6 +206,22 @@ price and the next available time in the same glance.
         </div>
         <a class="linkline" href="{% url 'train:schedule' %}">Full schedule</a>
       </div>
+
+      {% comment %}
+      Blocks are a LAB product now, not a line of prose. The saving and the
+      window both come from the API already worked out — a site that multiplied
+      the single-session price would contradict the tariff directly above it.
+      {% endcomment %}
+      {% for block in blocks %}
+        <a class="tile tile--third" href="{{ block.url }}">
+          <span class="tile__label">{{ block.sessions }} sessions</span>
+          <p class="tile__figure">{{ block.price_label }}</p>
+          <p class="tile__body">
+            {{ block.title }} — {{ block.per_session_label }} a session{% if block.saving_label %}, {{ block.saving_label }}{% endif %}.
+            <br><span class="meta">{{ block.window_label }}</span>
+          </p>
+        </a>
+      {% endfor %}
 
       <div class="tile tile--third">
         <span class="tile__label">How it works</span>
@@ -201,7 +239,7 @@ price and the next available time in the same glance.
         </p>
       </div>
 
-      <a class="tile tile--third" href="{% url 'house:contact' %}?world=train">
+      <a class="tile tile--third" href="{% url 'train:enquire' %}">
         <span class="tile__label">Not sure yet</span>
         <p class="tile__figure">Ask.</p>
         <p class="tile__body">Say where the player is and a time will be made.</p>
