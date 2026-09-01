@@ -313,6 +313,7 @@
 
   function mountPage() {
     mountPanels();
+    if (window.PF && window.PF.mountCore) window.PF.mountCore();
 
     var risers = document.querySelectorAll(".rise:not(.is-in)");
 

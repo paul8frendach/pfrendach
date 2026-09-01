@@ -140,6 +140,47 @@ left to right, like a contact sheet.
 </section>
 {% endif %}
 
+{% comment %}
+Core is local-first: nothing it holds ever leaves the machine it runs on. So
+this panel does not call a server — it asks the visitor's own browser whether
+Core is running *here*. On Paul's machine it fills with the real library; for
+everyone else it stays a description of what the tool is. That asymmetry is
+the honest behaviour for a local-first tool, not a limitation to paper over.
+{% endcomment %}
+<section class="section" id="core">
+  <div class="shell">
+    <p class="beat">The engine</p>
+    <h2>Core.</h2>
+    <p class="lead" style="margin-top:0.7rem;max-width:54ch">
+      The footage-to-content engine behind this room. Raw footage and a brand
+      kit go in; searchable shots, planned cuts and branded graphics come out —
+      all on the machine, with nothing uploaded anywhere.
+    </p>
+
+    <div class="corepanel" data-core-panel data-core-url="http://localhost:8014">
+      <div class="corepanel__head">
+        <span class="corepanel__dot" data-core-dot></span>
+        <span class="corepanel__state" data-core-state>Looking for Core on this machine…</span>
+      </div>
+
+      <div class="corepanel__grid" data-core-stats hidden>
+        <span><b data-core-assets>—</b>clips</span>
+        <span><b data-core-moments>—</b>moments</span>
+        <span><b data-core-workspaces>—</b>workspaces</span>
+        <span><b data-core-videos>—</b>videos</span>
+        <span><b data-core-graphics>—</b>graphics</span>
+      </div>
+
+      <p class="corepanel__note" data-core-note>
+        Core runs locally, so this panel only fills in on a machine that has it
+        running. Everywhere else it stays exactly this: a description.
+      </p>
+
+      <a class="btn" data-core-open href="http://localhost:8014/" hidden>Open Core</a>
+    </div>
+  </div>
+</section>
+
 <section class="section section--tight">
   <div class="shell center">
     <h2 style="max-width:20ch;margin-inline:auto">Never stock. Never a template.</h2>

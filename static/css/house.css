@@ -985,16 +985,6 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
   pointer-events: none;
   overflow: hidden;
 }
-.ground .cw {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: max(150vw, 150vh);
-  height: auto;
-  translate: -50% -50%;
-  opacity: 0.42;
-  transition: opacity 900ms var(--ease);
-}
 .ground [data-tick] { transition: stroke-opacity 400ms linear; }
 
 /* The vignette lives on the ground, not the wash, so a world can replace its
@@ -1722,11 +1712,6 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 
 /* The movement leans toward whoever is looking at it. A few pixels, no more —
    enough to register, never enough to notice as an effect. */
-.ground .cw {
-  translate:
-    calc(-50% + var(--pdx) * 14px)
-    calc(-50% + var(--pdy) * 10px);
-}
 
 /* The world's light follows the pointer across the page. */
 .ground__wash::after {
@@ -1801,6 +1786,8 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   transition: opacity 700ms var(--ease);
 }
 
+/* Each room shows exactly one face. The other two stay mounted and running at
+   zero opacity, which is what lets a room change cross-fade instead of cut. */
 [data-world="build"] .ground .cw:not(.cw--shutter):not(.cw--match) { opacity: 0.34; }
 [data-world="create"] .ground .cw--shutter { opacity: 0.5; }
 [data-world="train"] .ground .cw--match { opacity: 0.36; }

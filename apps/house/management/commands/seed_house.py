@@ -256,36 +256,123 @@ CAPABILITIES = [
 
 PROJECTS = [
     {
-        "name": "paulfrendach.com",
-        "slug": "paulfrendach-com",
-        "tagline": "One house, three worlds, and a booking system underneath it.",
-        "role": "Brand system, design, build",
-        "year": "2026",
-        "stage": Project.Stage.LIVE,
-        "stack": "Django, SQLite, WhiteNoise, vanilla CSS, vanilla JS",
-        "problem": (
-            "Three trades — content, web, training — that share one person and one mark, "
-            "but read as three different businesses if you build them as three sites."
-        ),
-        "approach": (
-            "One Django project, one stylesheet, one locked house mark. Worlds are a "
-            "data attribute that swaps the accent, the copy and the rhythm. The Train "
-            "room carries a real booking flow with slots, seat limits and confirmations."
-        ),
-        "outcome": "A single codebase where a new room costs a template, not a rebuild.",
+        "slug": "debrief",
+        "name": "Debrief",
+        "tagline": "A platform for structured political argument — research it, build the card, "
+                   "then defend it live with your group.",
+        "role": "Design, build, deploy, iOS shell",
+        "year": "2025—26",
+        "stage": "live",
+        "url": "https://pfrendach8.pythonanywhere.com/",
+        "stack": "Django 5.2, Python 3.14, LiveKit, Groq, Ollama, Whisper, ffmpeg, "
+                 "Capacitor, WhiteNoise, PythonAnywhere",
+        "problem": "Political argument online is reflex. There was nowhere to do the slow "
+                   "part — read the sources, work out what you actually think, write it "
+                   "down in a form someone could argue back at.",
+        "approach": "One unit of work — the argument card — with three ways in: a guided "
+                    "policy survey, a Socratic conversation with a model, or the manual "
+                    "builder. A research notebook underneath it pulls YouTube transcripts "
+                    "and article text so evidence is attached, not remembered. Then the "
+                    "social half: a Commons feed, private Squads, and Watch Parties where "
+                    "a group watches the same video in sync on cams and picks it apart.",
+        "outcome": "Live on PythonAnywhere with an iOS build verified on device. "
+                   "67 models, 130 migrations, 131 templates, ~65,000 lines.",
         "is_featured": True,
         "sort": 10,
     },
+    {
+        "slug": "sunset-landing-40",
+        "name": "Sunset Landing 40",
+        "tagline": "Booking and guest services for a waterfront condo — built to get the "
+                   "owner out of the loop.",
+        "role": "Client build — design, build, deploy",
+        "year": "2026",
+        "stage": "live",
+        "url": "",
+        "stack": "Django 5.1, HTMX, Stripe, SQLite, uv, PythonAnywhere",
+        "problem": "The unit rented by word of mouth and a personal Facebook page, and the "
+                   "owner personally answered every question about dates, price and the "
+                   "door code.",
+        "approach": "Guest trust levels decide the path: a new guest routes to her for "
+                    "approval, a returning one books instantly. Payment is "
+                    "deposit-on-approval — the card is captured when dates are requested "
+                    "and only charged once she says yes. A concierge thread answers from a "
+                    "scoped facts table and escalates anything it does not hold.",
+        "outcome": "Guests find it, book it, pay, and get their code without her touching "
+                   "anything. 11 Django apps, ~17,000 lines.",
+        "is_featured": True,
+        "sort": 20,
+    },
+    {
+        "slug": "core",
+        "name": "Core",
+        "tagline": "A local-first content engine: a small business's own footage and brand "
+                   "kit in, finished posts out.",
+        "role": "Design and build",
+        "year": "2026",
+        "stage": "building",
+        "url": "",
+        "stack": "Django, ffmpeg, mlx-whisper, moondream, qwen2.5, Ollama, Pillow",
+        "problem": "Small businesses have plenty of footage and no time to edit it. The "
+                   "tools that would help are cloud tools, and their footage is not "
+                   "something they want to upload.",
+        "approach": "Everything runs on the machine — nothing leaves it. Footage is "
+                    "auto-labelled by a pipeline split by model strength: speech to text "
+                    "with word timings, frames to literal description by a small vision "
+                    "model, then a reasoning model snapping both to a closed vocabulary so "
+                    "the library is actually searchable. Long clips split into moments, so "
+                    "a cut never starts mid-sentence. The planner may only build from real "
+                    "moment ids — anything it invents is dropped.",
+        "outcome": "Renders video and branded graphics end to end from a plain-language "
+                   "brief. Reference customer is a soccer coaching brand.",
+        "is_featured": True,
+        "sort": 30,
+    },
+    {
+        "slug": "paulfrendach-com",
+        "name": "paulfrendach.com",
+        "tagline": "One house, three worlds, and a clock behind all of them.",
+        "role": "Design and build",
+        "year": "2026",
+        "stage": "live",
+        "url": "",
+        "stack": "Django, vanilla CSS, vanilla JS, WhiteNoise",
+        "problem": "Three trades under one name, with nothing tying them together and "
+                   "nothing telling them apart.",
+        "approach": "A locked house mark and one stylesheet; the rooms change accent, "
+                    "texture, type and shape but never the mark. The intro is drawn live "
+                    "rather than played from a file, and the clockwork behind it keeps "
+                    "running as you move between rooms because only the page body is "
+                    "swapped.",
+        "outcome": "This page.",
+        "is_featured": False,
+        "sort": 40,
+    },
 ]
 
-
 FEATURES = [
-    ("paulfrendach-com", "The curtain", "The locked sting drawn live in HTML and CSS, not played from a video file. Lifts into the header signature.", "~4s, once per session"),
-    ("paulfrendach-com", "Three worlds, one stylesheet", "A data attribute swaps accent, texture and rhythm. A new room costs a template, not a rebuild.", "1 CSS system"),
-    ("paulfrendach-com", "Seamless routing", "Links swap the page body only. The background movement never restarts and prefetch makes a room change instant.", "No reload"),
-    ("paulfrendach-com", "Booking and confirmation", "Session types, open slots, seat limits, a reference for the client and a decision for the owner.", "Seat-safe under load"),
-    ("paulfrendach-com", "Read-only JSON API", "Sessions, open slots and booking status as public endpoints, ready for a widget or an app.", "3 endpoints"),
-    ("paulfrendach-com", "An admin he can use", "Live switches on everything, so nothing ships before he says so — including unconfirmed honours.", "0 code edits to publish"),
+    # Debrief
+    ("debrief", "Argument cards", "One structured unit — claim, supporting and opposing points, sourced evidence, conclusion — with version history and rollback on every edit.", "3 ways to create one"),
+    ("debrief", "Research notebook", "Pulls full YouTube transcripts and article text, then lets you highlight, timestamp and comment before any of it becomes an argument.", "Video, article, note, quote"),
+    ("debrief", "Watch Parties", "A group watches the same video at the same timestamp on live cams, with chat, a queue, screen share, and the session recorded into the notebook.", "LiveKit WebRTC"),
+    ("debrief", "BrainDrop API", "An API and MCP endpoint so an external model can write straight into your notebook, auto-tagged by topic and type.", "MCP protocol"),
+    ("debrief", "Trust and safety", "Blocking, reporting and account deletion enforced at one choke point, with full erasure of authored content after a 30-day grace period.", "1 enforcement module"),
+    ("debrief", "iOS shell", "A Capacitor hybrid verified on device: splash handover, native share sheet, push permission, offline page, status-bar theme sync.", "Verified on iPhone"),
+    # Sunset Landing 40
+    ("sunset-landing-40", "Deposit on approval", "The card is captured when dates are requested and charged only when the owner approves. Declining never charges.", "Stripe + local stub"),
+    ("sunset-landing-40", "Guest trust levels", "New guests route to the owner for approval; returning guests book instantly. That routing rule is the whole product.", "3 tiers"),
+    ("sunset-landing-40", "The concierge", "One thread per guest, answering from a facts table scoped public / guest / internal — the boundary is the query, not the prompt.", "Scoped knowledge"),
+    ("sunset-landing-40", "Floor-plan tour", "Eleven stops pinned to a cropped floor plan with view cones, cross-fades and parallax — built from flat photography, structured so real panoramas drop in later.", "11 stops"),
+    # Core
+    ("core", "Auto-labelling pipeline", "Speech to text with word timings, frames to literal description, then a reasoning model snapping both to a closed vocabulary so facets actually group.", "3 models, one at a time"),
+    ("core", "Moments, not files", "A six-minute training video is one asset but a dozen searchable shots, so a cut never starts mid-sentence.", "Shot-level retrieval"),
+    ("core", "Plans that render", "The planner is handed real candidate moments and must build from those ids. Anything it invents is dropped before it reaches the renderer.", "0 invented shots"),
+    ("core", "Brand-kit rendering", "No literal colour in any drawing code. One template serves every workspace and still comes out looking like theirs.", "Colour, type, logo, voice"),
+    # paulfrendach.com
+    ("paulfrendach-com", "The curtain", "The locked sting drawn live in HTML and CSS, not played from a video file. It lifts into the header signature.", "~4s, once per session"),
+    ("paulfrendach-com", "Three clock faces", "Shutter, escapement and match clock, mounted together and driven from one loop — the mechanism never restarts between rooms.", "1 loop, 3 readings"),
+    ("paulfrendach-com", "Seamless routing", "Links swap the page body only. The background keeps running and prefetch makes a room change instant.", "No reload"),
+    ("paulfrendach-com", "Booking and confirmation", "Session types, open slots, seat limits, a reference for the player and a decision for the coach.", "Seat-safe under load"),
 ]
 
 
