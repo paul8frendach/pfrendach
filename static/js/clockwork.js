@@ -76,7 +76,11 @@
 
   function easeImpulse(frac, tau) { return 1 - Math.exp(-frac / (tau || 0.09)); }
 
-  var GOLD = "var(--gold)";
+  /* Every face draws in --cw-ink, which each room sets to its own accent. The
+     mechanism is the constant; its colour belongs to the world you are in. The
+     house *mark* is never recoloured — that rule is about the logo, not the
+     movement behind it. */
+  var GOLD = "var(--cw-ink, var(--gold))";
 
   function svgMarkup(opts) {
     var ticks = "";
@@ -156,7 +160,7 @@
 
   function shutterMarkup() {
     var uid = "sh" + Math.floor(Math.random() * 1e6);
-    var GLOW = "var(--glow)";
+    var GLOW = "var(--cw-ink, var(--glow))";
     var marks = "";
     for (var i = 0; i < 24; i++) {
       var a = (i / 24) * Math.PI * 2 - Math.PI / 2;
@@ -208,7 +212,7 @@
   /* ---- TRAIN: a match clock. Time in minutes played, out of 90. ---- */
 
   function matchMarkup() {
-    var GOLD = "var(--gold)";
+    var GOLD = "var(--cw-ink, var(--gold))";
     var ticks = "";
     for (var i = 0; i < 60; i++) {
       var a = (i / 60) * Math.PI * 2 - Math.PI / 2;

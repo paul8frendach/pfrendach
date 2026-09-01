@@ -34,6 +34,11 @@
   --accent: var(--gold);
   --accent-ink: var(--ink);
 
+  /* The ink the clockwork is drawn in. The mechanism is the one thing every
+     room shares, so it takes the room's colour rather than staying gold in a
+     steel or glow world and reading as something left behind. */
+  --cw-ink: var(--gold);
+
   --font-display: "Fraunces", "FrauncesLocal", ui-serif, Georgia, serif;
   --font-sans: "Outfit", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
@@ -55,9 +60,9 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-[data-world="create"] { --accent: var(--glow); }
-[data-world="build"]  { --accent: var(--steel); }
-[data-world="train"]  { --accent: var(--gold); }
+[data-world="create"] { --accent: var(--glow);  --cw-ink: var(--glow); }
+[data-world="build"]  { --accent: var(--steel); --cw-ink: var(--steel); }
+[data-world="train"]  { --accent: var(--gold);  --cw-ink: var(--gold); }
 
 /* ---------------------------------------------------------------- reset */
 
@@ -1788,10 +1793,22 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 
 /* Each room shows exactly one face. The other two stay mounted and running at
    zero opacity, which is what lets a room change cross-fade instead of cut. */
-[data-world="build"] .ground .cw:not(.cw--shutter):not(.cw--match) { opacity: 0.34; }
+
+/* Build is the room where the mechanism is the subject, so the whole movement
+   has to be on screen. The shutter and the match clock are concentric and read
+   fine bled off the edges; this one is not — its gear train sits low-left and
+   its escapement high-right, and at the bleed size both fall outside the
+   viewport entirely, leaving only a bare chapter ring. Size it to fit. */
+[data-world="build"] .ground .cw:not(.cw--shutter):not(.cw--match) {
+  width: min(96vh, 96vw);
+  opacity: 0.55;
+}
 [data-world="create"] .ground .cw--shutter { opacity: 0.5; }
 [data-world="train"] .ground .cw--match { opacity: 0.36; }
 
 /* The house itself shows the movement, quietly — it is the room the other
    three are inside. */
-[data-world="house"] .ground .cw:not(.cw--shutter):not(.cw--match) { opacity: 0.3; }
+[data-world="house"] .ground .cw:not(.cw--shutter):not(.cw--match) {
+  width: min(104vh, 104vw);
+  opacity: 0.34;
+}

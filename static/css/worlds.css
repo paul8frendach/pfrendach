@@ -204,21 +204,23 @@
    under the pointer, like a sheet on a desk. */
 [data-world="build"] .ground__wash {
   background:
-    linear-gradient(color-mix(in srgb, var(--steel) 9%, transparent) 1px, transparent 1px)
+    linear-gradient(color-mix(in srgb, var(--steel) 6%, transparent) 1px, transparent 1px)
       calc(var(--pdx) * -14px) calc(var(--pdy) * -14px) / 100% 26px,
-    linear-gradient(90deg, color-mix(in srgb, var(--steel) 9%, transparent) 1px, transparent 1px)
+    linear-gradient(90deg, color-mix(in srgb, var(--steel) 6%, transparent) 1px, transparent 1px)
       calc(var(--pdx) * -14px) calc(var(--pdy) * -14px) / 26px 100%,
-    linear-gradient(color-mix(in srgb, var(--steel) 15%, transparent) 1px, transparent 1px)
+    linear-gradient(color-mix(in srgb, var(--steel) 11%, transparent) 1px, transparent 1px)
       calc(var(--pdx) * -14px) calc(var(--pdy) * -14px) / 100% 130px,
-    linear-gradient(90deg, color-mix(in srgb, var(--steel) 15%, transparent) 1px, transparent 1px)
+    linear-gradient(90deg, color-mix(in srgb, var(--steel) 11%, transparent) 1px, transparent 1px)
       calc(var(--pdx) * -14px) calc(var(--pdy) * -14px) / 130px 100%,
     radial-gradient(110% 70% at 50% -8%, color-mix(in srgb, var(--steel) 16%, transparent), transparent 56%);
   mask-image: radial-gradient(120% 100% at 50% 0%, black 40%, transparent 92%);
 }
+/* A gentle vignette only. Crushing the corners here would hide the two parts
+   that make this face itself — the gear train and the escapement. */
 [data-world="build"] .ground::after {
   background:
-    radial-gradient(ellipse at center, transparent 46%, var(--ink) 96%),
-    linear-gradient(180deg, transparent 76%, var(--ink) 100%);
+    radial-gradient(ellipse 86% 78% at 50% 50%, transparent 62%, var(--ink) 100%),
+    linear-gradient(180deg, transparent 82%, var(--ink) 100%);
 }
 [data-world="build"] .grain::after { opacity: 0.022; }
 
