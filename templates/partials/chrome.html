@@ -32,6 +32,12 @@ cross-fade, so nothing ever jumps from one layout to another.
         {% endfor %}
       </nav>
 
+      {% comment %}
+      What time means in this room. Frames under a shutter, ticks off an
+      escapement, minutes of a match — the same mechanism, read three ways.
+      {% endcomment %}
+      <span class="readout" data-readout aria-hidden="true"></span>
+
       <nav class="subnav" aria-label="More">
         <a href="{% url 'house:about' %}"
            {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>

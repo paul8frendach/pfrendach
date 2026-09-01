@@ -179,7 +179,30 @@
   var ground = document.querySelector("[data-ground]");
   if (ground && !reduced && window.PF && window.PF.clockwork && !ground.dataset.mounted) {
     ground.dataset.mounted = "1";
-    window.PF.clockwork.mount(ground, { autorun: true, rate: 0.16, noGlow: true });
+    var readout = document.querySelector("[data-readout]");
+
+    window.PF.clockwork.mountFaces(ground, {
+      autorun: true,
+      rate: 0.16,
+      noGlow: true,
+      /* The readout in the chrome says what time means in this room: frames
+         under a shutter, ticks off an escapement, minutes of a match. Written
+         at most once a second — it is a clock, not a stopwatch. */
+      onTick: readout ? (function () {
+        var last = "";
+        return function (r) {
+          var world = document.documentElement.getAttribute("data-world");
+          var text =
+            world === "create" ? "F" + String(r.frame).padStart(2, "0") + " · 24 FPS" :
+            world === "build"  ? String(r.tick).padStart(5, "0") + " T · 1.000 Hz" :
+            world === "train"  ? String(r.minute).padStart(2, "0") + ":" + String(r.second).padStart(2, "0") + " PLAYED" :
+            "";
+          if (text === last) return;
+          last = text;
+          readout.textContent = text;
+        };
+      })() : null,
+    });
   }
 
   /* ---------------------------------------------------------- presence

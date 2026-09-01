@@ -457,6 +457,22 @@ p:last-child { margin-bottom: 0; }
    Off the centre axis entirely, at the rail's right edge, in the quietest
    type on the page. Present when wanted, invisible until then. */
 
+/* The room's own reading of the time. Deliberately the smallest, quietest
+   thing in the chrome: you notice it on the second visit, not the first. */
+.readout {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--accent) 52%, transparent);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: calc(1 - var(--cond));
+  transition: color 0.6s var(--ease);
+}
+
 .subnav {
   position: absolute;
   right: 0;
@@ -1764,3 +1780,31 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   35%  { opacity: 1; }
   to   { transform: translateX(46%); opacity: 0; }
 }
+
+/* ---------------------------------------------------------------- faces
+   Three clock faces live in the ground at once, driven by one loop. The room
+   decides which one you are looking at; changing rooms cross-fades between
+   them, so the mechanism never restarts — it only ever changes how it is read. */
+
+.ground .cw,
+.ground .cw--shutter,
+.ground .cw--match {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(150vw, 150vh);
+  height: auto;
+  translate:
+    calc(-50% + var(--pdx) * 14px)
+    calc(-50% + var(--pdy) * 10px);
+  opacity: 0;
+  transition: opacity 700ms var(--ease);
+}
+
+[data-world="build"] .ground .cw:not(.cw--shutter):not(.cw--match) { opacity: 0.34; }
+[data-world="create"] .ground .cw--shutter { opacity: 0.5; }
+[data-world="train"] .ground .cw--match { opacity: 0.36; }
+
+/* The house itself shows the movement, quietly — it is the room the other
+   three are inside. */
+[data-world="house"] .ground .cw:not(.cw--shutter):not(.cw--match) { opacity: 0.3; }

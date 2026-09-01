@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static house_tags %}
 
 {% block title %}Paul Frendach — Create · Build · Train{% endblock %}
 {% block world %}house{% endblock %}
 
-{% block curtain_css %}<link rel="stylesheet" href="{% static 'css/curtain.css' %}">{% endblock %}
+{% block curtain_css %}<link rel="stylesheet" href="{% asset 'css/curtain.css' %}">{% endblock %}
 {% block curtain %}{% include "partials/curtain.html" %}{% endblock %}
-{% block curtain_js %}<script src="{% static 'js/sting.js' %}" defer></script>{% endblock %}
+{% block curtain_js %}<script src="{% asset 'js/sting.js' %}" defer></script>{% endblock %}
 
 {% block content %}
 

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static house_tags %}
 
 {% block title %}Sting — Paul Frendach{% endblock %}
 {% block world %}house{% endblock %}
 {% block extra_head %}<meta name="robots" content="noindex">{% endblock %}
-{% block curtain_css %}<link rel="stylesheet" href="{% static 'css/curtain.css' %}">{% endblock %}
+{% block curtain_css %}<link rel="stylesheet" href="{% asset 'css/curtain.css' %}">{% endblock %}
 
 {% block content %}
 {% comment %}
@@ -37,4 +37,4 @@ mp4 masters stay in static/flash/ for graphics work — not played on this site.
 </section>
 {% endblock %}
 
-{% block curtain_js %}<script src="{% static 'js/sting.js' %}" defer></script>{% endblock %}
+{% block curtain_js %}<script src="{% asset 'js/sting.js' %}" defer></script>{% endblock %}
