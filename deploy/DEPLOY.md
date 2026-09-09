@@ -28,22 +28,36 @@ that is empty. Step 8 fills it.
 
 ## 1. Get the code onto the box
 
-There is no git remote for this project, so the bundle is the delivery.
-
-On the Mac:
+The repo is `git@github.com:paul8frendach/pfrendach.git` (private). In a
+PythonAnywhere **Bash console**:
 
 ```bash
-cd ~/Desktop/paulfrendach && bash deploy/make-bundle.sh
+git clone git@github.com:paul8frendach/pfrendach.git ~/paulfrendach
 ```
 
-That writes `~/Desktop/paulfrendach-deploy.tar.gz` and **refuses to build if
-`.env` ended up inside it** — that file holds a live LAB key, and a bundle
-carrying it becomes a working credential sitting in a Downloads folder.
-
-Upload it through the PythonAnywhere **Files** tab, then in a **Bash console**:
+That needs a **deploy key**, and the key has to be generated ON THE SERVER —
+a key made on the Mac would mean copying a private key around, which is the
+one thing a deploy key exists to avoid:
 
 ```bash
-cd ~ && tar -xzf paulfrendach-deploy.tar.gz
+ssh-keygen -t ed25519 -C "pythonanywhere-paulfrendach" -f ~/.ssh/id_ed25519 -N ""
+cat ~/.ssh/id_ed25519.pub
+```
+
+Paste that public key at **GitHub → the repo → Settings → Deploy keys → Add
+deploy key**. Leave **Allow write access UNTICKED**: the server only ever
+pulls, and a read-only key cannot rewrite your history if the box is ever
+compromised.
+
+### Or, without git
+
+`deploy/make-bundle.sh` still works and is the fallback if the console cannot
+reach GitHub. It writes `~/Desktop/paulfrendach-deploy.tar.gz`, **refuses to
+build if `.env` ended up inside it**, and is uploaded through the Files tab:
+
+```bash
+cd ~/Desktop/paulfrendach && bash deploy/make-bundle.sh   # on the Mac
+cd ~ && tar -xzf paulfrendach-deploy.tar.gz               # on the server
 ```
 
 ## 2. Bootstrap
@@ -168,6 +182,12 @@ and you are content that every subdomain will always be HTTPS.
 ---
 
 ## Redeploying, later
+
+```bash
+cd ~/paulfrendach && git pull && bash deploy/update.sh
+```
+
+Or, if you used the bundle route:
 
 ```bash
 cd ~/Desktop/paulfrendach && bash deploy/make-bundle.sh     # on the Mac
