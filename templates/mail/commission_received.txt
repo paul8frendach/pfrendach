@@ -1,0 +1,15 @@
+New commission request — {{ commission.name }}
+
+Service:  {{ commission.get_service_display }}{% if commission.package %} (from {{ commission.package.name }}){% endif %}
+Date:     {% if commission.event_date %}{{ commission.event_date }}{% else %}not set{% endif %}
+Place:    {{ commission.location|default:"—" }}
+Email:    {{ commission.email }}
+Phone:    {{ commission.phone|default:"—" }}
+Budget:   {% if commission.budget %}${{ commission.budget }}{% else %}—{% endif %}
+Heard via:{{ commission.how_heard|default:" —" }}
+
+{{ commission.details }}
+
+--
+Oasis Media Visions · reply to {{ commission.email }}
+Sent from {{ site.contact_email }}

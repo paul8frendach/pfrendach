@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}Request a film — Oasis Media Visions{% endblock %}
+{% block description %}Request a wedding, event, school or listing film from Oasis Media Visions. Tell Paul your date, place and story and get a real quote.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="shell hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> Service request</p>
+    <h1 class="oasis-head" style="max-width:18ch">Tell me about your film.</h1>
+    <p class="lead" style="margin-top:1rem;max-width:50ch">
+      The more you tell me — the date, the place, the people who matter — the better the quote.
+      I read every one of these myself and reply with a real number, usually within a day.
+    </p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:clamp(28px,4vw,48px)">
+  <div class="shell split">
+    <div class="stack">
+      <form class="omv-form" method="post" action="{% url 'create:request' %}" novalidate>
+        {% csrf_token %}
+        {% if selected_package %}
+          <p class="notice">Starting from <b>{{ selected_package.name }}</b> — {{ selected_package.price_label }}. Tell me the details below.</p>
+        {% endif %}
+
+        {# honeypot — hidden from people, catnip for bots #}
+        <div style="position:absolute;left:-9999px" aria-hidden="true">
+          {{ form.company }}
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">Your name</label>
+            {{ form.name }}{{ form.name.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {{ form.email }}{{ form.email.errors }}
+          </div>
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="{{ form.phone.id_for_label }}">Phone</label>
+            {{ form.phone }}{{ form.phone.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.service.id_for_label }}">What kind of film</label>
+            {{ form.service }}{{ form.service.errors }}
+          </div>
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="{{ form.event_date.id_for_label }}">Date (if you have one)</label>
+            {{ form.event_date }}{{ form.event_date.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.location.id_for_label }}">Venue or town</label>
+            {{ form.location }}{{ form.location.errors }}
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="{{ form.details.id_for_label }}">Tell me about it</label>
+          {{ form.details }}{{ form.details.errors }}
+        </div>
+
+        <div class="field--row">
+          <div class="field">
+            <label for="{{ form.budget.id_for_label }}">Budget (optional)</label>
+            {{ form.budget }}{{ form.budget.errors }}
+          </div>
+          <div class="field">
+            <label for="{{ form.how_heard.id_for_label }}">How did you find me?</label>
+            {{ form.how_heard }}{{ form.how_heard.errors }}
+          </div>
+        </div>
+
+        {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+
+        <div class="actions">
+          <button class="btn btn--solid" type="submit">Send it to Paul</button>
+        </div>
+        <p class="helptext">No robots on the other end. A real reply from a real person.</p>
+      </form>
+    </div>
+
+    <aside class="stack">
+      <ul class="facts">
+        <li><b>Call or text</b><span><a href="tel:+14436840042">(443) 684-0042</a></span></li>
+        <li><b>Instagram</b><span><a href="https://instagram.com/visionoasis" rel="noopener" target="_blank">@visionoasis</a></span></li>
+        <li><b>Based in</b><span>Huntingtown, MD · Calvert County</span></li>
+        <li><b>Books with</b><span>50% deposit secures the date</span></li>
+        <li><b>Delivery</b><span>Final film within 30 days</span></li>
+      </ul>
+      <p class="slate">Credited Oasis Media Visions</p>
+      <a class="linkline" href="{% url 'create:index' %}">&larr; Back to the work</a>
+    </aside>
+  </div>
+</section>
+{% endblock %}

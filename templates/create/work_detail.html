@@ -1,13 +1,16 @@
 {% extends "base.html" %}
+{% load house_tags %}
 
-{% block title %}{{ piece.title }} — Vision Oasis{% endblock %}
-{% block description %}{{ piece.blurb|default:piece.title }}{% endblock %}
+{% block title %}{{ piece.title }} — Oasis Media Visions{% endblock %}
+{% block description %}{{ piece.blurb|default:piece.title }} — a {{ piece.get_category_display }} film by Oasis Media Visions.{% endblock %}
 {% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
 
 {% block content %}
 <section class="hero hero--room" style="padding-bottom:0">
   <div class="shell hero__inner center">
-    <p class="beat beat--center">{{ piece.get_kind_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
+    <p class="beat beat--center">{{ piece.get_category_display }}{% if piece.year %} · {{ piece.year }}{% endif %}</p>
     <h1>{{ piece.title }}</h1>
   </div>
 </section>
@@ -15,11 +18,6 @@
 <section class="section--tight" style="padding-top:clamp(28px,4vw,48px)">
   <div class="shell">
     {% if piece.instagram_embed %}
-      {% comment %}
-      Instagram serves its own embed. It is sandboxed in its own frame, sized
-      4:5 like a reel, and it is never the only thing on the page — the poster
-      and the words still carry the work if the embed is blocked.
-      {% endcomment %}
       <div class="ig">
         <iframe src="{{ piece.instagram_embed }}" title="{{ piece.title }} on Instagram"
                 loading="lazy" scrolling="no" allowtransparency="true"
@@ -30,10 +28,14 @@
         {% if piece.video_url %}
           <iframe src="{{ piece.video_url }}" title="{{ piece.title }}"
                   allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+        {% elif piece.playable %}
+          <video controls playsinline {% if piece.poster %}poster="{{ piece.poster.url }}"{% endif %}>
+            <source src="{{ piece.playable }}" type="video/mp4">
+          </video>
         {% elif piece.poster %}
           <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
         {% else %}
-          <span class="frame__empty">{{ piece.get_kind_display }}</span>
+          <span class="frame__empty">{{ piece.get_category_display }}</span>
         {% endif %}
       </div>
     {% endif %}
@@ -44,14 +46,17 @@
   <div class="shell split">
     <div class="stack">
       <ul class="facts">
+        {% if piece.location %}<li><b>Where</b><span>{{ piece.location }}</span></li>{% endif %}
         {% if piece.client %}<li><b>For</b><span>{{ piece.client }}</span></li>{% endif %}
+        <li><b>Kind</b><span>{{ piece.get_category_display }}</span></li>
         {% if piece.instagram_url %}
           <li><b>Instagram</b><span><a href="{{ piece.instagram_url }}" rel="noopener" target="_blank">View post</a></span></li>
         {% endif %}
-        {% if piece.runtime %}<li><b>Runtime</b><span>{{ piece.runtime }}</span></li>{% endif %}
+        {% if piece.runtime_label %}<li><b>Runtime</b><span>{{ piece.runtime_label }}</span></li>{% endif %}
         <li><b>Credit</b><span>{{ piece.credit }}</span></li>
       </ul>
-      <p class="slate">Vision Oasis</p>
+      <p class="slate">Oasis Media Visions</p>
+      <a class="btn btn--solid" href="{% url 'create:request' %}?service={{ piece.category }}">Request one like this</a>
     </div>
     <div class="stack">
       {% if piece.description %}<p class="lead">{{ piece.description|linebreaksbr }}</p>{% endif %}
@@ -63,13 +68,13 @@
 {% if more %}
 <section class="section section--tight">
   <div class="shell">
-    <p class="beat beat--center">Next</p>
+    <p class="beat beat--center">More {{ piece.get_category_display|lower }}</p>
     <div class="grid grid--3" style="margin-top:1.6rem">
       {% for other in more %}
         <a class="card" href="{{ other.get_absolute_url }}">
           <span class="frame">
             {% if other.poster %}<img src="{{ other.poster.url }}" alt="{{ other.title }}" loading="lazy">
-            {% else %}<span class="frame__empty">{{ other.get_kind_display }}</span>{% endif %}
+            {% else %}<span class="frame__empty">{{ other.get_category_display }}</span>{% endif %}
           </span>
           <span class="card__title">{{ other.title }}</span>
         </a>

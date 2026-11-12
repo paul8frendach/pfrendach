@@ -90,7 +90,15 @@ INSTALLED_APPS = [
     "apps.train",
     "apps.create",
     "apps.build",
+    "apps.accounts",
+    "apps.shop",
 ]
+
+# ---------------------------------------------------------------- Printful
+
+PRINTFUL_API_KEY = os.environ.get("PRINTFUL_API_KEY", "")
+PRINTFUL_WEBHOOK_SECRET = os.environ.get("PRINTFUL_WEBHOOK_SECRET", "")
+PRINTFUL_CACHE_SECONDS = int(os.environ.get("PRINTFUL_CACHE_SECONDS", "900"))
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -101,6 +109,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.house.middleware.OMVApexMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -134,6 +143,10 @@ DATABASES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/accounts/dashboard/"
+LOGOUT_REDIRECT_URL = "/"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

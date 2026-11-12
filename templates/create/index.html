@@ -1,40 +1,193 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static house_tags %}
 
-{% block title %}Vision Oasis — content for small business{% endblock %}
-{% block description %}Vision Oasis. Session films, brand films and stills for small businesses. Cinema first, useful second.{% endblock %}
+{% block title %}Oasis Media Visions — Wedding & event films in Maryland{% endblock %}
+{% block description %}Oasis Media Visions. Cinematic wedding, event, school and listing films in Calvert, Anne Arundel and across Maryland. Owner-operated by Paul Frendach.{% endblock %}
+{% block og_title %}Oasis Media Visions — Maryland wedding & event films{% endblock %}
+{% block og_description %}Cinematic highlight films for weddings, events, schools and listings. Owner-operated, delivered in 30 days.{% endblock %}
 {% block world %}create{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% asset 'css/omv.css' %}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoProductionCompany",
+  "name": "Oasis Media Visions",
+  "alternateName": "OMV",
+  "description": "Cinematic wedding, event, school and real-estate listing films in Maryland.",
+  "url": "https://www.oasismediavisions.com",
+  "telephone": "+1-443-684-0042",
+  "email": "paul@oasismediavisions.com",
+  "founder": "Paul Frendach",
+  "sameAs": ["https://instagram.com/visionoasis"],
+  "areaServed": ["Calvert County, MD", "Anne Arundel County, MD", "Frederick County, MD", "Maryland"],
+  "address": {"@type": "PostalAddress", "addressLocality": "Huntingtown", "addressRegion": "MD", "postalCode": "20678", "addressCountry": "US"},
+  "priceRange": "$$"
+}
+</script>
+{% endblock %}
 
 {% block content %}
 
-<section class="hero hero--room">
-  <div class="shell hero__inner center">
-    <p class="beat beat--center">Create — Vision Oasis</p>
-    <h1 class="oasis-head">Cinema first.<br>Useful second.</h1>
-    <p class="lead" style="margin-top:1.1rem;max-width:46ch">
-      Content for small businesses that refuses to look like content. Session
-      films, brand films, stills — made the way the training is made: night,
-      grain, breath, the walk-off.
+{# ---------------------------------------------------------------- hero #}
+<section class="omv-hero">
+  <div class="omv-hero__media" aria-hidden="true">
+    {% if featured.playable %}
+      <video autoplay muted loop playsinline preload="metadata"
+             {% if featured.poster %}poster="{{ featured.poster.url }}"{% endif %}>
+        <source src="{{ featured.playable }}" type="video/mp4">
+      </video>
+    {% elif featured.poster %}
+      <img src="{{ featured.poster.url }}" alt="">
+    {% endif %}
+  </div>
+  <div class="omv-hero__scrim" aria-hidden="true"></div>
+
+  <div class="shell omv-hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> Film house</p>
+    <h1 class="oasis-head">The day, told the way it felt.</h1>
+    <p class="omv-hero__lead">
+      Cinematic wedding, event, school and listing films across Maryland. Owner-operated —
+      Paul Frendach shoots every frame and cuts every film himself. Never stock. Never a template.
     </p>
-    <div class="actions" style="margin-top:1.4rem">
-      <a class="btn btn--solid" href="#work">The reel</a>
-      <a class="btn btn--quiet" href="#commission">Commission a film</a>
+    <div class="actions" style="margin-top:1.6rem">
+      <a class="btn btn--solid" href="#work">Watch the work</a>
+      <a class="btn btn--quiet" href="{% url 'create:request' %}">Request your film</a>
     </div>
-    <p class="slate" style="margin-top:1.6rem;justify-content:center">Credited Vision Oasis</p>
+    <p class="omv-hero__cov">
+      <b>Weddings</b> · <b>Events</b> · <b>Schools &amp; sports</b> · <b>Listings &amp; drone</b> · <b>Brand</b>
+      — Calvert, Anne Arundel &amp; beyond
+    </p>
   </div>
 </section>
 
-<hr class="tickrule shell">
+{# ---------------------------------------------------------------- trust strip #}
+<section class="omv-strip">
+  <div class="shell omv-strip__row">
+    <span class="omv-strip__item"><b>Owner-operated</b> one eye, start to finish</span>
+    <span class="omv-strip__item"><b>30 days</b> to final delivery</span>
+    <span class="omv-strip__item"><b>50%</b> books your date</span>
+    <span class="omv-strip__item"><b>FAA Part 107</b> drone for the aerials</span>
+  </div>
+</section>
 
-{% comment %}
-The methods are the wonder: how a thing gets made, laid out as a strip you read
-left to right, like a contact sheet.
-{% endcomment %}
+{# ---------------------------------------------------------------- work by category #}
+<section class="section" id="work">
+  <div class="shell">
+    <div class="headrow">
+      <div>
+        <p class="beat">The work</p>
+        <h2>Films, by what they're for.</h2>
+      </div>
+      <nav class="chips-nav" aria-label="Filter work">
+        <a class="chip-link" href="{% url 'create:index' %}"
+           {% if not active_category %}aria-current="page"{% endif %}>All</a>
+        {% for value, label in categories %}
+          <a class="chip-link" href="?category={{ value }}"
+             {% if active_category == value %}aria-current="page"{% endif %}>{{ label }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+
+    {% if work %}
+      <div class="console" data-console>
+        <div class="console__track" data-console-track>
+          {% for piece in work %}
+            <article class="reelcard{% if forloop.first %} is-active{% endif %}" data-reel-item>
+              <a class="reelcard__frame frame frame--{{ piece.aspect }}"
+                 href="{{ piece.get_absolute_url }}" aria-label="{{ piece.title }}">
+                {% if piece.playable %}
+                  <video data-reel-video muted loop playsinline preload="none"
+                         {% if piece.poster %}poster="{{ piece.poster.url }}"{% endif %}>
+                    <source src="{{ piece.playable }}" type="video/mp4">
+                  </video>
+                {% elif piece.poster %}
+                  <img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">
+                {% else %}
+                  <span class="frame__empty">{{ piece.get_category_display }}</span>
+                {% endif %}
+                <span class="plate__burn">
+                  {{ piece.get_category_display }}{% if piece.runtime_label %} · {{ piece.runtime_label }}{% endif %}
+                </span>
+              </a>
+              <div class="reelcard__meta">
+                <span class="plate__title">{{ piece.title }}</span>
+                {% if piece.blurb %}<span class="plate__blurb">{{ piece.blurb }}</span>{% endif %}
+                <span class="plate__foot">
+                  <span>{% if piece.location %}{{ piece.location }}{% elif piece.client %}{{ piece.client }}{% else %}{{ piece.credit }}{% endif %}</span>
+                  <span>{{ piece.year }}</span>
+                </span>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+        <div class="console__bar">
+          <button class="console__step" type="button" data-console-prev aria-label="Previous">&larr;</button>
+          <div class="console__dots" data-console-dots></div>
+          <button class="console__step" type="button" data-console-next aria-label="Next">&rarr;</button>
+        </div>
+      </div>
+    {% else %}
+      {# No live films yet — show the categories as the way in, honestly. #}
+      <div class="omv-cats">
+        {% for value, label in categories %}
+          <a class="omv-cat" href="{% url 'create:request' %}?service={{ value }}">
+            <span class="omv-cat__count">Now booking</span>
+            <span class="omv-cat__name">{{ label }}</span>
+            <p class="omv-cat__hint omv-cat__hint--soon">Fresh films are being cut. Start one &rarr;</p>
+          </a>
+        {% endfor %}
+      </div>
+      <p class="notice" style="margin-top:1.4rem">
+        The reel is coming off the drives.
+        <a href="{% url 'create:request' %}">Ask to see the latest films directly.</a>
+      </p>
+    {% endif %}
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- packages / pricing #}
+{% if packages %}
+<section class="section" id="packages">
+  <div class="shell">
+    <p class="beat">What you can book</p>
+    <h2>Packages &amp; pricing.</h2>
+    <p class="lead" style="margin-top:0.8rem;max-width:54ch">
+      Honest starting prices. Every film is quoted to the day, the place and the hours you actually need —
+      drone, extra coverage and RAW footage add on when they earn their keep.
+    </p>
+
+    <div class="pricegrid">
+      {% for package in packages %}
+        <div class="pricecard{% if package.is_featured %} pricecard--featured{% endif %}">
+          {% if package.is_featured %}<span class="pricecard__tag">Most booked</span>{% endif %}
+          <span class="pricecard__name">{{ package.name }}</span>
+          <span class="pricecard__price">
+            {{ package.price_label }}<small>{{ package.price_note|default:package.turnaround }}</small>
+          </span>
+          <p class="pricecard__summary">{{ package.summary }}</p>
+          <ul class="pricecard__list">
+            {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
+          </ul>
+          <a class="btn {% if package.is_featured %}btn--solid{% endif %} pricecard__cta"
+             href="{% url 'create:request' %}?package={{ package.slug }}">Book this</a>
+        </div>
+      {% endfor %}
+    </div>
+    <p style="margin-top:1.2rem;color:var(--muted);font-size:0.86rem">
+      Not sure which fits? <a class="linkline" href="{% url 'create:request' %}">Tell me about your day</a> and I'll point you to the right one.
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------------- methods #}
 {% if methods %}
 <section class="section section--tight" id="methods">
   <div class="shell">
     <p class="beat">How it gets made</p>
-    <h2>The methods.</h2>
+    <h2>Four steps, one eye.</h2>
     <div class="strip rise">
       {% for method in methods %}
         <article class="frameshot">
@@ -54,142 +207,47 @@ left to right, like a contact sheet.
 </section>
 {% endif %}
 
-<section class="section" id="work">
+{# ---------------------------------------------------------------- proof (real facts only) #}
+<section class="section section--tight" id="why">
   <div class="shell">
-    <div class="headrow">
-      <div>
-        <p class="beat">Selected work</p>
-        <h2>The reel.</h2>
-      </div>
-      <nav class="chips-nav" aria-label="Filter work">
-        <a class="chip-link" href="{% url 'create:index' %}"
-           {% if not active_kind %}aria-current="page"{% endif %}>All</a>
-        {% for value, label in kinds %}
-          <a class="chip-link" href="?kind={{ value }}"
-             {% if active_kind == value %}aria-current="page"{% endif %}>{{ label }}</a>
-        {% endfor %}
-      </nav>
-    </div>
-
-    <div class="reel">
-      {% for piece in work %}
-        <a class="plate rise" href="{{ piece.get_absolute_url }}">
-          <span class="frame frame--{{ piece.aspect }}">
-            {% if piece.poster %}
-              <img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">
-            {% else %}
-              <span class="frame__empty">{{ piece.get_kind_display }}</span>
-            {% endif %}
-            <span class="plate__burn">{{ piece.get_kind_display }}{% if piece.runtime %} · {{ piece.runtime }}{% endif %}</span>
-          </span>
-          <span class="plate__title">{{ piece.title }}</span>
-          {% if piece.blurb %}<span class="plate__blurb">{{ piece.blurb }}</span>{% endif %}
-          <span class="plate__foot">
-            <span>{% if piece.client %}{{ piece.client }}{% else %}{{ piece.credit }}{% endif %}</span>
-            <span>{{ piece.year }}</span>
-          </span>
-        </a>
-      {% empty %}
-        <p class="notice">
-          The reel is being cut.
-          <a href="{% url 'house:contact' %}?world=create">Ask to see it directly.</a>
-        </p>
-      {% endfor %}
+    <p class="beat">Why Oasis Media Visions</p>
+    <h2>The promises on every job.</h2>
+    <div class="proofgrid">
+      <div class="proof"><b>You, not a crew</b><span>Paul shoots and cuts every film himself. One taste, start to finish.</span></div>
+      <div class="proof"><b>You own it</b><span>Full ownership of your delivered highlight film — share it anywhere, forever.</span></div>
+      <div class="proof"><b>On time</b><span>Your film delivered in high quality within 30 days. In writing.</span></div>
+      <div class="proof"><b>Covered</b><span>Carried for the work — professional insurance, a performance guarantee behind every booking.</span></div>
     </div>
   </div>
 </section>
 
-{% if packages %}
-<section class="section" id="commission">
+{# ---------------------------------------------------------------- request CTA #}
+<section class="section">
   <div class="shell">
-    <p class="beat">For small business</p>
-    <h2>What you can commission.</h2>
-    <p class="lead" style="margin-top:0.8rem;max-width:52ch">
-      You are not buying footage. You are buying an hour of someone's attention
-      on what your place actually looks like when it is working.
-    </p>
-
-    <div class="bento">
-      {% for package in packages %}
-        <div class="tile tile--third">
-          <span class="tile__label">{{ package.price_label }} · {{ package.turnaround }}</span>
-          <span class="tile__figure">{{ package.name }}</span>
-          <p class="tile__body">{{ package.summary }}</p>
-          <ul class="ticks">
-            {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
-          </ul>
-          <a class="linkline" href="{% url 'house:contact' %}?world=create">Commission this</a>
-        </div>
-      {% endfor %}
-
-      <div class="tile tile--half">
-        <span class="tile__label">What you actually get</span>
-        <p class="tile__body">
-          A film that looks like your place on its best day, cut for where it is
-          going — wide for the site, vertical for the feed, stills for everything
-          else. Every crop framed on purpose.
-        </p>
+    <div class="omv-cta">
+      <p class="beat beat--center">Start here</p>
+      <h2 style="margin-top:0.4rem">Tell me about your day.</h2>
+      <p>A date, a place, and what you want to remember. I read every request myself and reply with a real quote — usually within a day.</p>
+      <div class="actions" style="margin-top:1.6rem;justify-content:center">
+        <a class="btn btn--solid" href="{% url 'create:request' %}">Request your film</a>
+        <a class="btn btn--quiet" href="tel:+14436840042">Call (443) 684-0042</a>
       </div>
-      <a class="tile tile--half" href="{% url 'house:contact' %}?world=create">
-        <span class="tile__label">Something else in mind</span>
-        <span class="tile__figure">Tell me.</span>
-        <p class="tile__body">Most of the good work started as a conversation, not a package.</p>
-      </a>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-{% comment %}
-Core is local-first: nothing it holds ever leaves the machine it runs on. So
-this panel does not call a server — it asks the visitor's own browser whether
-Core is running *here*. On Paul's machine it fills with the real library; for
-everyone else it stays a description of what the tool is. That asymmetry is
-the honest behaviour for a local-first tool, not a limitation to paper over.
-{% endcomment %}
-<section class="section" id="core">
-  <div class="shell">
-    <p class="beat">The engine</p>
-    <h2>Core.</h2>
-    <p class="lead" style="margin-top:0.7rem;max-width:54ch">
-      The footage-to-content engine behind this room. Raw footage and a brand
-      kit go in; searchable shots, planned cuts and branded graphics come out —
-      all on the machine, with nothing uploaded anywhere.
-    </p>
-
-    <div class="corepanel" data-core-panel data-core-url="http://localhost:8014">
-      <div class="corepanel__head">
-        <span class="corepanel__dot" data-core-dot></span>
-        <span class="corepanel__state" data-core-state>Looking for Core on this machine…</span>
-      </div>
-
-      <div class="corepanel__grid" data-core-stats hidden>
-        <span><b data-core-assets>—</b>clips</span>
-        <span><b data-core-moments>—</b>moments</span>
-        <span><b data-core-workspaces>—</b>workspaces</span>
-        <span><b data-core-videos>—</b>videos</span>
-        <span><b data-core-graphics>—</b>graphics</span>
-      </div>
-
-      <p class="corepanel__note" data-core-note>
-        Core runs locally, so this panel only fills in on a machine that has it
-        running. Everywhere else it stays exactly this: a description.
-      </p>
-
-      <a class="btn" data-core-open href="http://localhost:8014/" hidden>Open Core</a>
     </div>
   </div>
 </section>
 
-<section class="section section--tight">
-  <div class="shell center">
-    <h2 style="max-width:20ch;margin-inline:auto">Never stock. Never a template.</h2>
-    <p style="margin:1.2rem auto 0;max-width:42ch;color:var(--bone-dim)">
-      One camera, one eye, and the patience to wait for the light.
-    </p>
-    <div class="actions" style="margin-top:1.6rem">
-      <a class="btn btn--solid" href="{% url 'house:contact' %}?world=create">Start a film</a>
+{# ---------------------------------------------------------------- contact #}
+<section class="section section--tight" id="contact">
+  <div class="shell">
+    <p class="beat">Oasis Media Visions</p>
+    <h2 class="omv-brand"><span class="omv-brand__oasis">Oasis</span><span class="omv-brand__rest">Media Visions</span></h2>
+    <div class="omv-contact">
+      <div><span class="omv-contact__label">Based in</span><span class="omv-contact__val">Huntingtown, MD<br>Calvert County</span></div>
+      <div><span class="omv-contact__label">Call or text</span><span class="omv-contact__val"><a href="tel:+14436840042">(443) 684-0042</a></span></div>
+      <div><span class="omv-contact__label">Instagram</span><span class="omv-contact__val"><a href="https://instagram.com/visionoasis" rel="me noopener" target="_blank">@visionoasis</a></span></div>
+      <div><span class="omv-contact__label">Email</span><span class="omv-contact__val"><a href="mailto:paul@oasismediavisions.com">paul@oasismediavisions.com</a></span></div>
     </div>
+    <p class="slate" style="margin-top:1.8rem">A Paul Frendach film house · Credited Oasis Media Visions</p>
   </div>
 </section>
 {% endblock %}

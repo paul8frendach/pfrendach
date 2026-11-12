@@ -20,11 +20,32 @@ class Work(TimeStamped, Published):
         STILLS = "stills", "Stills"
         SESSION = "session", "Session film"
 
+    class Category(models.TextChoices):
+        """The market a piece belongs to — how the portfolio is navigated."""
+
+        WEDDING = "wedding", "Weddings"
+        EVENT = "event", "Events"
+        SCHOOL = "school", "Schools & Sports"
+        LISTING = "listing", "Real estate & drone"
+        BRAND = "brand", "Brand & business"
+        STILLS = "stills", "Stills"
+
     title = models.CharField(max_length=140)
     slug = models.SlugField(max_length=140, unique=True)
     kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.FILM)
+    category = models.CharField(
+        max_length=10,
+        choices=Category.choices,
+        default=Category.WEDDING,
+        db_index=True,
+        help_text="The market this piece belongs to. Drives the portfolio filter.",
+    )
     year = models.CharField(max_length=8, blank=True)
     client = models.CharField(max_length=120, blank=True)
+    location = models.CharField(
+        max_length=120, blank=True, default="",
+        help_text="Venue or town, e.g. Walker's Overlook · Walkersville, MD",
+    )
     blurb = models.CharField(max_length=200, blank=True)
     description = models.TextField(blank=True)
     poster = models.ImageField(upload_to="create/posters/", blank=True)
@@ -32,6 +53,19 @@ class Work(TimeStamped, Published):
     instagram_url = models.URLField(
         blank=True,
         help_text="Public Instagram post or reel URL. Embedded on the work page.",
+    )
+    video_file = models.FileField(
+        upload_to="create/reel/",
+        blank=True,
+        help_text="Web-ready derivative made by `manage.py ingest_reel`.",
+    )
+    duration_seconds = models.FloatField(null=True, blank=True)
+    width = models.PositiveIntegerField(null=True, blank=True)
+    height = models.PositiveIntegerField(null=True, blank=True)
+    source_path = models.CharField(
+        max_length=500,
+        blank=True,
+        help_text="Where the master came from, so a re-ingest knows what it already has.",
     )
     aspect = models.CharField(
         max_length=8,
@@ -51,6 +85,22 @@ class Work(TimeStamped, Published):
 
     def get_absolute_url(self) -> str:
         return reverse("create:work_detail", args=[self.slug])
+
+    @property
+    def playable(self) -> str:
+        """The source the console should play, if there is one."""
+        if self.video_file:
+            return self.video_file.url
+        return ""
+
+    @property
+    def runtime_label(self) -> str:
+        if self.runtime:
+            return self.runtime
+        if not self.duration_seconds:
+            return ""
+        total = int(round(self.duration_seconds))
+        return f"{total // 60}:{total % 60:02d}"
 
     @property
     def instagram_embed(self) -> str:
@@ -112,3 +162,72 @@ class Method(TimeStamped, Published):
     @property
     def gear_items(self) -> list[str]:
         return [item.strip() for item in self.gear.split(",") if item.strip()]
+
+
+class Commission(TimeStamped):
+    """
+    A service request from the Oasis Media Visions site. Purpose-built for how
+    film work actually gets booked: a service, a date, a place, and the story.
+
+    Separate from the house Inquiry on purpose — this one carries the fields a
+    videographer needs to quote, and it is what Oasis reads as an OMV enquiry.
+    """
+
+    class Service(models.TextChoices):
+        WEDDING = "wedding", "Wedding film"
+        EVENT = "event", "Event film"
+        SCHOOL = "school", "School / sports film"
+        LISTING = "listing", "Listing film & drone"
+        BRAND = "brand", "Brand / business film"
+        OTHER = "other", "Something else"
+
+    class Status(models.TextChoices):
+        NEW = "new", "New"
+        READ = "read", "Read"
+        QUOTED = "quoted", "Quoted"
+        BOOKED = "booked", "Booked"
+        CLOSED = "closed", "Closed"
+
+    name = models.CharField(max_length=120)
+    email = models.EmailField()
+    phone = models.CharField(max_length=40, blank=True)
+    service = models.CharField(
+        max_length=10, choices=Service.choices, default=Service.WEDDING, db_index=True
+    )
+    package = models.ForeignKey(
+        "create.Package",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="commissions",
+        help_text="If they started from a package, it is recorded here.",
+    )
+    event_date = models.DateField(null=True, blank=True, help_text="If they have one.")
+    location = models.CharField(
+        max_length=160, blank=True, help_text="Venue or town the shoot is in."
+    )
+    details = models.TextField(help_text="What they are trying to make.")
+    budget = models.PositiveIntegerField(
+        null=True, blank=True, help_text="Optional, in whole dollars."
+    )
+    how_heard = models.CharField(max_length=120, blank=True)
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.NEW, db_index=True
+    )
+    source_path = models.CharField(max_length=200, blank=True)
+    notified_oasis = models.BooleanField(
+        default=False,
+        help_text="Set once Oasis has picked this up as an enquiry, so it is not re-counted.",
+    )
+
+    class Meta:
+        ordering = ("-created_at",)
+        verbose_name = "commission request"
+        verbose_name_plural = "commission requests"
+
+    def __str__(self) -> str:
+        return f"{self.get_service_display()} · {self.name} · {self.created_at:%Y-%m-%d}"
+
+    @property
+    def is_open(self) -> bool:
+        return self.status in {self.Status.NEW, self.Status.READ, self.Status.QUOTED}
