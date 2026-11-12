@@ -256,6 +256,10 @@
   background: var(--glow);
 }
 .pricecard__cta { margin-top: auto; }
+.pricecard__book { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.pricecard__book form { width: 100%; margin: 0; }
+.pricecard__book .btn { width: 100%; justify-content: center; }
+.pricecard__book .linkline { font-size: 0.82rem; }
 
 /* ----------------------------------------------------------------- proof */
 .proofgrid {

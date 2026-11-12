@@ -202,6 +202,11 @@ class Command(BaseCommand):
             )
         for p in PACKAGES:
             slug = slugify(p["name"])
+            price = Decimal(p["price_from"]) if p["price_from"] else None
+            # Deposit that books the date = half the floor, roundable in admin.
+            deposit = price * Decimal("0.5") if price is not None else None
+            if deposit is not None:
+                deposit = deposit.quantize(Decimal("1"))
             Package.objects.update_or_create(
                 slug=slug,
                 defaults={
@@ -209,8 +214,10 @@ class Command(BaseCommand):
                     "summary": p["summary"],
                     "deliverables": p["deliverables"],
                     "turnaround": p["turnaround"],
-                    "price_from": Decimal(p["price_from"]) if p["price_from"] else None,
+                    "price_from": price,
                     "price_note": p["price_note"],
+                    "deposit_amount": deposit,
+                    "allow_online_booking": deposit is not None,
                     "is_featured": p["is_featured"],
                     "sort": p["sort"],
                     "is_live": True,

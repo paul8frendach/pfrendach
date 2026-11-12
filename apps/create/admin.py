@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Commission, Method, Package, Work
+from .models import Commission, Method, Package, Payment, Work
 
 
 @admin.register(Work)
@@ -20,9 +20,20 @@ class MethodAdmin(admin.ModelAdmin):
 
 @admin.register(Package)
 class PackageAdmin(admin.ModelAdmin):
-    list_display = ("name", "price_label", "turnaround", "is_featured", "is_live", "sort")
-    list_editable = ("is_featured", "is_live", "sort")
+    list_display = ("name", "price_label", "deposit_amount", "allow_online_booking",
+                    "turnaround", "is_featured", "is_live", "sort")
+    list_editable = ("deposit_amount", "allow_online_booking", "is_featured", "is_live", "sort")
     prepopulated_fields = {"slug": ("name",)}
+
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("created_at", "kind", "amount", "status", "customer_email", "package", "commission")
+    list_filter = ("status", "kind", "notified_oasis")
+    search_fields = ("customer_email", "customer_name", "stripe_session_id", "stripe_payment_intent")
+    readonly_fields = ("created_at", "updated_at", "stripe_session_id", "stripe_payment_intent",
+                       "checkout_url", "source_path", "amount_cents")
+    date_hierarchy = "created_at"
 
 
 @admin.register(Commission)

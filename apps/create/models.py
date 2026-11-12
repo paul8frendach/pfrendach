@@ -120,6 +120,14 @@ class Package(TimeStamped, Published):
     turnaround = models.CharField(max_length=60, blank=True, default="2 weeks")
     price_from = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     price_note = models.CharField(max_length=80, blank=True, default="On request")
+    deposit_amount = models.DecimalField(
+        max_digits=8, decimal_places=2, null=True, blank=True,
+        help_text="Deposit that books the date. Set this to offer online booking for this package.",
+    )
+    allow_online_booking = models.BooleanField(
+        default=False,
+        help_text="Show a Stripe 'Book — pay deposit' button (needs a deposit amount and Stripe keys).",
+    )
     is_featured = models.BooleanField(default=False)
 
     class Meta:
@@ -137,6 +145,19 @@ class Package(TimeStamped, Published):
         if self.price_from is None:
             return self.price_note or "On request"
         return f"From ${int(self.price_from)}"
+
+    @property
+    def bookable(self) -> bool:
+        """Online booking is on, a deposit is set, and Stripe can take it."""
+        from .payments import configured
+
+        return bool(self.allow_online_booking and self.deposit_amount and configured())
+
+    @property
+    def deposit_label(self) -> str:
+        if not self.deposit_amount:
+            return ""
+        return f"${int(self.deposit_amount)}"
 
 
 class Method(TimeStamped, Published):
@@ -231,3 +252,75 @@ class Commission(TimeStamped):
     @property
     def is_open(self) -> bool:
         return self.status in {self.Status.NEW, self.Status.READ, self.Status.QUOTED}
+
+
+class Payment(TimeStamped):
+    """
+    One Stripe payment for OMV — a deposit that books a date, a balance, or a
+    full amount. The row is created `pending` when Checkout starts; the Stripe
+    webhook is the only thing that marks it `paid`. The redirect is never
+    trusted, so a closed browser tab can never lose or fake a booking.
+    """
+
+    class Kind(models.TextChoices):
+        DEPOSIT = "deposit", "Deposit"
+        BALANCE = "balance", "Balance"
+        FULL = "full", "Full payment"
+
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        PAID = "paid", "Paid"
+        FAILED = "failed", "Failed"
+        CANCELED = "canceled", "Canceled"
+        REFUNDED = "refunded", "Refunded"
+
+    commission = models.ForeignKey(
+        "create.Commission", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="payments",
+    )
+    package = models.ForeignKey(
+        "create.Package", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="payments",
+    )
+    kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.DEPOSIT)
+    amount = models.DecimalField(max_digits=9, decimal_places=2)
+    currency = models.CharField(max_length=8, default="usd")
+    description = models.CharField(max_length=200, blank=True)
+
+    customer_name = models.CharField(max_length=160, blank=True)
+    customer_email = models.EmailField(blank=True)
+
+    stripe_session_id = models.CharField(max_length=120, blank=True, db_index=True)
+    stripe_payment_intent = models.CharField(max_length=120, blank=True, db_index=True)
+    checkout_url = models.URLField(blank=True, max_length=600)
+
+    status = models.CharField(
+        max_length=10, choices=Status.choices, default=Status.PENDING, db_index=True
+    )
+    source_path = models.CharField(max_length=200, blank=True)
+    notified_oasis = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("-created_at",)
+
+    def __str__(self) -> str:
+        return f"{self.get_kind_display()} ${self.amount} · {self.get_status_display()} · {self.customer_email or '—'}"
+
+    @property
+    def amount_cents(self) -> int:
+        return int(round(float(self.amount) * 100))
+
+    def mark_paid(self, *, payment_intent: str = "", name: str = "", email: str = "") -> None:
+        self.status = self.Status.PAID
+        if payment_intent:
+            self.stripe_payment_intent = payment_intent
+        if name:
+            self.customer_name = name
+        if email:
+            self.customer_email = email
+        self.save(update_fields=[
+            "status", "stripe_payment_intent", "customer_name", "customer_email", "updated_at",
+        ])
+        if self.commission_id and self.kind == self.Kind.DEPOSIT:
+            self.commission.status = Commission.Status.BOOKED
+            self.commission.save(update_fields=["status", "updated_at"])

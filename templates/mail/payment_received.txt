@@ -1,0 +1,13 @@
+Deposit paid — {{ payment.customer_name|default:payment.customer_email }}
+
+Amount:   ${{ payment.amount }} {{ payment.currency|upper }} ({{ payment.get_kind_display }})
+Package:  {% if payment.package %}{{ payment.package.name }}{% else %}—{% endif %}
+Customer: {{ payment.customer_name|default:"—" }} · {{ payment.customer_email|default:"—" }}
+Stripe:   {{ payment.stripe_payment_intent|default:payment.stripe_session_id }}
+{% if payment.commission %}Request:  #{{ payment.commission.id }} — now marked BOOKED
+{% endif %}
+The date is secured. Follow up to lock the timeline.
+
+--
+Oasis Media Visions
+Sent from {{ site.contact_email }}

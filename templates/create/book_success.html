@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Your date is held — Oasis Media Visions{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block content %}
+<section class="hero hero--room">
+  <div class="shell hero__inner center">
+    <p class="beat beat--center">Oasis Media Visions</p>
+    <h1 class="oasis-head">Your date is held.</h1>
+    <p class="lead" style="margin-top:1rem;max-width:44ch;margin-inline:auto">
+      Deposit received — thank you. That secures your date. You'll get a receipt from Stripe,
+      and a note from Paul (a real person) within a day to lock in the timeline and the details.
+    </p>
+    <div class="actions" style="margin-top:1.6rem;justify-content:center">
+      <a class="btn btn--quiet" href="{% url 'create:index' %}">Back to the work</a>
+      <a class="btn btn--quiet" href="tel:+14436840042">Call (443) 684-0042</a>
+    </div>
+    <p class="slate" style="margin-top:1.6rem;justify-content:center">Credited Oasis Media Visions</p>
+  </div>
+</section>
+{% endblock %}

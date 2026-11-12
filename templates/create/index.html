@@ -170,8 +170,19 @@
           <ul class="pricecard__list">
             {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
           </ul>
-          <a class="btn {% if package.is_featured %}btn--solid{% endif %} pricecard__cta"
-             href="{% url 'create:request' %}?package={{ package.slug }}">Book this</a>
+          {% if package.bookable %}
+            <div class="pricecard__cta pricecard__book">
+              <form method="post" action="{% url 'create:book' %}">
+                {% csrf_token %}
+                <input type="hidden" name="package" value="{{ package.slug }}">
+                <button class="btn btn--solid" type="submit">Book — pay {{ package.deposit_label }} deposit</button>
+              </form>
+              <a class="linkline" href="{% url 'create:request' %}?package={{ package.slug }}">or ask a question first</a>
+            </div>
+          {% else %}
+            <a class="btn {% if package.is_featured %}btn--solid{% endif %} pricecard__cta"
+               href="{% url 'create:request' %}?package={{ package.slug }}">Request a quote</a>
+          {% endif %}
         </div>
       {% endfor %}
     </div>

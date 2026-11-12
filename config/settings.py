@@ -201,6 +201,15 @@ else:
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"hello@{SITE_DOMAIN}")
 NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", DEFAULT_FROM_EMAIL)
 
+# ---------------------------------------------------------------- Stripe (OMV)
+# Payments go straight into Oasis Media Visions' own Stripe account. With no
+# keys set, the booking buttons stay hidden and the page falls back to
+# request-a-quote. Use test keys locally; live keys only in production.
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY", "")
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+STRIPE_CURRENCY = os.environ.get("STRIPE_CURRENCY", "usd")
+
 # ---------------------------------------------------------------- security
 
 X_FRAME_OPTIONS = "DENY"
