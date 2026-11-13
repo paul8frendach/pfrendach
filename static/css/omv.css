@@ -132,8 +132,10 @@
   }
   .omv-subnav__tab::after { left: 10px; right: 10px; }
   .omv-subnav__cta { margin-left: 3px; }
-  /* In the scroller the account tab follows the CTA and peeks at the right
-     edge, which reads as "there's more" rather than a hard cut. */
+  /* "Request a film" shortens to "Request" on a phone so the four core tabs
+     fit at rest and the account tab peeks at the edge — a scroll cue, not a
+     chopped word. */
+  .omv-subnav__cta-rest { display: none; }
   .omv-subnav__account { margin-left: 0; }
 }
 

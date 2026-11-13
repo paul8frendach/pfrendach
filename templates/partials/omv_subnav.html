@@ -21,7 +21,7 @@ active tab carries the glow; the Request tab is the standing call to action.
          {% if omv_tab == 'packages' %}aria-current="page"{% endif %}>Packages</a>
       <a href="{% url 'create:request' %}"
          class="omv-subnav__tab omv-subnav__cta{% if omv_tab == 'request' %} is-active{% endif %}"
-         {% if omv_tab == 'request' %}aria-current="page"{% endif %}>Request a film</a>
+         {% if omv_tab == 'request' %}aria-current="page"{% endif %}>Request<span class="omv-subnav__cta-rest"> a film</span></a>
       <a href="{% if user.is_authenticated %}{% url 'create:account' %}{% else %}{% url 'create:signin' %}{% endif %}"
          class="omv-subnav__tab omv-subnav__account{% if omv_tab == 'account' %} is-active{% endif %}"
          {% if omv_tab == 'account' %}aria-current="page"{% endif %}>{% if user.is_authenticated %}Your projects{% else %}Sign in{% endif %}</a>
