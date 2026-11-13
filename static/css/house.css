@@ -2054,22 +2054,32 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 
 /* ---------------------------------------------------------- train: the player
    Who's coaching you — Paul's own playing days, a national title among them. */
-.train-player__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.train-player__strip {
+  display: flex;
   gap: 12px;
   margin-top: 1.4rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  /* a soft fade at each edge so the frames drift in and out, not hard-cut */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 3.5%, #000 96.5%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 3.5%, #000 96.5%, transparent);
 }
-.train-player__grid figure {
+.train-player__strip::-webkit-scrollbar { display: none; }
+.train-player__strip:active { cursor: grabbing; }
+.train-player__strip figure {
   position: relative;
   margin: 0;
+  flex: 0 0 clamp(192px, 24vw, 280px);
+  aspect-ratio: 4 / 5;
   border-radius: 12px;
   overflow: clip;
   border: 1px solid var(--rule);
   background: var(--ink-2);
-  aspect-ratio: 4 / 5;
 }
-.train-player__grid img {
+.train-player__strip img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2105,5 +2115,5 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 }
 .train-player__note b { color: var(--bone); font-weight: 500; }
 @media (max-width: 640px) {
-  .train-player__grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .train-player__strip figure { flex-basis: 62vw; }
 }

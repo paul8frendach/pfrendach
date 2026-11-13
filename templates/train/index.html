@@ -33,7 +33,7 @@
       <p class="beat">The player</p>
       <h2>Coached by someone who played.</h2>
     </div></div>
-    <div class="train-player__grid">
+    <div class="train-player__strip" data-player-strip tabindex="0" aria-label="Paul's playing days — scrolls automatically, drag to browse">
       <figure><img src="{% static 'train/player/paul-1.jpg' %}" alt="Paul Frendach juggling in a Temple kit" loading="lazy"></figure>
       <figure><img src="{% static 'train/player/paul-2.jpg' %}" alt="Paul Frendach on the ball for Temple" loading="lazy"></figure>
       <figure><img src="{% static 'train/player/paul-3.jpg' %}" alt="Paul Frendach in a Temple match" loading="lazy"></figure>
@@ -288,4 +288,50 @@ price and the next available time in the same glance.
     </div>
   </div>
 </section>
+
+<script>
+/* The player strip breathes: it drifts on its own, pauses the moment you touch
+   or hover it, and you can drag through it. Stops when off screen or when the
+   viewer prefers less motion. */
+(function () {
+  var strip = document.querySelector("[data-player-strip]");
+  if (!strip) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  Array.prototype.slice.call(strip.children).forEach(function (n) {
+    var c = n.cloneNode(true);
+    c.setAttribute("aria-hidden", "true");
+    strip.appendChild(c);
+  });
+
+  var paused = false, offscreen = false, half = 0, resumeT;
+  function measure() { half = strip.scrollWidth / 2; }
+  function pause() { paused = true; clearTimeout(resumeT); }
+  function resumeSoon() { clearTimeout(resumeT); resumeT = setTimeout(function () { paused = false; }, 1400); }
+
+  strip.addEventListener("pointerenter", pause);
+  strip.addEventListener("pointerleave", resumeSoon);
+  strip.addEventListener("pointerdown", pause);
+  window.addEventListener("pointerup", resumeSoon);
+  strip.addEventListener("touchstart", pause, { passive: true });
+  strip.addEventListener("touchend", resumeSoon, { passive: true });
+  strip.addEventListener("wheel", function () { pause(); resumeSoon(); }, { passive: true });
+  window.addEventListener("resize", measure, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) {
+      es.forEach(function (e) { offscreen = !e.isIntersecting; });
+    }, { threshold: 0 }).observe(strip);
+  }
+
+  function tick() {
+    if (!paused && !offscreen && half > 0) {
+      strip.scrollLeft += 0.6;
+      if (strip.scrollLeft >= half) strip.scrollLeft -= half;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(function () { measure(); requestAnimationFrame(tick); });
+})();
+</script>
 {% endblock %}
