@@ -1,0 +1,60 @@
+{% load static %}
+{% comment %}
+First-visit nudge to install the site as an app. Shows only on a phone, only in
+a normal browser (not already installed), and only once — the choice is
+remembered. iOS gets the manual Share → Add to Home Screen hint (Safari has no
+install API); Chrome/Android gets the native prompt behind one button.
+{% endcomment %}
+<div class="pwa-install" data-install hidden role="dialog" aria-label="Add Oasis Media Visions to your home screen">
+  <img class="pwa-install__icon" src="{% static 'marks/pf-app-icon-180.png' %}" alt="" width="44" height="44">
+  <div class="pwa-install__body">
+    <b class="pwa-install__title">Add to your Home Screen</b>
+    <span class="pwa-install__hint" data-install-ios>
+      Tap
+      <svg class="pwa-install__share" viewBox="0 0 24 24" aria-hidden="true" width="15" height="15">
+        <path d="M12 3v11M12 3l-4 4M12 3l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 11H5a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1h-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      then <b>Add to Home Screen</b> — opens like a real app.
+    </span>
+    <span class="pwa-install__hint" data-install-android hidden>Install Oasis Media Visions as an app.</span>
+  </div>
+  <button class="pwa-install__go" type="button" data-install-go hidden>Install</button>
+  <button class="pwa-install__close" type="button" data-install-close aria-label="Not now">&times;</button>
+</div>
+
+<script>
+(function () {
+  var KEY = "pf-install-dismissed";
+  var el = document.querySelector("[data-install]");
+  if (!el) return;
+  var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+  var dismissed = false; try { dismissed = localStorage.getItem(KEY) === "1"; } catch (e) {}
+  var phone = window.matchMedia && matchMedia("(max-width: 820px)").matches;
+  if (standalone || dismissed || !phone) return;
+
+  var deferred = null;
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferred = e;
+    el.querySelector("[data-install-ios]").hidden = true;
+    el.querySelector("[data-install-android]").hidden = false;
+    el.querySelector("[data-install-go]").hidden = false;
+  });
+
+  function show() { el.hidden = false; requestAnimationFrame(function () { el.classList.add("is-in"); }); }
+  function hide() {
+    el.classList.remove("is-in");
+    setTimeout(function () { el.hidden = true; }, 420);
+    try { localStorage.setItem(KEY, "1"); } catch (e) {}
+  }
+
+  setTimeout(show, 2800);
+  el.querySelector("[data-install-close]").addEventListener("click", hide);
+  var go = el.querySelector("[data-install-go]");
+  go.addEventListener("click", function () {
+    if (deferred) { deferred.prompt(); deferred = null; }
+    hide();
+  });
+})();
+</script>

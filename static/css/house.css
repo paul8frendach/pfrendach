@@ -293,6 +293,11 @@ p:last-child { margin-bottom: 0; }
    so nothing reflows when they go. */
 html.nav-tucked .chrome { transform: translateY(-101%); }
 
+/* Installed (standalone) PWA: sit the bar below the status bar / notch, and
+   keep content clear of the home indicator. No effect in a normal browser,
+   where the safe-area insets resolve to 0. */
+.chrome { padding-top: env(safe-area-inset-top, 0px); }
+
 .chrome__spacer { height: var(--chrome-tall, 130px); }
 
 .chrome__inner {
@@ -930,6 +935,8 @@ a.card:hover::before, .card--hover:hover::before { transform: scaleY(1); }
 .foot {
   border-top: 1px solid var(--rule);
   padding-block: clamp(40px, 6vw, 72px);
+  /* clear the home indicator when installed as a standalone app */
+  padding-bottom: calc(clamp(40px, 6vw, 72px) + env(safe-area-inset-bottom, 0px));
   color: var(--muted);
   font-size: 0.85rem;
 }
@@ -1960,7 +1967,7 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
     padding-inline: 50px;          /* symmetric clearance for the burger */
   }
   .sig--crest { font-size: clamp(19px, 5.8vw, 25px); }
-  .chrome__spacer { height: 60px; }
+  .chrome__spacer { height: calc(60px + env(safe-area-inset-top, 0px)); }
 
   .chrome__mobile {
     display: block;
@@ -2007,3 +2014,40 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   .chrome__mobile-inner a[aria-current="page"] { color: var(--accent); }
   .chrome__mobile-join { color: var(--accent); }
 }
+
+/* ---------------------------------------------------------- install nudge
+   First-visit "add to home screen" prompt. Branded, dismissible, phone-only. */
+.pwa-install {
+  position: fixed;
+  left: 12px; right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 120;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--ink) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--rule));
+  border-radius: 16px;
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 22px 54px -22px rgba(0,0,0,0.85);
+  transform: translateY(150%);
+  opacity: 0;
+  transition: transform .5s var(--ease), opacity .5s var(--ease);
+}
+.pwa-install.is-in { transform: none; opacity: 1; }
+.pwa-install[hidden] { display: none; }
+.pwa-install__icon { width: 44px; height: 44px; border-radius: 11px; flex: none; }
+.pwa-install__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.pwa-install__title { color: var(--bone); font-size: 0.95rem; }
+.pwa-install__hint { color: var(--bone-dim); font-size: 0.8rem; line-height: 1.4; }
+.pwa-install__hint b { color: var(--bone); font-weight: 500; }
+.pwa-install__share { display: inline-block; vertical-align: -2px; color: var(--accent); }
+.pwa-install__go {
+  flex: none; background: var(--accent); color: var(--ink); border: 0;
+  border-radius: 999px; padding: 9px 16px; font-weight: 600; font-size: 0.82rem; cursor: pointer;
+}
+.pwa-install__close {
+  flex: none; background: none; border: 0; color: var(--muted);
+  font-size: 1.35rem; line-height: 1; padding: 2px 6px; cursor: pointer; align-self: flex-start;
+}
+.pwa-install__close:hover { color: var(--bone); }
+@media (min-width: 560px) { .pwa-install { left: auto; right: 16px; max-width: 430px; } }

@@ -48,6 +48,17 @@ def index(request):
         Photo.objects.filter(is_live=True, style=Photo.Style.WEDDING).first()
         or Photo.objects.filter(is_live=True).first()
     )
+    # Atmospheric side-angle frames the hero drifts through — the room feels
+    # alive without pulling focus off the headline. Dark, cinematic picks only.
+    _hero_slide_names = [
+        "wedding-1.jpg", "aerial-2.jpg", "wedding-7.jpg",
+        "sports-7.jpg", "wedding-3.jpg", "aerial-5.jpg",
+    ]
+    _have = set(
+        Photo.objects.filter(is_live=True, image__in=_hero_slide_names)
+        .values_list("image", flat=True)
+    )
+    hero_slides = [static(f"omv/gallery/{n}") for n in _hero_slide_names if n in _have]
     # Each film category borrows a real still of the nearest style, so the
     # "now booking" cards are never empty boxes.
     _style_for = {"wedding": "wedding", "event": "wedding", "school": "sports",
@@ -68,6 +79,7 @@ def index(request):
             "work": work,
             "featured": featured,
             "hero_photo": hero_photo,
+            "hero_slides": hero_slides,
             "groups": _grouped_work(),
             "categories": Work.Category.choices,
             "cat_cards": cat_cards,

@@ -41,7 +41,8 @@
   border-block: 1px solid var(--omv-line);
   background: color-mix(in srgb, var(--ink) 82%, transparent);
   position: sticky;
-  top: 58px; /* sits just under the collapsed house chrome (59px, z-index 50) */
+  /* under the collapsed house chrome (59px); + the notch inset when installed */
+  top: calc(58px + env(safe-area-inset-top, 0px));
   z-index: 40;
   backdrop-filter: blur(14px) saturate(1.2);
   transition: transform 0.42s var(--ease), top 0.42s var(--ease);
@@ -176,8 +177,36 @@ html.nav-tucked .omv-subnav { top: 0; transform: translateY(-101%); }
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 30%, transparent) 0%,
-    color-mix(in srgb, var(--ink) 20%, transparent) 40%, var(--ink) 100%);
+  /* Vertical floor for the coverage line + a soft left wash so the headline
+     holds against whichever frame is drifting behind it. */
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ink) 34%, transparent) 0%,
+      color-mix(in srgb, var(--ink) 22%, transparent) 38%, var(--ink) 100%),
+    linear-gradient(90deg, color-mix(in srgb, var(--ink) 42%, transparent) 0%, transparent 58%);
+}
+
+/* The hero drifts through a few cinematic frames — alive, never distracting. */
+.omv-hero__slides { position: absolute; inset: 0; }
+.omv-hero__slides .omv-hero__slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 35%;
+  opacity: 0;
+  filter: saturate(0.98) contrast(1.05);
+  transition: opacity 1.8s ease;
+  animation: none;
+  will-change: opacity;
+}
+.omv-hero__slides .omv-hero__slide.is-active {
+  opacity: 0.66;
+  animation: omv-hero-drift 13s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .omv-hero__slides .omv-hero__slide { transition: none; animation: none; }
+  .omv-hero__slides .omv-hero__slide.is-active { animation: none; }
 }
 .omv-hero__inner {
   padding-block: clamp(48px, 10vw, 120px) clamp(40px, 7vw, 84px);
@@ -888,4 +917,49 @@ html.nav-tucked .omv-subnav { top: 0; transform: translateY(-101%); }
   .omv-receipt__date { grid-column: 2; }
   .omv-portal__foot { flex-direction: column; align-items: stretch; text-align: center; }
   .omv-subnav__account { margin-left: 0; }
+}
+
+/* ------------------------------------------------------------ experience band
+   Social proof for the pitch: the big number, then who the work was for. */
+.omv-exp {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.6fr);
+  gap: clamp(22px, 4vw, 54px);
+  align-items: center;
+  margin-top: 1.6rem;
+}
+.omv-exp__stat {
+  border: 1px solid var(--omv-panel-edge);
+  background: var(--omv-panel);
+  border-radius: 18px;
+  padding: clamp(26px, 3.4vw, 40px) clamp(20px, 3vw, 32px);
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+.omv-exp__num {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(3.4rem, 10vw, 5.4rem);
+  line-height: 0.86;
+  letter-spacing: -0.02em;
+  color: var(--glow);
+}
+.omv-exp__lbl { color: var(--bone-dim); font-size: 0.92rem; line-height: 1.4; }
+.omv-exp__list { list-style: none; margin: 0; padding: 0; display: grid; }
+.omv-exp__list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 15px 2px;
+  border-top: 1px solid var(--omv-line);
+}
+.omv-exp__list li:first-child { border-top: 0; }
+.omv-exp__list b { color: var(--bone); font-weight: 500; font-size: 1.08rem; }
+.omv-exp__list span { color: var(--muted); font-size: 0.9rem; text-align: right; }
+@media (max-width: 720px) {
+  .omv-exp { grid-template-columns: 1fr; gap: 22px; }
+  .omv-exp__list li { flex-direction: column; gap: 3px; align-items: flex-start; padding: 12px 2px; }
+  .omv-exp__list span { text-align: left; }
 }

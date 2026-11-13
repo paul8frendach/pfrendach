@@ -5,6 +5,7 @@
 {% block description %}Oasis Media Visions. Cinematic wedding, event, school and listing films in Calvert, Anne Arundel and across Maryland. Owner-operated by Paul Frendach.{% endblock %}
 {% block og_title %}Oasis Media Visions — Maryland wedding & event films{% endblock %}
 {% block og_description %}Cinematic highlight films for weddings, events, schools and listings. Owner-operated, delivered in 30 days.{% endblock %}
+{% block og_image %}{{ site_url }}{% static 'omv/og-card.jpg' %}{% endblock %}
 {% block world %}create{% endblock %}
 
 {% comment %}The ꟼFrendach clock intro — plays once on arrival / each app launch,
@@ -44,8 +45,13 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
              {% if featured.poster %}poster="{{ featured.poster.url }}"{% endif %}>
         <source src="{{ featured.playable }}" type="video/mp4">
       </video>
-    {% elif featured.poster %}
-      <img src="{{ featured.poster.url }}" alt="">
+    {% elif hero_slides %}
+      <div class="omv-hero__slides" data-hero-slides>
+        {% for src in hero_slides %}
+          <img class="omv-hero__slide{% if forloop.first %} is-active{% endif %}" src="{{ src }}" alt=""
+               {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}>
+        {% endfor %}
+      </div>
     {% elif hero_photo %}
       <img src="{% static hero_photo.static_path %}" alt="" fetchpriority="high">
     {% endif %}
@@ -79,6 +85,29 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
     <span class="omv-strip__item"><b>30 days</b> to final delivery</span>
     <span class="omv-strip__item"><b>50%</b> books your date</span>
     <span class="omv-strip__item"><b>FAA Part 107</b> drone for the aerials</span>
+  </div>
+</section>
+
+{# ---------------------------------------------------------------- experience #}
+<section class="section section--tight" id="experience">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">Experience</p>
+      <h2>Trusted to tell the story.</h2>
+    </div></div>
+    <div class="omv-exp">
+      <div class="omv-exp__stat">
+        <span class="omv-exp__num">2M+</span>
+        <span class="omv-exp__lbl">social media views on content produced</span>
+      </div>
+      <ul class="omv-exp__list">
+        <li><b>Universities</b><span>UVA · Temple · Penn State</span></li>
+        <li><b>Private schools</b><span>athletics, brand &amp; day-in-the-life</span></li>
+        <li><b>Major corporations</b><span>brand &amp; event films</span></li>
+        <li><b>Keller Williams</b><span>real estate listings &amp; drone</span></li>
+        <li><b>Weddings</b><span>across Maryland &amp; the Mid-Atlantic</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -295,4 +324,20 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
     <p class="slate" style="margin-top:1.8rem">A Paul Frendach film house · Credited Oasis Media Visions</p>
   </div>
 </section>
+
+<script>
+(function () {
+  var wrap = document.querySelector("[data-hero-slides]");
+  if (!wrap) return;
+  var slides = Array.prototype.slice.call(wrap.querySelectorAll(".omv-hero__slide"));
+  if (slides.length < 2) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  var i = 0;
+  setInterval(function () {
+    slides[i].classList.remove("is-active");
+    i = (i + 1) % slides.length;
+    slides[i].classList.add("is-active");
+  }, 6000);
+})();
+</script>
 {% endblock %}
