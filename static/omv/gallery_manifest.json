@@ -72,14 +72,6 @@
     "is_featured": true
   },
   {
-    "image": "portrait-2.jpg",
-    "style": "portrait",
-    "sort": 2,
-    "width": 1467,
-    "height": 2200,
-    "is_featured": false
-  },
-  {
     "image": "portrait-4.jpg",
     "style": "portrait",
     "sort": 4,

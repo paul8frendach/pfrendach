@@ -2117,3 +2117,16 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 @media (max-width: 640px) {
   .train-player__strip figure { flex-basis: 62vw; }
 }
+
+/* Paul's creative headshot on the About hero (a portrait, not portfolio work). */
+.about-headshot {
+  width: clamp(150px, 26vw, 220px);
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 22%;
+  border-radius: 16px;
+  display: block;
+  margin: 0 auto 1.5rem;
+  border: 1px solid var(--rule);
+  filter: contrast(1.04);
+}
