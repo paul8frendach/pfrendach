@@ -46,8 +46,23 @@
         <h2>{{ group.label }}.</h2>
       </div>
     </div>
+
+    {% with lead=group.photos.0 %}
+    {% if lead %}
+    <a class="gallery-lead gallery-lead--{{ lead.orientation }}"
+       href="{% static lead.static_path %}" data-lightbox
+       {% if lead.caption %}data-caption="{{ lead.caption }}"{% endif %}
+       aria-label="{{ lead.title|default:group.label }}">
+      <img src="{% static lead.static_path %}" alt="{{ lead.title|default:group.label }}"
+           {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+           {% if lead.width %}width="{{ lead.width }}" height="{{ lead.height }}"{% endif %}>
+      <span class="gallery-lead__tag">{{ group.label }}</span>
+    </a>
+    {% endif %}
+    {% endwith %}
+
     <div class="gallery">
-      {% for photo in group.photos %}
+      {% for photo in group.photos|slice:"1:" %}
         <a class="gallery__item gallery__item--{{ photo.orientation }}"
            href="{% static photo.static_path %}"
            data-lightbox

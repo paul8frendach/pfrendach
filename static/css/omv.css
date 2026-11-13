@@ -490,10 +490,63 @@
 }
 
 /* ----------------------------------------------------------- photography */
+/* The lead frame — each style opens on its strongest moment, full width and
+   cinematic, before the grid of the rest. */
+.gallery-lead {
+  position: relative;
+  display: block;
+  margin-top: 1.4rem;
+  border-radius: 16px;
+  overflow: clip;
+  border: 1px solid var(--omv-line);
+  background: var(--ink-2);
+  cursor: zoom-in;
+  aspect-ratio: 16 / 7;
+}
+.gallery-lead img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  display: block;
+  transition: transform 1.1s var(--ease), filter 0.6s var(--ease);
+  filter: saturate(0.94) contrast(1.02);
+}
+.gallery-lead::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 52%,
+    color-mix(in srgb, var(--ink) 72%, transparent) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.gallery-lead:hover img { transform: scale(1.03); filter: saturate(1.05) contrast(1.03); }
+.gallery-lead__tag {
+  position: absolute;
+  left: clamp(16px, 2.4vw, 26px);
+  bottom: clamp(14px, 2vw, 22px);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.6vw, 1.6rem);
+  color: var(--bone);
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 18px color-mix(in srgb, var(--ink) 80%, transparent);
+}
+.gallery-lead__tag::before {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 2px;
+  margin-right: 12px;
+  vertical-align: middle;
+  background: var(--glow);
+}
+
 .gallery {
   columns: 3 330px;
   column-gap: 14px;
-  margin-top: 1.4rem;
+  margin-top: 14px;
 }
 .gallery__item {
   display: block;
@@ -572,6 +625,7 @@
   .omv-hero h1 { max-width: 100%; }
   .gallery { columns: 2 150px; column-gap: 10px; }
   .gallery__item { margin-bottom: 10px; }
+  .gallery-lead { aspect-ratio: 4 / 3; border-radius: 12px; }
   .photo-teaser { grid-template-columns: repeat(2, 1fr); }
 }
 

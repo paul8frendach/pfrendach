@@ -1,0 +1,210 @@
+[
+  {
+    "image": "wedding-1.jpg",
+    "style": "wedding",
+    "sort": 1,
+    "width": 2200,
+    "height": 1467,
+    "is_featured": true
+  },
+  {
+    "image": "wedding-2.jpg",
+    "style": "wedding",
+    "sort": 2,
+    "width": 1920,
+    "height": 1080,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-3.jpg",
+    "style": "wedding",
+    "sort": 3,
+    "width": 2200,
+    "height": 1467,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-4.jpg",
+    "style": "wedding",
+    "sort": 4,
+    "width": 2200,
+    "height": 1238,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-5.jpg",
+    "style": "wedding",
+    "sort": 5,
+    "width": 1234,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-6.jpg",
+    "style": "wedding",
+    "sort": 6,
+    "width": 1920,
+    "height": 1080,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-7.jpg",
+    "style": "wedding",
+    "sort": 7,
+    "width": 2200,
+    "height": 1467,
+    "is_featured": false
+  },
+  {
+    "image": "wedding-8.jpg",
+    "style": "wedding",
+    "sort": 8,
+    "width": 1467,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "portrait-1.jpg",
+    "style": "portrait",
+    "sort": 1,
+    "width": 1234,
+    "height": 2200,
+    "is_featured": true
+  },
+  {
+    "image": "portrait-2.jpg",
+    "style": "portrait",
+    "sort": 2,
+    "width": 1467,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "portrait-3.jpg",
+    "style": "portrait",
+    "sort": 3,
+    "width": 2200,
+    "height": 1467,
+    "is_featured": false
+  },
+  {
+    "image": "portrait-4.jpg",
+    "style": "portrait",
+    "sort": 4,
+    "width": 1234,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "portrait-5.jpg",
+    "style": "portrait",
+    "sort": 5,
+    "width": 1234,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "portrait-6.jpg",
+    "style": "portrait",
+    "sort": 6,
+    "width": 2200,
+    "height": 1650,
+    "is_featured": false
+  },
+  {
+    "image": "sports-1.jpg",
+    "style": "sports",
+    "sort": 1,
+    "width": 1496,
+    "height": 997,
+    "is_featured": true
+  },
+  {
+    "image": "sports-2.jpg",
+    "style": "sports",
+    "sort": 2,
+    "width": 1496,
+    "height": 997,
+    "is_featured": false
+  },
+  {
+    "image": "sports-3.jpg",
+    "style": "sports",
+    "sort": 3,
+    "width": 2200,
+    "height": 1234,
+    "is_featured": false
+  },
+  {
+    "image": "sports-4.jpg",
+    "style": "sports",
+    "sort": 4,
+    "width": 2200,
+    "height": 1234,
+    "is_featured": false
+  },
+  {
+    "image": "sports-5.jpg",
+    "style": "sports",
+    "sort": 5,
+    "width": 1496,
+    "height": 997,
+    "is_featured": false
+  },
+  {
+    "image": "sports-6.jpg",
+    "style": "sports",
+    "sort": 6,
+    "width": 2200,
+    "height": 1234,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-1.jpg",
+    "style": "aerial",
+    "sort": 1,
+    "width": 2200,
+    "height": 1650,
+    "is_featured": true
+  },
+  {
+    "image": "aerial-2.jpg",
+    "style": "aerial",
+    "sort": 2,
+    "width": 2200,
+    "height": 1650,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-3.jpg",
+    "style": "aerial",
+    "sort": 3,
+    "width": 2200,
+    "height": 1238,
+    "is_featured": false
+  },
+  {
+    "image": "event-1.jpg",
+    "style": "event",
+    "sort": 1,
+    "width": 1467,
+    "height": 2200,
+    "is_featured": true
+  },
+  {
+    "image": "event-2.jpg",
+    "style": "event",
+    "sort": 2,
+    "width": 1467,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "event-3.jpg",
+    "style": "event",
+    "sort": 3,
+    "width": 1920,
+    "height": 1080,
+    "is_featured": false
+  }
+]
