@@ -38,13 +38,15 @@
 
 /* -------------------------------------------------------------- sub-navigation */
 .omv-subnav {
-  border-block: 1px solid var(--omv-line);
-  background: color-mix(in srgb, var(--ink) 82%, transparent);
+  /* Matches the collapsed house chrome exactly — same ink, same blur, one
+     shared divider — so the two bars read as a single continuous nav. */
+  border-bottom: 1px solid color-mix(in srgb, var(--bone) 12%, transparent);
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
   position: sticky;
   /* under the collapsed house chrome (59px); + the notch inset when installed */
   top: calc(58px + env(safe-area-inset-top, 0px));
   z-index: 40;
-  backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: saturate(150%) blur(18px);
   transition: transform 0.42s var(--ease), top 0.42s var(--ease);
 }
 /* Tucks away with the house chrome when you read down the page. */
