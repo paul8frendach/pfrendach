@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static house_tags %}
 
-{% block title %}Oasis Media Visions — Wedding & event films in Maryland{% endblock %}
-{% block description %}Oasis Media Visions. Cinematic wedding, event, school and listing films in Calvert, Anne Arundel and across Maryland. Owner-operated by Paul Frendach.{% endblock %}
-{% block og_title %}Oasis Media Visions — Maryland wedding & event films{% endblock %}
-{% block og_description %}Cinematic highlight films for weddings, events, schools and listings. Owner-operated, delivered in 30 days.{% endblock %}
+{% block title %}Videographer & Drone Pilot in Southern Maryland — Oasis Media Visions{% endblock %}
+{% block description %}Oasis Media Visions — videographer, FAA-licensed drone pilot and video editor in Southern Maryland. Wedding, event, school, corporate and real-estate films across Calvert, Anne Arundel and beyond. Owner-operated by Paul Frendach.{% endblock %}
+{% block og_title %}Oasis Media Visions — Videographer & Drone Pilot in Southern Maryland{% endblock %}
+{% block og_description %}Videographer, FAA-licensed drone pilot and video editor. Cinematic wedding, event, school, corporate and real-estate films — owner-operated, delivered in 30 days.{% endblock %}
 {% block og_image %}{{ site_url }}{% static 'omv/og-card.jpg' %}{% endblock %}
 {% block world %}create{% endblock %}
 
@@ -19,17 +19,25 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "VideoProductionCompany",
+  "@type": ["VideoProductionCompany", "LocalBusiness"],
   "name": "Oasis Media Visions",
   "alternateName": "OMV",
-  "description": "Cinematic wedding, event, school and real-estate listing films in Maryland.",
-  "url": "https://www.oasismediavisions.com",
+  "description": "Videographer, FAA-licensed drone pilot and video editor in Southern Maryland — wedding, event, school, corporate and real-estate films.",
+  "url": "https://omv.pfrendach.com",
   "telephone": "+1-443-684-0042",
   "email": "paul@oasismediavisions.com",
-  "founder": "Paul Frendach",
+  "founder": {"@type": "Person", "name": "Paul Frendach", "jobTitle": "Videographer & FAA-licensed drone pilot"},
+  "knowsAbout": ["Drone videography", "Aerial cinematography", "Video editing", "Wedding films", "Real estate videography", "FAA Part 107"],
   "sameAs": ["https://instagram.com/visionoasis"],
-  "areaServed": ["Calvert County, MD", "Anne Arundel County, MD", "Frederick County, MD", "Maryland"],
+  "areaServed": ["Southern Maryland", "Calvert County, MD", "Anne Arundel County, MD", "St. Mary's County, MD", "Charles County, MD", "Maryland"],
   "address": {"@type": "PostalAddress", "addressLocality": "Huntingtown", "addressRegion": "MD", "postalCode": "20678", "addressCountry": "US"},
+  "makesOffer": [
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Wedding films"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Drone & aerial videography"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Real estate listing films"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "School & sports films"}},
+    {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Corporate & brand films"}}
+  ],
   "priceRange": "$$"
 }
 </script>
@@ -95,19 +103,28 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
       <p class="beat">Experience</p>
       <h2>Trusted to tell the story.</h2>
     </div></div>
-    <div class="omv-exp">
-      <div class="omv-exp__stat">
-        <span class="omv-exp__num">2M+</span>
-        <span class="omv-exp__lbl">social media views on content produced</span>
+    <div class="omv-stats">
+      <div class="omv-stat">
+        <span class="omv-stat__num">2M+</span>
+        <span class="omv-stat__lbl">social media views on content produced</span>
       </div>
-      <ul class="omv-exp__list">
-        <li><b>Universities</b><span>UVA · Temple · Penn State</span></li>
-        <li><b>Private schools</b><span>athletics, brand &amp; day-in-the-life</span></li>
-        <li><b>Major corporations</b><span>brand &amp; event films</span></li>
-        <li><b>Keller Williams</b><span>real estate listings &amp; drone</span></li>
-        <li><b>Weddings</b><span>across Maryland &amp; the Mid-Atlantic</span></li>
-      </ul>
+      <div class="omv-stat">
+        <span class="omv-stat__num">Part&nbsp;107</span>
+        <span class="omv-stat__lbl">FAA-licensed drone pilot</span>
+      </div>
+      <div class="omv-stat omv-stat--press">
+        <span class="omv-stat__press">The Washington Post</span>
+        <span class="omv-stat__lbl">aerial footage picked up by news outlets — the 2021 I-95 backup</span>
+      </div>
     </div>
+
+    <ul class="omv-exp__list">
+      <li><b>Universities</b><span>UVA · Temple · Penn State</span></li>
+      <li><b>Private schools</b><span>athletics, brand &amp; day-in-the-life</span></li>
+      <li><b>Major corporations</b><span>brand &amp; event films</span></li>
+      <li><b>Keller Williams</b><span>real estate listings &amp; drone</span></li>
+      <li><b>Weddings</b><span>across Maryland &amp; the Mid-Atlantic</span></li>
+    </ul>
   </div>
 </section>
 
