@@ -343,6 +343,69 @@ The writes landed and the account still did not match, because the venue does
 not exist on it and the API will not invent a location. Without the verify pass
 that reads as a clean success.
 
+## 4e. Handing your users a LAB account
+
+The LAB is what a coach and their athletes use **on the day** — the mobile app
+at the field. A parent who signed up on the website and then has to sign up
+again to get any of that mostly does not, and the coach loses the half of the
+product only The LAB provides.
+
+`POST /api/v1/clients` closes that gap. The site posts the profile it already
+holds from its own sign-up; The LAB creates the Payer, the Athletes and a real
+account, and emails the person a link to set their own password.
+
+### What your sign-up must collect
+
+This is the requirement on the web app, and it is short:
+
+| Field | | |
+|---|---|---|
+| `payer.email` | **required** | the account's identity, and the only address the invitation reaches |
+| `payer.first_name`, `payer.last_name` | **required** | |
+| `payer.phone` | optional | |
+| `athletes[].first_name`, `.last_name` | **required per athlete** | |
+| `athletes[]` age | **one of** `birthday` (YYYY-MM-DD), `birth_year`, `age_range` | send one, never all three |
+
+Up to 12 athletes. **If your sign-up does not collect the child's name and age,
+add it** — those two fields are the difference between the coach receiving a
+contact and receiving a roster.
+
+### The three rules
+
+1. **A password never crosses the API.** There is no field for one, and posting
+   one is refused with `400 password_not_accepted` rather than ignored, so
+   nobody builds a flow around a field that silently does nothing. The account
+   is created with an *unusable* password; only a link sent to that inbox can
+   set one. Nothing can sign in as them before that.
+2. **An address that already belongs to a LAB user is never touched.** That
+   account has an owner and they did not ask for this. `status` comes back
+   `existing_account`, nothing is created, no email is sent — ask them to log in.
+3. **Resubmitting does not resend.** A live claim link returns `claim_pending`,
+   so replaying a form cannot be used to spam somebody's inbox.
+
+### Branching on the answer
+
+`account.status` is the only thing worth branching on:
+
+| | |
+|---|---|
+| `claim_sent` | New account, link issued. Tell them to check their email. |
+| `claim_pending` | A live link already went out. Do not resubmit. |
+| `existing_account` | Already a LAB user. Ask them to log in. |
+
+A `lab_test_` key creates the records, sends **no** email, and returns
+`account.claim_url` so the flow can be walked without a real inbox. A live key
+never returns it — a claim URL in an API response is a password reset for
+anyone holding your logs.
+
+### Why the wrapper does not call this from the enquiry form
+
+`store.provision_client()` exists and is deliberately not wired into
+`train:enquire`. An enquiry is somebody asking a question; turning that into
+"we made you an account and emailed you" is the coach's decision, not a side
+effect of a contact form. Call it from a real sign-up, where the person chose
+to register.
+
 ## 5. Where things are
 
 | File | What it is |

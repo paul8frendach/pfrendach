@@ -9,9 +9,11 @@ from apps.house.sitemaps import SITEMAPS
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("accounts/", include("apps.accounts.urls")),
     path("train/", include("apps.train.urls")),
     path("create/", include("apps.create.urls")),
     path("build/", include("apps.build.urls")),
+    path("shop/", include("apps.shop.urls", namespace="shop")),
     path(
         "sitemap.xml",
         sitemap,
