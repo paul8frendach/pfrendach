@@ -118,7 +118,7 @@ html.nav-tucked .omv-subnav { top: 0; transform: translateY(-101%); }
   background: color-mix(in srgb, var(--glow) 85%, white);
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1100px) {
   .omv-subnav__brand { display: none; }
   .omv-subnav__inner { justify-content: flex-start; padding-block: 4px; }
   .omv-subnav__tabs {

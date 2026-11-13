@@ -25,6 +25,11 @@ urlpatterns = [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
         name="robots",
     ),
+    path(
+        "sw.js",
+        TemplateView.as_view(template_name="sw.js", content_type="application/javascript"),
+        name="sw",
+    ),
     path("", include("apps.house.urls")),
 ]
 

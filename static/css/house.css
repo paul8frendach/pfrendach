@@ -1922,7 +1922,9 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 .chrome__burger { display: none; }
 .chrome__mobile { display: none; }
 
-@media (max-width: 720px) {
+/* Tablets and split-views collapse to the clean bar too (the desktop row of
+   crest + three tabs + four links only fits comfortably past ~1100px). */
+@media (max-width: 1100px) {
   .chrome__burger {
     display: flex;
     flex-direction: column;

@@ -89,5 +89,12 @@
   <script src="{% asset 'js/console.js' %}" defer></script>
   {% block curtain_js %}{% endblock %}
   {% block extra_js %}{% endblock %}
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function () {});
+    });
+  }
+  </script>
 </body>
 </html>
