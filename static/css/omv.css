@@ -36,6 +36,84 @@
 }
 .omv-kicker span { color: var(--muted); }
 
+/* -------------------------------------------------------------- sub-navigation */
+.omv-subnav {
+  border-block: 1px solid var(--omv-line);
+  background: color-mix(in srgb, var(--glow) 4%, var(--ink-2));
+}
+.omv-subnav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 54px;
+}
+.omv-subnav__brand {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  flex: none;
+}
+.omv-subnav__o { color: var(--glow); }
+.omv-subnav__rest { color: var(--bone); }
+.omv-subnav__tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.omv-subnav__tabs::-webkit-scrollbar { display: none; }
+.omv-subnav__tab {
+  position: relative;
+  flex: none;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  color: var(--bone-dim);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.3s var(--ease), background 0.3s var(--ease);
+  white-space: nowrap;
+}
+.omv-subnav__tab::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 2px;
+  height: 2px;
+  background: var(--glow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+.omv-subnav__tab:hover { color: var(--bone); }
+.omv-subnav__tab:hover::after,
+.omv-subnav__tab.is-active::after { transform: scaleX(1); }
+.omv-subnav__tab.is-active { color: var(--bone); }
+.omv-subnav__cta {
+  margin-left: 6px;
+  background: var(--glow);
+  color: var(--ink);
+  font-weight: 600;
+}
+.omv-subnav__cta::after { display: none; }
+.omv-subnav__cta:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--glow) 85%, white);
+}
+
+@media (max-width: 720px) {
+  .omv-subnav__brand { display: none; }
+  .omv-subnav__inner { justify-content: flex-start; }
+  .omv-subnav__tabs { width: 100%; }
+}
+
 /* ------------------------------------------------------------------ hero */
 .omv-hero {
   position: relative;

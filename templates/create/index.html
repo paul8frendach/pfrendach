@@ -53,7 +53,6 @@
     </p>
     <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="#work">Watch the work</a>
-      <a class="btn btn--quiet" href="{% url 'create:photography' %}">Photography</a>
       <a class="btn btn--quiet" href="{% url 'create:request' %}">Request your film</a>
     </div>
     <p class="omv-hero__cov">
@@ -62,6 +61,8 @@
     </p>
   </div>
 </section>
+
+{% include "partials/omv_subnav.html" %}
 
 {# ---------------------------------------------------------------- trust strip #}
 <section class="omv-strip">

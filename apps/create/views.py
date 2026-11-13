@@ -52,6 +52,7 @@ def index(request):
             "photos": list(Photo.objects.filter(is_live=True, is_featured=True)[:4])
             or list(Photo.objects.filter(is_live=True)[:4]),
             "photo_count": Photo.objects.filter(is_live=True).count(),
+            "omv_tab": "films",
         },
     )
 
@@ -75,6 +76,7 @@ def photography(request):
             "styles": Photo.Style.choices,
             "active_style": style,
             "count": live.count(),
+            "omv_tab": "photography",
         },
     )
 
@@ -130,6 +132,7 @@ def request_film(request):
             "form": form,
             "packages": Package.objects.filter(is_live=True),
             "selected_package": package,
+            "omv_tab": "request",
         },
     )
 

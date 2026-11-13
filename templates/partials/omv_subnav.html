@@ -1,0 +1,27 @@
+{% comment %}
+Oasis Media Visions sub-navigation. Sits on every room surface so a visitor
+moves between Films, Photography, Packages and Request without hunting. The
+active tab carries the glow; the Request tab is the standing call to action.
+`omv_tab` is set by each view: films | photography | packages | request.
+{% endcomment %}
+<nav class="omv-subnav" aria-label="Oasis Media Visions sections">
+  <div class="shell omv-subnav__inner">
+    <a class="omv-subnav__brand" href="{% url 'create:index' %}" aria-label="Oasis Media Visions home">
+      <span class="omv-subnav__o">Oasis</span><span class="omv-subnav__rest"> Media Visions</span>
+    </a>
+    <div class="omv-subnav__tabs">
+      <a href="{% url 'create:index' %}#work"
+         class="omv-subnav__tab{% if omv_tab == 'films' %} is-active{% endif %}"
+         {% if omv_tab == 'films' %}aria-current="page"{% endif %}>Films</a>
+      <a href="{% url 'create:photography' %}"
+         class="omv-subnav__tab{% if omv_tab == 'photography' %} is-active{% endif %}"
+         {% if omv_tab == 'photography' %}aria-current="page"{% endif %}>Photography</a>
+      <a href="{% url 'create:index' %}#packages"
+         class="omv-subnav__tab{% if omv_tab == 'packages' %} is-active{% endif %}"
+         {% if omv_tab == 'packages' %}aria-current="page"{% endif %}>Packages</a>
+      <a href="{% url 'create:request' %}"
+         class="omv-subnav__tab omv-subnav__cta{% if omv_tab == 'request' %} is-active{% endif %}"
+         {% if omv_tab == 'request' %}aria-current="page"{% endif %}>Request a film</a>
+    </div>
+  </div>
+</nav>
