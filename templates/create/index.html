@@ -128,6 +128,29 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
   </div>
 </section>
 
+{# ---------------------------------------------------------------- in motion #}
+{% if teasers %}
+<section class="section section--tight" id="motion">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">In motion</p>
+      <h2>A few seconds of the feeling.</h2>
+    </div></div>
+    <div class="omv-reel">
+      {% for t in teasers %}
+      <figure class="omv-reel__item">
+        <video class="omv-reel__vid" muted loop playsinline preload="none"
+               poster="{{ t.poster }}" data-reel aria-label="{{ t.label }}">
+          <source src="{{ t.src }}" type="video/mp4">
+        </video>
+        <figcaption class="omv-reel__cap">{{ t.label }}</figcaption>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {# ---------------------------------------------------------------- work by category #}
 <section class="section" id="work">
   <div class="shell">
@@ -355,6 +378,25 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
     i = (i + 1) % slides.length;
     slides[i].classList.add("is-active");
   }, 6000);
+})();
+
+/* The teaser reel plays only while on screen — muted, looping, inline. Battery
+   and data stay cheap, and nothing moves that you can't see. */
+(function () {
+  var vids = Array.prototype.slice.call(document.querySelectorAll("[data-reel]"));
+  if (!vids.length) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!("IntersectionObserver" in window)) {
+    vids.forEach(function (v) { v.play().catch(function () {}); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.preload = "auto"; e.target.play().catch(function () {}); }
+      else { e.target.pause(); }
+    });
+  }, { threshold: 0.3 });
+  vids.forEach(function (v) { io.observe(v); });
 })();
 </script>
 {% endblock %}

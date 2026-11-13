@@ -59,6 +59,19 @@ def index(request):
         .values_list("image", flat=True)
     )
     hero_slides = [static(f"omv/gallery/{n}") for n in _hero_slide_names if n in _have]
+
+    # Short, muted, looping teasers — a few seconds of the feeling, in motion.
+    _teaser_set = [
+        ("city", "Philadelphia, from the air"),
+        ("staircase", "The first look"),
+        ("reveal", "The reveal"),
+        ("aerial", "Drone over the block"),
+    ]
+    teasers = [
+        {"src": static(f"omv/teasers/{n}.mp4"),
+         "poster": static(f"omv/teasers/{n}.jpg"), "label": label}
+        for n, label in _teaser_set
+    ]
     # Each film category borrows a real still of the nearest style, so the
     # "now booking" cards are never empty boxes.
     _style_for = {"wedding": "wedding", "event": "wedding", "school": "sports",
@@ -80,6 +93,7 @@ def index(request):
             "featured": featured,
             "hero_photo": hero_photo,
             "hero_slides": hero_slides,
+            "teasers": teasers,
             "groups": _grouped_work(),
             "categories": Work.Category.choices,
             "cat_cards": cat_cards,
