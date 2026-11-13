@@ -39,8 +39,14 @@
 /* -------------------------------------------------------------- sub-navigation */
 .omv-subnav {
   border-block: 1px solid var(--omv-line);
-  background: color-mix(in srgb, var(--glow) 4%, var(--ink-2));
+  background: color-mix(in srgb, var(--ink) 82%, transparent);
+  position: sticky;
+  top: 58px; /* sits just under the collapsed house chrome (59px, z-index 50) */
+  z-index: 40;
+  backdrop-filter: blur(14px) saturate(1.2);
 }
+/* clicked #work / #packages land below the fixed chrome + sticky sub-nav */
+[data-world="create"] [id] { scroll-margin-top: 120px; }
 .omv-subnav__inner {
   display: flex;
   align-items: center;
