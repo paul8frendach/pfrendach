@@ -1902,3 +1902,86 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   width: min(104vh, 104vw);
   opacity: 0.34;
 }
+
+/* ---------------------------------------------------------- mobile menu
+   On a phone the crest shows only the mark, so the whole nav lives behind a
+   menu button in the corner. Desktop is unchanged — the button never shows. */
+.chrome__burger { display: none; }
+.chrome__mobile { display: none; }
+
+@media (max-width: 720px) {
+  .chrome__burger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    position: absolute;
+    top: 0;
+    right: 14px;
+    height: 59px;
+    width: 46px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    z-index: 60;
+    padding: 0;
+  }
+  .chrome__burger span {
+    display: block;
+    height: 2px;
+    width: 24px;
+    background: var(--bone);
+    border-radius: 2px;
+    transition: transform 0.3s var(--ease), opacity 0.2s var(--ease), width 0.3s var(--ease);
+  }
+  .chrome__burger span:nth-child(2) { width: 17px; }
+  .chrome__burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 24px; }
+  .chrome__burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .chrome__burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 24px; }
+
+  .chrome__mobile {
+    display: block;
+    position: fixed;
+    top: 59px;
+    left: 0;
+    right: 0;
+    z-index: 55;
+    background: color-mix(in srgb, var(--ink) 97%, transparent);
+    backdrop-filter: blur(18px) saturate(1.2);
+    border-bottom: 1px solid var(--rule);
+    box-shadow: 0 24px 50px -28px rgba(0, 0, 0, 0.9);
+    animation: chrome-menu-in 0.28s var(--ease);
+  }
+  .chrome__mobile[hidden] { display: none; }
+  @keyframes chrome-menu-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+  .chrome__mobile-inner {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 22px 24px;
+  }
+  .chrome__mobile-label {
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 16px 0 4px;
+  }
+  .chrome__mobile-inner > a,
+  .chrome__mobile-signout {
+    color: var(--bone);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    padding: 10px 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    cursor: pointer;
+  }
+  .chrome__mobile-world { display: flex; align-items: baseline; gap: 0.6ch; }
+  .chrome__mobile-world b { font-weight: 500; }
+  .chrome__mobile-world span { color: var(--muted); font-size: 0.82rem; font-family: var(--font-sans); }
+  .chrome__mobile-inner a[aria-current="page"] { color: var(--accent); }
+  .chrome__mobile-join { color: var(--accent); }
+}
