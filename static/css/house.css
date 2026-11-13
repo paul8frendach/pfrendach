@@ -2053,33 +2053,49 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 @media (min-width: 560px) { .pwa-install { left: auto; right: 16px; max-width: 430px; } }
 
 /* ---------------------------------------------------------- train: the player
-   Who's coaching you — a wide lead shot of Paul the player, then three more. */
-.train-player { margin-top: 1.4rem; }
-.train-player__lead {
-  width: 100%;
-  aspect-ratio: 16 / 8;
-  object-fit: cover;
-  object-position: center 32%;
-  border-radius: 14px;
-  border: 1px solid var(--rule);
-  display: block;
-  filter: saturate(1.02) contrast(1.04);
-}
-.train-player__row {
+   Who's coaching you — Paul's own playing days, a national title among them. */
+.train-player__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 1.4rem;
 }
-.train-player__row img {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: center 28%;
+.train-player__grid figure {
+  position: relative;
+  margin: 0;
   border-radius: 12px;
+  overflow: clip;
   border: 1px solid var(--rule);
+  background: var(--ink-2);
+  aspect-ratio: 4 / 5;
+}
+.train-player__grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
   display: block;
-  filter: saturate(1.02) contrast(1.04);
+  filter: saturate(1.03) contrast(1.05);
+}
+.train-player__champ { border-color: color-mix(in srgb, var(--accent) 50%, var(--rule)); }
+.train-player__champ::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 58%, rgba(11, 13, 12, 0.8));
+  pointer-events: none;
+}
+.train-player__cap {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 11px;
+  z-index: 2;
+  color: var(--bone);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
 }
 .train-player__note {
   margin-top: 1.3rem;
@@ -2089,6 +2105,5 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 }
 .train-player__note b { color: var(--bone); font-weight: 500; }
 @media (max-width: 640px) {
-  .train-player__lead { aspect-ratio: 16 / 10; }
-  .train-player__row { gap: 8px; }
+  .train-player__grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
 }
