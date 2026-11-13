@@ -285,7 +285,13 @@ p:last-child { margin-bottom: 0; }
     color-mix(in srgb, var(--ink) calc(58% + 30% * var(--cond)), transparent);
   backdrop-filter: saturate(150%) blur(calc(6px + 12px * var(--cond)));
   border-bottom: 1px solid color-mix(in srgb, var(--bone) calc(4% + 10% * var(--cond)), transparent);
+  transition: transform 0.42s var(--ease);
 }
+
+/* The bars are optional: they tuck away as you read down the page and return
+   the instant you scroll back up. Transform only — the spacer holds the layout,
+   so nothing reflows when they go. */
+html.nav-tucked .chrome { transform: translateY(-101%); }
 
 .chrome__spacer { height: var(--chrome-tall, 130px); }
 

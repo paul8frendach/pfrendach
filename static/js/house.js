@@ -18,6 +18,8 @@
   if (chrome) {
     var pending = false;
     var lastCond = -1;
+    var lastScrollY = 0;      // for scroll-direction, to auto-hide the bars
+    var navTucked = false;
     var crest = chrome.querySelector(".chrome__crest");
     var CONDENSE_OVER = 90;   // px of scroll to go from full crest to slim rail
 
@@ -44,6 +46,25 @@
       doc.style.setProperty(
         "--scrollp", travel > 40 ? Math.min(1, y / travel).toFixed(4) : "0"
       );
+
+      /* Auto-hide the bars on the way down, bring them back on the way up — the
+         nav is optional: there the instant you reach for it, gone while you
+         read. The top of the page always shows them. */
+      var dy = y - lastScrollY;
+      if (Math.abs(dy) > 4) {
+        if (y < 80) navTucked = false;
+        else if (dy > 0 && y > 200) navTucked = true;
+        else if (dy < 0) navTucked = false;
+        lastScrollY = y;
+        if (doc.classList.toggle("nav-tucked", navTucked) && navTucked) {
+          var mob = document.querySelector("[data-mobile-nav]");
+          var burger = document.querySelector("[data-burger]");
+          if (mob && !mob.hidden) {
+            mob.hidden = true;
+            if (burger) burger.setAttribute("aria-expanded", "false");
+          }
+        }
+      }
     }
 
     /* The crest's natural height decides how far it has to collapse, and the
