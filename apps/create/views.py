@@ -72,19 +72,37 @@ def index(request):
          "poster": static(f"omv/teasers/{n}.jpg"), "label": label}
         for n, label in _teaser_set
     ]
-    # Each film category borrows a real still of the nearest style, so the
-    # "now booking" cards are never empty boxes.
-    _style_for = {"wedding": "wedding", "event": "wedding", "school": "sports",
+    # Each film category shows a distinct, style-accurate still: no two cards
+    # share a photo, and none repeats a frame the hero is already drifting
+    # through. The style map matches the still to what the category actually is.
+    _style_for = {"wedding": "wedding", "event": "event", "school": "sports",
                   "listing": "aerial", "brand": "portrait", "stills": "portrait"}
-    _by_style = {}
+    _used = set(_hero_slide_names)
     cat_cards = []
     for value, label in Work.Category.choices:
-        ps = _style_for.get(value, "wedding")
-        if ps not in _by_style:
-            _by_style[ps] = Photo.objects.filter(is_live=True, style=ps).first()
-        p = _by_style[ps] or Photo.objects.filter(is_live=True).first()
+        ps = _style_for.get(value, "portrait")
+        photo = (
+            Photo.objects.filter(is_live=True, style=ps).exclude(image__in=_used).first()
+            or Photo.objects.filter(is_live=True).exclude(image__in=_used).first()
+            or Photo.objects.filter(is_live=True, style=ps).first()
+        )
+        if photo:
+            _used.add(photo.image)
         cat_cards.append({"value": value, "label": label,
-                          "poster": static(p.static_path) if p else ""})
+                          "poster": static(photo.static_path) if photo else ""})
+
+    # The photography teaser shows four more stills — one per style for range,
+    # and none shared with the hero or the category cards above.
+    teaser_photos = []
+    for st in ("wedding", "sports", "aerial", "portrait"):
+        ph = Photo.objects.filter(is_live=True, style=st).exclude(image__in=_used).first()
+        if ph:
+            _used.add(ph.image)
+            teaser_photos.append(ph)
+    if len(teaser_photos) < 4:
+        for ph in Photo.objects.filter(is_live=True).exclude(image__in=_used)[: 4 - len(teaser_photos)]:
+            _used.add(ph.image)
+            teaser_photos.append(ph)
     return render(
         request,
         "create/index.html",
@@ -100,8 +118,7 @@ def index(request):
             "active_category": category,
             "packages": Package.objects.filter(is_live=True),
             "methods": Method.objects.filter(is_live=True),
-            "photos": list(Photo.objects.filter(is_live=True, is_featured=True)[:4])
-            or list(Photo.objects.filter(is_live=True)[:4]),
+            "photos": teaser_photos,
             "photo_count": Photo.objects.filter(is_live=True).count(),
             "omv_tab": "films",
         },
