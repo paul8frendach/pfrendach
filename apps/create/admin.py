@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Commission, Method, Package, Payment, Work
+from .models import Commission, Method, Package, Payment, Photo, Work
+
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ("image", "style", "title", "is_featured", "is_live", "sort")
+    list_editable = ("style", "is_featured", "is_live", "sort")
+    list_filter = ("style", "is_live", "is_featured")
+    search_fields = ("image", "title", "caption")
 
 
 @admin.register(Work)

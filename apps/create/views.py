@@ -13,7 +13,7 @@ from apps.house.models import SiteConfig
 
 from . import payments
 from .forms import CommissionForm
-from .models import Commission, Method, Package, Payment, Work
+from .models import Commission, Method, Package, Payment, Photo, Work
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +49,32 @@ def index(request):
             "active_category": category,
             "packages": Package.objects.filter(is_live=True),
             "methods": Method.objects.filter(is_live=True),
+            "photos": list(Photo.objects.filter(is_live=True, is_featured=True)[:4])
+            or list(Photo.objects.filter(is_live=True)[:4]),
+            "photo_count": Photo.objects.filter(is_live=True).count(),
+        },
+    )
+
+
+def photography(request):
+    """The Photography sub-world — best stills grouped by style."""
+    live = Photo.objects.filter(is_live=True)
+    style = request.GET.get("style")
+    if style in dict(Photo.Style.choices):
+        live = live.filter(style=style)
+    groups = []
+    for value, label in Photo.Style.choices:
+        shots = [p for p in live if p.style == value]
+        if shots:
+            groups.append({"value": value, "label": label, "photos": shots})
+    return render(
+        request,
+        "create/photography.html",
+        {
+            "groups": groups,
+            "styles": Photo.Style.choices,
+            "active_style": style,
+            "count": live.count(),
         },
     )
 

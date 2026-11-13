@@ -53,6 +53,7 @@
     </p>
     <div class="actions" style="margin-top:1.6rem">
       <a class="btn btn--solid" href="#work">Watch the work</a>
+      <a class="btn btn--quiet" href="{% url 'create:photography' %}">Photography</a>
       <a class="btn btn--quiet" href="{% url 'create:request' %}">Request your film</a>
     </div>
     <p class="omv-hero__cov">
@@ -146,6 +147,29 @@
     {% endif %}
   </div>
 </section>
+
+{# ---------------------------------------------------------------- photography #}
+{% if photos %}
+<section class="section section--tight" id="photography">
+  <div class="shell">
+    <div class="headrow">
+      <div>
+        <p class="beat">Stills</p>
+        <h2>Photography.</h2>
+      </div>
+      <a class="chip-link" href="{% url 'create:photography' %}">See all {{ photo_count }} &rarr;</a>
+    </div>
+    <div class="photo-teaser">
+      {% for p in photos %}
+        <a class="photo-teaser__item" href="{% url 'create:photography' %}?style={{ p.style }}" aria-label="{{ p.get_style_display }}">
+          <img src="{% static p.static_path %}" alt="{{ p.get_style_display }}" loading="lazy">
+          <span>{{ p.get_style_display }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {# ---------------------------------------------------------------- packages / pricing #}
 {% if packages %}

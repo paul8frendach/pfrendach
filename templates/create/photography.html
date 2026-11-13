@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}Photography — Oasis Media Visions{% endblock %}
+{% block description %}Photography by Oasis Media Visions — weddings and couples, portraits and graduation, sports and aerials across Maryland and beyond.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="shell hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> Photography</p>
+    <h1 class="oasis-head" style="max-width:16ch">The still frame.</h1>
+    <p class="lead" style="margin-top:1rem;max-width:50ch">
+      A photograph has to hold on its own — one frame, no sound, no second chance. These are
+      the ones that held. Grouped by what they are.
+    </p>
+    <div class="actions" style="margin-top:1.3rem">
+      <a class="btn btn--quiet" href="{% url 'create:index' %}">&larr; Films &amp; the studio</a>
+      <a class="btn btn--quiet" href="{% url 'create:request' %}">Request a shoot</a>
+    </div>
+  </div>
+</section>
+
+{% if groups %}
+<section class="section" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="shell">
+    <nav class="chips-nav" aria-label="Filter photos" style="margin-bottom:0.4rem">
+      <a class="chip-link" href="{% url 'create:photography' %}"
+         {% if not active_style %}aria-current="page"{% endif %}>All</a>
+      {% for value, label in styles %}
+        <a class="chip-link" href="?style={{ value }}"
+           {% if active_style == value %}aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+  </div>
+
+  {% for group in groups %}
+  <div class="shell" style="margin-top:clamp(28px,4vw,52px)">
+    <div class="headrow">
+      <div>
+        <p class="beat">{{ group.photos|length }} frame{{ group.photos|length|pluralize }}</p>
+        <h2>{{ group.label }}.</h2>
+      </div>
+    </div>
+    <div class="gallery">
+      {% for photo in group.photos %}
+        <a class="gallery__item gallery__item--{{ photo.orientation }}"
+           href="{% static photo.static_path %}"
+           data-lightbox
+           {% if photo.caption %}data-caption="{{ photo.caption }}"{% endif %}
+           aria-label="{{ photo.title|default:group.label }}">
+          <img src="{% static photo.static_path %}" alt="{{ photo.title|default:group.label }}"
+               loading="lazy" {% if photo.width %}width="{{ photo.width }}" height="{{ photo.height }}"{% endif %}>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</section>
+{% else %}
+<section class="section">
+  <div class="shell">
+    <p class="notice">The gallery is being hung. <a href="{% url 'create:request' %}">Ask to see the latest stills.</a></p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="shell">
+    <div class="omv-cta">
+      <p class="beat beat--center">Your day, in stills</p>
+      <h2 style="margin-top:0.4rem">Want photos like these?</h2>
+      <p>Weddings, portraits, teams, aerials. Tell me what you're after and I'll send a real quote.</p>
+      <div class="actions" style="margin-top:1.5rem;justify-content:center">
+        <a class="btn btn--solid" href="{% url 'create:request' %}">Request a shoot</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# lightbox #}
+<div class="lightbox" data-lightbox-box hidden aria-hidden="true">
+  <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">&times;</button>
+  <img class="lightbox__img" data-lightbox-img alt="">
+  <p class="lightbox__cap" data-lightbox-cap></p>
+</div>
+
+<script>
+(function () {
+  var box = document.querySelector('[data-lightbox-box]');
+  if (!box) return;
+  var img = box.querySelector('[data-lightbox-img]');
+  var cap = box.querySelector('[data-lightbox-cap]');
+  function open(href, caption) {
+    img.src = href; cap.textContent = caption || '';
+    box.hidden = false; box.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    box.hidden = true; box.setAttribute('aria-hidden', 'true');
+    img.src = ''; document.body.style.overflow = '';
+  }
+  document.querySelectorAll('[data-lightbox]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      open(a.getAttribute('href'), a.getAttribute('data-caption'));
+    });
+  });
+  box.addEventListener('click', function (e) { if (e.target !== img) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+})();
+</script>
+{% endblock %}

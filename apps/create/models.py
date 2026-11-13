@@ -324,3 +324,51 @@ class Payment(TimeStamped):
         if self.commission_id and self.kind == self.Kind.DEPOSIT:
             self.commission.status = Commission.Status.BOOKED
             self.commission.save(update_fields=["status", "updated_at"])
+
+
+class Photo(TimeStamped, Published):
+    """
+    A still in the Photography sub-world. The optimized file lives under
+    static/omv/gallery/ and is committed, so it ships with the site and needs
+    no media server. Grouped by style, newest first within each style.
+    """
+
+    class Style(models.TextChoices):
+        WEDDING = "wedding", "Weddings & couples"
+        PORTRAIT = "portrait", "Portraits & graduation"
+        SPORTS = "sports", "Sports"
+        AERIAL = "aerial", "Aerial & drone"
+        EVENT = "event", "Events"
+
+    image = models.CharField(
+        max_length=200, help_text="Filename under static/omv/gallery/"
+    )
+    style = models.CharField(
+        max_length=10, choices=Style.choices, default=Style.WEDDING, db_index=True
+    )
+    title = models.CharField(max_length=140, blank=True)
+    caption = models.CharField(max_length=200, blank=True)
+    width = models.PositiveIntegerField(null=True, blank=True)
+    height = models.PositiveIntegerField(null=True, blank=True)
+    is_featured = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ("style", "sort", "-created_at")
+
+    def __str__(self) -> str:
+        return self.title or self.image
+
+    @property
+    def static_path(self) -> str:
+        return f"omv/gallery/{self.image}"
+
+    @property
+    def orientation(self) -> str:
+        if not (self.width and self.height):
+            return "landscape"
+        r = self.width / self.height
+        if r > 1.15:
+            return "landscape"
+        if r < 0.87:
+            return "portrait"
+        return "square"
