@@ -18,7 +18,7 @@ from apps.house.models import SiteConfig
 
 from . import payments
 from .forms import CommissionForm
-from .models import Commission, Method, Package, Payment, Photo, Work
+from .models import Commission, Method, Package, Payment, Photo, Service, Work
 
 logger = logging.getLogger(__name__)
 
@@ -88,8 +88,12 @@ def index(request):
         )
         if photo:
             _used.add(photo.image)
-        cat_cards.append({"value": value, "label": label,
-                          "poster": static(photo.static_path) if photo else ""})
+        svc = Service.objects.filter(category=value, is_live=True).first()
+        cat_cards.append({
+            "value": value, "label": label,
+            "poster": static(photo.static_path) if photo else "",
+            "url": svc.get_absolute_url() if svc else f"{reverse('create:request')}?service={value}",
+        })
 
     # The photography teaser shows four more stills — one per style for range,
     # and none shared with the hero or the category cards above.
@@ -158,6 +162,22 @@ def work_detail(request, slug):
             "piece": piece,
             "more": Work.objects.filter(is_live=True, category=piece.category)
             .exclude(pk=piece.pk)[:3],
+        },
+    )
+
+
+def service_detail(request, slug):
+    """A single service — the context, what's included, the process, a clip."""
+    service = get_object_or_404(Service, slug=slug, is_live=True)
+    pieces = Work.objects.filter(is_live=True, category=service.category)[:3]
+    return render(
+        request,
+        "create/service_detail.html",
+        {
+            "service": service,
+            "pieces": pieces,
+            "packages": Package.objects.filter(is_live=True),
+            "omv_tab": "films",
         },
     )
 

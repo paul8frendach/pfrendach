@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}{{ service.title }} — Oasis Media Visions{% endblock %}
+{% block description %}{{ service.summary }}{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="omv-svc-hero">
+  <div class="omv-svc-hero__media" aria-hidden="true">
+    {% if service.clip %}
+      <video autoplay muted loop playsinline preload="none"
+             {% if service.poster %}poster="{{ service.poster_src }}"{% endif %} data-svc-clip>
+        <source src="{{ service.clip_src }}" type="video/mp4">
+      </video>
+    {% elif service.poster %}
+      <img src="{{ service.poster_src }}" alt="" fetchpriority="high">
+    {% endif %}
+  </div>
+  <div class="omv-svc-hero__scrim" aria-hidden="true"></div>
+  <div class="shell omv-svc-hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> {{ service.kicker|default:"Service" }}</p>
+    <h1 class="oasis-head" style="max-width:16ch">{{ service.title }}</h1>
+    <p class="omv-hero__lead" style="max-width:48ch">{{ service.summary }}</p>
+    <div class="actions" style="margin-top:1.5rem">
+      <a class="btn btn--solid" href="{% url 'create:request' %}?service={{ service.category }}">Request this film</a>
+      <a class="btn btn--quiet" href="{% url 'create:index' %}#work">All services</a>
+    </div>
+  </div>
+</section>
+
+{% include "partials/omv_subnav.html" %}
+
+{% if service.body %}
+<section class="section section--tight">
+  <div class="shell split">
+    <div><p class="beat">What it is</p></div>
+    <div class="stack"><div class="lead">{{ service.body|linebreaks }}</div></div>
+  </div>
+</section>
+{% endif %}
+
+{% if service.include_lines %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">What's included</p>
+      <h2>What you get.</h2>
+    </div></div>
+    <ul class="omv-svc-includes">
+      {% for item in service.include_lines %}<li>{{ item }}</li>{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
+{% if service.process_steps %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">The process</p>
+      <h2>How it gets made.</h2>
+    </div></div>
+    <ol class="omv-svc-process">
+      {% for step in service.process_steps %}
+      <li>
+        <span class="omv-svc-process__n">{{ forloop.counter }}</span>
+        <div class="omv-svc-process__t"><b>{{ step.title }}</b>{% if step.detail %}<span>{{ step.detail }}</span>{% endif %}</div>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+{% endif %}
+
+{% if pieces %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">From the work</p>
+      <h2>Recent films.</h2>
+    </div></div>
+    <div class="omv-svc-pieces">
+      {% for piece in pieces %}
+      <a class="omv-svc-piece" href="{{ piece.get_absolute_url }}">
+        {% if piece.poster %}<img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">{% endif %}
+        <span>{{ piece.title }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="shell">
+    <div class="omv-cta">
+      <p class="beat beat--center">Start here</p>
+      <h2 style="margin-top:0.4rem">Tell me about your day.</h2>
+      <p>Your date, your place, your story — and I'll send a real quote, usually within a day.</p>
+      <div class="actions" style="margin-top:1.5rem;justify-content:center">
+        <a class="btn btn--solid" href="{% url 'create:request' %}?service={{ service.category }}">Request this film</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var v = document.querySelector("[data-svc-clip]");
+  if (!v) return;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  v.preload = "auto";
+  v.play().catch(function () {});
+})();
+</script>
+{% endblock %}

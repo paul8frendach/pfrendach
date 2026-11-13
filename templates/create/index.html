@@ -211,7 +211,7 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
       {# No live films yet — show the categories as the way in, honestly. #}
       <div class="omv-cats">
         {% for c in cat_cards %}
-          <a class="omv-cat" href="{% url 'create:request' %}?service={{ c.value }}"
+          <a class="omv-cat" href="{{ c.url }}"
              {% if c.poster %}style="--_poster:url('{{ c.poster }}')"{% endif %}>
             <span class="omv-cat__count">Now booking</span>
             <span class="omv-cat__name">{{ c.label }}</span>

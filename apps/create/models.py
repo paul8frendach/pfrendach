@@ -475,3 +475,69 @@ class Photo(TimeStamped, Published):
         if r < 0.87:
             return "portrait"
         return "square"
+
+
+class Service(TimeStamped, Published):
+    """
+    A production service — a category of film with its own context, process and
+    example clip. Keyed to Work.Category so it threads into the existing request
+    flow (?service=<category>) and the home category cards.
+    """
+
+    category = models.CharField(
+        max_length=10, choices=Work.Category.choices, unique=True, db_index=True
+    )
+    slug = models.SlugField(max_length=60, unique=True)
+    title = models.CharField(max_length=80)
+    kicker = models.CharField(max_length=60, blank=True)
+    summary = models.CharField(max_length=220, help_text="The one-line context.")
+    body = models.TextField(blank=True, help_text="What this service actually is.")
+    includes = models.TextField(blank=True, help_text="One deliverable per line.")
+    process = models.TextField(
+        blank=True, help_text="One step per line, as 'Title — detail'."
+    )
+    clip = models.CharField(
+        max_length=120, blank=True, help_text="Video filename under static/omv/service/."
+    )
+    poster = models.CharField(
+        max_length=120, blank=True, help_text="Poster image under static/omv/service/."
+    )
+
+    class Meta:
+        ordering = ("sort", "title")
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_absolute_url(self) -> str:
+        return reverse("create:service_detail", args=[self.slug])
+
+    @property
+    def include_lines(self) -> list[str]:
+        return [line.strip() for line in self.includes.splitlines() if line.strip()]
+
+    @property
+    def process_steps(self) -> list[dict]:
+        steps = []
+        for line in self.process.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if "—" in line:
+                title, detail = line.split("—", 1)
+                steps.append({"title": title.strip(), "detail": detail.strip()})
+            else:
+                steps.append({"title": line, "detail": ""})
+        return steps
+
+    @property
+    def clip_src(self) -> str:
+        from django.templatetags.static import static
+
+        return static(f"omv/service/{self.clip}") if self.clip else ""
+
+    @property
+    def poster_src(self) -> str:
+        from django.templatetags.static import static
+
+        return static(f"omv/service/{self.poster}") if self.poster else ""
