@@ -29,6 +29,27 @@
     function syncChrome() {
       pending = false;
       var y = window.scrollY || document.documentElement.scrollTop;
+
+      /* Auto-hide the bars on the way down, bring them back on the way up — the
+         nav is optional: there the instant you reach for it, gone while you
+         read. The top of the page always shows them. Runs before the condense
+         early-return below, so it keeps working once the bar has fully slimmed. */
+      var dy = y - lastScrollY;
+      if (Math.abs(dy) > 5) {
+        if (y < 80) navTucked = false;
+        else if (dy > 0 && y > 220) navTucked = true;
+        else if (dy < 0) navTucked = false;
+        lastScrollY = y;
+        if (document.documentElement.classList.toggle("nav-tucked", navTucked) && navTucked) {
+          var mob = document.querySelector("[data-mobile-nav]");
+          var burger = document.querySelector("[data-burger]");
+          if (mob && !mob.hidden) {
+            mob.hidden = true;
+            if (burger) burger.setAttribute("aria-expanded", "false");
+          }
+        }
+      }
+
       var cond = Math.min(1, Math.max(0, y / CONDENSE_OVER));
       // Quantise to 3dp: enough for a smooth ramp, few enough style writes
       // that we are not thrashing the compositor on every scroll frame.
@@ -46,25 +67,6 @@
       doc.style.setProperty(
         "--scrollp", travel > 40 ? Math.min(1, y / travel).toFixed(4) : "0"
       );
-
-      /* Auto-hide the bars on the way down, bring them back on the way up — the
-         nav is optional: there the instant you reach for it, gone while you
-         read. The top of the page always shows them. */
-      var dy = y - lastScrollY;
-      if (Math.abs(dy) > 4) {
-        if (y < 80) navTucked = false;
-        else if (dy > 0 && y > 200) navTucked = true;
-        else if (dy < 0) navTucked = false;
-        lastScrollY = y;
-        if (doc.classList.toggle("nav-tucked", navTucked) && navTucked) {
-          var mob = document.querySelector("[data-mobile-nav]");
-          var burger = document.querySelector("[data-burger]");
-          if (mob && !mob.hidden) {
-            mob.hidden = true;
-            if (burger) burger.setAttribute("aria-expanded", "false");
-          }
-        }
-      }
     }
 
     /* The crest's natural height decides how far it has to collapse, and the
