@@ -160,6 +160,22 @@
     "is_featured": false
   },
   {
+    "image": "sports-7.jpg",
+    "style": "sports",
+    "sort": 7,
+    "width": 1234,
+    "height": 2200,
+    "is_featured": false
+  },
+  {
+    "image": "sports-8.jpg",
+    "style": "sports",
+    "sort": 8,
+    "width": 2200,
+    "height": 1234,
+    "is_featured": false
+  },
+  {
     "image": "aerial-1.jpg",
     "style": "aerial",
     "sort": 1,
@@ -180,7 +196,39 @@
     "style": "aerial",
     "sort": 3,
     "width": 2200,
+    "height": 1650,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-4.jpg",
+    "style": "aerial",
+    "sort": 4,
+    "width": 2200,
     "height": 1238,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-5.jpg",
+    "style": "aerial",
+    "sort": 5,
+    "width": 2200,
+    "height": 1650,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-6.jpg",
+    "style": "aerial",
+    "sort": 6,
+    "width": 2200,
+    "height": 1238,
+    "is_featured": false
+  },
+  {
+    "image": "aerial-7.jpg",
+    "style": "aerial",
+    "sort": 7,
+    "width": 1496,
+    "height": 1122,
     "is_featured": false
   },
   {
