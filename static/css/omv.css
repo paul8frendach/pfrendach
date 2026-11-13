@@ -555,3 +555,258 @@
   .gallery__item { margin-bottom: 10px; }
   .photo-teaser { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* ======================================================================
+   Client portal — the quote → account → deposit flow.
+   One home for a client's projects: status rail, quote, deposit button.
+   Built on the room tokens so it reads as the same object as the rest.
+   ====================================================================== */
+
+.omv-inline-link {
+  color: var(--glow);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--glow) 40%, transparent);
+  transition: border-color 0.2s var(--ease);
+}
+.omv-inline-link:hover { border-color: var(--glow); }
+
+/* ---- account opt-in, folded into the request form ---- */
+.omv-optin {
+  margin-top: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--omv-panel-edge);
+  border-radius: 14px;
+  background: var(--omv-panel);
+  display: grid;
+  gap: 14px;
+}
+.omv-optin__check {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  cursor: pointer;
+  color: var(--bone);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.omv-optin__check input {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--glow);
+  flex: 0 0 auto;
+}
+.omv-optin__pw { margin: 0; }
+
+/* ---- sign-in ---- */
+.omv-auth { max-width: 440px; }
+
+/* ---- the portal ---- */
+.omv-portal { display: grid; gap: 20px; }
+
+.omv-project {
+  border: 1px solid var(--omv-line);
+  border-radius: 18px;
+  background: var(--ink-2);
+  padding: clamp(20px, 3vw, 28px);
+  display: grid;
+  gap: 20px;
+}
+.omv-project--quoted { border-color: var(--omv-panel-edge); }
+.omv-project--booked {
+  border-color: color-mix(in srgb, var(--glow) 34%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--glow) 12%, transparent);
+}
+
+.omv-project__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.omv-project__ref {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--glow);
+  margin: 0 0 4px;
+}
+.omv-project__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  color: var(--bone);
+  margin: 0;
+  line-height: 1.1;
+}
+.omv-project__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 8px 0 0;
+  color: var(--bone-dim);
+  font-size: 0.86rem;
+}
+.omv-project__meta span { position: relative; }
+.omv-project__meta span + span::before {
+  content: "·";
+  position: absolute;
+  left: -9px;
+  color: var(--muted);
+}
+
+.omv-chip {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--omv-line);
+  color: var(--bone-dim);
+  white-space: nowrap;
+}
+.omv-chip--quoted { color: var(--glow); border-color: var(--omv-panel-edge); background: color-mix(in srgb, var(--glow) 8%, transparent); }
+.omv-chip--booked { color: var(--ink); background: var(--glow); border-color: var(--glow); }
+
+/* ---- status rail: four beats, the current one lit ---- */
+.omv-rail {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.omv-rail__step {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.omv-rail__step::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--omv-line);
+}
+.omv-rail__step:first-child::before { display: none; }
+.omv-rail__step.is-done::before,
+.omv-rail__step.is-current::before { background: color-mix(in srgb, var(--glow) 55%, transparent); }
+.omv-rail__dot {
+  position: relative;
+  z-index: 1;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--ink-2);
+  border: 2px solid var(--omv-line);
+}
+.omv-rail__step.is-done .omv-rail__dot { background: color-mix(in srgb, var(--glow) 55%, transparent); border-color: color-mix(in srgb, var(--glow) 55%, transparent); }
+.omv-rail__step.is-current .omv-rail__dot {
+  background: var(--glow);
+  border-color: var(--glow);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--glow) 18%, transparent);
+}
+.omv-rail__label {
+  font-size: 0.74rem;
+  color: var(--bone-dim);
+  letter-spacing: 0.02em;
+}
+.omv-rail__step.is-current .omv-rail__label { color: var(--bone); }
+
+/* ---- quote block ---- */
+.omv-quote {
+  border-top: 1px solid var(--omv-line);
+  padding-top: 18px;
+  display: grid;
+  gap: 14px;
+}
+.omv-quote__top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.omv-quote__amount {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5vw, 2.5rem);
+  color: var(--bone);
+  margin: 0;
+  line-height: 1;
+}
+.omv-quote__dep { margin: 0; color: var(--glow); font-size: 0.9rem; }
+.omv-quote__note { margin: 0; color: var(--bone-dim); line-height: 1.6; max-width: 56ch; }
+
+.omv-project__line { margin: 0; color: var(--bone-dim); line-height: 1.6; }
+.omv-project__line--good { color: var(--bone); }
+
+/* ---- receipts ---- */
+.omv-receipts { margin-top: 34px; }
+.omv-receipts__head {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--bone);
+  margin: 0 0 12px;
+}
+.omv-receipts__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.omv-receipt {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--omv-line);
+  border-radius: 12px;
+  background: var(--ink-2);
+  font-size: 0.88rem;
+}
+.omv-receipt__desc { color: var(--bone); }
+.omv-receipt__amt { color: var(--bone); font-variant-numeric: tabular-nums; }
+.omv-receipt__status {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.omv-receipt__status--paid { color: var(--glow); }
+.omv-receipt__date { color: var(--muted); font-size: 0.8rem; }
+
+/* ---- empty + foot ---- */
+.omv-portal__empty {
+  text-align: center;
+  padding: clamp(30px, 6vw, 60px) 0;
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+}
+.omv-portal__foot {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--omv-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.omv-signout {
+  background: none;
+  border: 1px solid var(--omv-line);
+  color: var(--bone-dim);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.omv-signout:hover { border-color: var(--bone-dim); color: var(--bone); }
+
+.omv-subnav__account { margin-left: auto; }
+
+@media (max-width: 620px) {
+  .omv-project__head { flex-direction: column; }
+  .omv-rail__label { font-size: 0.62rem; }
+  .omv-receipt { grid-template-columns: 1fr auto; row-gap: 4px; }
+  .omv-receipt__date { grid-column: 2; }
+  .omv-portal__foot { flex-direction: column; align-items: stretch; text-align: center; }
+  .omv-subnav__account { margin-left: 0; }
+}

@@ -1940,6 +1940,22 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   .chrome__burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
   .chrome__burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 24px; }
 
+  /* One tidy bar on a phone: the wordmark centred, the whole rail of tabs
+     retired into the menu button so nothing can overflow or truncate. The
+     crest no longer collapses on scroll here — a stable 59px bar reads calmer
+     than a mark that shrinks to nothing and leaves the burger floating alone. */
+  .chrome__rail { display: none; }
+  .chrome__inner { padding-block: 0; min-height: 59px; align-content: center; }
+  .chrome__crest {
+    height: auto;
+    margin-bottom: 0;
+    opacity: 1;
+    transform: none;
+    padding-inline: 50px;          /* symmetric clearance for the burger */
+  }
+  .sig--crest { font-size: clamp(19px, 5.8vw, 25px); }
+  .chrome__spacer { height: 60px; }
+
   .chrome__mobile {
     display: block;
     position: fixed;

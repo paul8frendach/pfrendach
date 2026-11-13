@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}Sign in — Oasis Media Visions{% endblock %}
+{% block description %}Sign in to your Oasis Media Visions client portal to track your project, see your quote and pay your deposit.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="shell hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> Client portal</p>
+    <h1 class="oasis-head" style="max-width:16ch">Welcome back.</h1>
+    <p class="lead" style="margin-top:1rem;max-width:44ch">
+      Sign in to see where your project stands, read your quote, and pay your deposit when you're ready.
+    </p>
+  </div>
+</section>
+
+{% include "partials/omv_subnav.html" %}
+
+<section class="section" style="padding-top:clamp(28px,4vw,48px)">
+  <div class="shell omv-auth">
+    <form class="omv-form" method="post" action="{% url 'create:signin' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+      {% endif %}
+
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        <input type="text" name="username" id="{{ form.username.id_for_label }}"
+               autocomplete="username" placeholder="you@email.com"
+               value="{{ form.username.value|default:'' }}" required>
+        {{ form.username.errors }}
+      </div>
+
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        <input type="password" name="password" id="{{ form.password.id_for_label }}"
+               autocomplete="current-password" required>
+        {{ form.password.errors }}
+      </div>
+
+      <div class="actions">
+        <button class="btn btn--solid" type="submit">Sign in</button>
+      </div>
+      <p class="helptext">
+        No account yet? <a class="omv-inline-link" href="{% url 'create:request' %}">Start a request</a> —
+        you can create one as you go.
+      </p>
+    </form>
+  </div>
+</section>
+{% endblock %}

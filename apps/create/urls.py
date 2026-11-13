@@ -13,5 +13,9 @@ urlpatterns = [
     path("book/success/", views.book_success, name="book_success"),
     path("book/cancel/", views.book_cancel, name="book_cancel"),
     path("stripe/webhook/", views.stripe_webhook, name="stripe_webhook"),
+    # Client portal
+    path("account/", views.account, name="account"),
+    path("signin/", views.signin, name="signin"),
+    path("signout/", views.signout, name="signout"),
     path("<slug:slug>/", views.work_detail, name="work_detail"),
 ]

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}Your projects — Oasis Media Visions{% endblock %}
+{% block description %}Your Oasis Media Visions client portal — track each project, read your quote and pay your deposit.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="shell hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> Your projects</p>
+    <h1 class="oasis-head" style="max-width:18ch">
+      {% if user.first_name %}Hello, {{ user.first_name }}.{% else %}Your projects.{% endif %}
+    </h1>
+    <p class="lead" style="margin-top:1rem;max-width:46ch">
+      {% if open_count %}
+        {{ open_count }} project{{ open_count|pluralize }} in motion. Everything about your film lives here —
+        status, quote and deposit.
+      {% else %}
+        This is where every film you ask me for lives — its status, your quote, your deposit, all in one place.
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+{% include "partials/omv_subnav.html" %}
+
+<section class="section" style="padding-top:clamp(28px,4vw,48px)">
+  <div class="shell">
+
+    {% if commissions %}
+    <div class="omv-portal">
+      {% for c in commissions %}
+      <article class="omv-project omv-project--{{ c.status }}">
+        <header class="omv-project__head">
+          <div>
+            <p class="omv-project__ref">{{ c.reference }}</p>
+            <h2 class="omv-project__title">{{ c.get_service_display }}</h2>
+            <p class="omv-project__meta">
+              {% if c.event_date %}<span>{{ c.event_date|date:"j M Y" }}</span>{% endif %}
+              {% if c.location %}<span>{{ c.location }}</span>{% endif %}
+              <span>Requested {{ c.created_at|date:"j M Y" }}</span>
+            </p>
+          </div>
+          <span class="omv-chip omv-chip--{{ c.status }}">{{ c.get_status_display }}</span>
+        </header>
+
+        {% if c.status != 'closed' %}
+        <ol class="omv-rail" aria-label="Project status">
+          {% for step in c.progress %}
+          <li class="omv-rail__step{% if step.done %} is-done{% endif %}{% if step.current %} is-current{% endif %}">
+            <span class="omv-rail__dot" aria-hidden="true"></span>
+            <span class="omv-rail__label">{{ step.label }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+        {% endif %}
+
+        {% if c.status == 'quoted' and c.quote_amount %}
+        <div class="omv-quote">
+          <div class="omv-quote__top">
+            <p class="omv-quote__amount">${{ c.quote_amount|floatformat:0 }}</p>
+            {% if c.booking_deposit %}<p class="omv-quote__dep">${{ c.booking_deposit|floatformat:0 }} deposit books your date</p>{% endif %}
+          </div>
+          {% if c.quote_note %}<p class="omv-quote__note">{{ c.quote_note|linebreaksbr }}</p>{% endif %}
+          {% if c.can_book_online %}
+          <form method="post" action="{% url 'create:book' %}">
+            {% csrf_token %}
+            <input type="hidden" name="commission_id" value="{{ c.pk }}">
+            <button class="btn btn--solid" type="submit">Pay deposit &amp; book &mdash; ${{ c.booking_deposit|floatformat:0 }}</button>
+          </form>
+          <p class="helptext">Card entry is on Stripe's secure page. Your date is held the moment it clears.</p>
+          {% endif %}
+        </div>
+        {% elif c.status == 'booked' %}
+        <p class="omv-project__line omv-project__line--good">
+          Booked &mdash; your date is held.{% if c.deposit_paid %} Deposit received.{% endif %} I'll be in touch with the run of the day.
+        </p>
+        {% elif c.status == 'new' %}
+        <p class="omv-project__line">Received. Paul reads every one of these himself — your quote is on its way, usually within a day.</p>
+        {% elif c.status == 'read' %}
+        <p class="omv-project__line">Paul has your details and is putting your quote together now.</p>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="omv-portal__empty">
+      <p class="lead">No projects yet.</p>
+      <a class="btn btn--solid" href="{% url 'create:request' %}">Request a film</a>
+    </div>
+    {% endif %}
+
+    {% if payments %}
+    <div class="omv-receipts">
+      <h2 class="omv-receipts__head">Payments</h2>
+      <ul class="omv-receipts__list">
+        {% for p in payments %}
+        <li class="omv-receipt">
+          <span class="omv-receipt__desc">{{ p.description|default:p.get_kind_display }}</span>
+          <span class="omv-receipt__amt">${{ p.amount|floatformat:0 }}</span>
+          <span class="omv-receipt__status omv-receipt__status--{{ p.status }}">{{ p.get_status_display }}</span>
+          <span class="omv-receipt__date">{{ p.created_at|date:"j M Y" }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="omv-portal__foot">
+      <p class="helptext">
+        Questions on any of these? Text me on <a class="omv-inline-link" href="tel:+14436840042">(443) 684-0042</a>
+        or email <a class="omv-inline-link" href="mailto:paul@oasismediavisions.com">paul@oasismediavisions.com</a>.
+      </p>
+      <form method="post" action="{% url 'create:signout' %}">
+        {% csrf_token %}
+        <button class="omv-signout" type="submit">Sign out</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

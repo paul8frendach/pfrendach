@@ -2,6 +2,10 @@ import logging
 import os
 
 from django.contrib import messages
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.templatetags.static import static
@@ -125,12 +129,39 @@ def request_film(request):
         if package and not service:
             service = package.slug.split("-")[0]
 
+    authed = request.user.is_authenticated
     if request.method == "POST":
-        form = CommissionForm(request.POST, service=service, package=package)
+        form = CommissionForm(request.POST, service=service, package=package, authenticated=authed)
         if form.is_valid():
             commission = form.save(commit=False)
             commission.source_path = request.META.get("HTTP_REFERER", "")[:200]
+
+            # The account is offered inside the quote, never as a wall before it.
+            user = request.user if authed else None
+            made_account = False
+            if user is None and form.cleaned_data.get("create_account") and form.cleaned_data.get("password"):
+                email = commission.email.strip()
+                existing = (
+                    User.objects.filter(username__iexact=email).first()
+                    or User.objects.filter(email__iexact=email).first()
+                )
+                if existing:
+                    messages.info(
+                        request,
+                        "You already have an account with that email — sign in and your request will be waiting.",
+                    )
+                else:
+                    first = commission.name.strip().split(" ")[0][:150]
+                    user = User.objects.create_user(
+                        username=email[:150], email=email,
+                        password=form.cleaned_data["password"], first_name=first,
+                    )
+                    auth_login(request, user)
+                    made_account = True
+
+            commission.client = user
             commission.save()
+
             site = SiteConfig.load()
             send_templated(
                 subject=f"OMV commission — {commission.get_service_display()} · {commission.name}",
@@ -138,13 +169,23 @@ def request_film(request):
                 context={"commission": commission, "site": site},
                 to=[OMV_NOTIFY_EMAIL],
             )
+            if made_account:
+                messages.success(
+                    request,
+                    f"Your account is set up and {commission.reference} is in front of Paul. "
+                    "Track it right here — you'll see the quote and can pay your deposit when it lands.",
+                )
+                return redirect("create:account")
+            if user:
+                messages.success(request, f"Added to your projects — {commission.reference} is in front of Paul.")
+                return redirect("create:account")
             messages.success(
                 request,
                 "Received. Paul reads every one of these himself — expect a real reply, not a robot.",
             )
             return redirect("create:request_thanks")
     else:
-        form = CommissionForm(service=service, package=package)
+        form = CommissionForm(service=service, package=package, authenticated=authed)
 
     return render(
         request,
@@ -158,6 +199,51 @@ def request_film(request):
     )
 
 
+# ------------------------------------------------------------------ client portal
+
+def signin(request):
+    """OMV client sign-in. Lands them in their project portal."""
+    if request.user.is_authenticated:
+        return redirect("create:account")
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
+            dest = request.GET.get("next") or reverse("create:account")
+            return redirect(dest)
+    else:
+        form = AuthenticationForm(request)
+    return render(request, "create/signin.html", {"form": form, "omv_tab": "account"})
+
+
+@require_POST
+def signout(request):
+    auth_logout(request)
+    messages.info(request, "Signed out. Your projects are here whenever you come back.")
+    return redirect("create:index")
+
+
+@login_required(login_url="/create/signin/")
+def account(request):
+    """The client portal — every project, its status, and the deposit button."""
+    commissions = list(request.user.omv_commissions.all())
+    payments = (
+        Payment.objects.filter(commission__client=request.user)
+        .select_related("package", "commission")
+        .order_by("-created_at")
+    )
+    return render(
+        request,
+        "create/account.html",
+        {
+            "commissions": commissions,
+            "payments": payments,
+            "open_count": sum(1 for c in commissions if c.is_open),
+            "omv_tab": "account",
+        },
+    )
+
+
 def request_thanks(request):
     return render(request, "create/request_thanks.html")
 
@@ -166,20 +252,40 @@ def request_thanks(request):
 
 @require_POST
 def book(request):
-    """Start a Stripe Checkout for a package deposit. Card entry is on Stripe."""
-    package = get_object_or_404(Package, slug=request.POST.get("package"), is_live=True)
-    if not package.bookable:
-        messages.info(request, "That one is quote-first — tell me about your day and I'll send a booking link.")
-        return redirect(f"{reverse('create:request')}?package={package.slug}")
+    """Start a Stripe Checkout for a deposit. Card entry is on Stripe.
 
+    Two ways in: a package pricecard on the site, or a quoted project in the
+    client portal (which carries its own deposit and reference).
+    """
+    commission = None
     commission_id = request.POST.get("commission_id") or None
+    if commission_id:
+        commission = Commission.objects.filter(pk=commission_id).first()
+
+    if commission is not None:
+        if not commission.can_book_online:
+            messages.info(request, "This one isn't ready to book online yet — Paul will send a link.")
+            return redirect("create:account")
+        package = commission.package
+        amount = commission.booking_deposit
+        description = f"Deposit to book — {commission.get_service_display()} · {commission.reference}"
+        fallback = reverse("create:account")
+    else:
+        package = get_object_or_404(Package, slug=request.POST.get("package"), is_live=True)
+        if not package.bookable:
+            messages.info(request, "That one is quote-first — tell me about your day and I'll send a booking link.")
+            return redirect(f"{reverse('create:request')}?package={package.slug}")
+        amount = package.deposit_amount
+        description = f"{package.name} — deposit to book"
+        fallback = f"{reverse('create:request')}?package={package.slug}"
+
     payment = Payment.objects.create(
         package=package,
-        commission_id=commission_id,
+        commission=commission,
         kind=Payment.Kind.DEPOSIT,
-        amount=package.deposit_amount,
+        amount=amount,
         currency=os.environ.get("STRIPE_CURRENCY", "usd"),
-        description=f"{package.name} — deposit to book",
+        description=description,
         source_path=request.META.get("HTTP_REFERER", "")[:200],
     )
     try:
@@ -194,7 +300,7 @@ def book(request):
         payment.status = Payment.Status.FAILED
         payment.save(update_fields=["status", "updated_at"])
         messages.error(request, "Couldn't reach checkout just now. Send a request and I'll get you a link.")
-        return redirect(f"{reverse('create:request')}?package={package.slug}")
+        return redirect(fallback)
 
     payment.stripe_session_id = session.get("id", "")
     payment.checkout_url = session.get("url", "")

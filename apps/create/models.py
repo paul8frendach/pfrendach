@@ -5,10 +5,21 @@ Work is the portfolio. Packages are the storefront. Vision Oasis is credited on
 the work; it never sits on the house mark.
 """
 
+import secrets
+import string
+
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 from apps.house.models import Published, TimeStamped
+
+
+def commission_ref() -> str:
+    """Short, human reference a client can quote back: OMV-XXXX."""
+    alphabet = string.ascii_uppercase + string.digits
+    return "OMV-" + "".join(secrets.choice(alphabet) for _ in range(4))
 
 
 class Work(TimeStamped, Published):
@@ -209,6 +220,18 @@ class Commission(TimeStamped):
         BOOKED = "booked", "Booked"
         CLOSED = "closed", "Closed"
 
+    reference = models.CharField(
+        max_length=12, blank=True, default="", db_index=True,
+        help_text="Short code the client sees, e.g. OMV-7K2Q.",
+    )
+    client = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="omv_commissions",
+        help_text="The client account this project belongs to, if they made one.",
+    )
     name = models.CharField(max_length=120)
     email = models.EmailField()
     phone = models.CharField(max_length=40, blank=True)
@@ -235,6 +258,19 @@ class Commission(TimeStamped):
     status = models.CharField(
         max_length=10, choices=Status.choices, default=Status.NEW, db_index=True
     )
+    # Paul's quote, surfaced to the client in their portal.
+    quote_amount = models.DecimalField(
+        max_digits=9, decimal_places=2, null=True, blank=True,
+        help_text="The number quoted for the whole project.",
+    )
+    quote_deposit = models.DecimalField(
+        max_digits=9, decimal_places=2, null=True, blank=True,
+        help_text="Deposit that books the date. Blank falls back to the package deposit.",
+    )
+    quote_note = models.TextField(
+        blank=True, help_text="A short message that rides with the quote.",
+    )
+    quoted_at = models.DateTimeField(null=True, blank=True)
     source_path = models.CharField(max_length=200, blank=True)
     notified_oasis = models.BooleanField(
         default=False,
@@ -249,9 +285,76 @@ class Commission(TimeStamped):
     def __str__(self) -> str:
         return f"{self.get_service_display()} · {self.name} · {self.created_at:%Y-%m-%d}"
 
+    def save(self, *args, **kwargs):
+        new_ref = False
+        if not self.reference:
+            self.reference = commission_ref()
+            new_ref = True
+        stamped = False
+        if self.status == self.Status.QUOTED and not self.quoted_at:
+            self.quoted_at = timezone.now()
+            stamped = True
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            update_fields = set(update_fields)
+            if new_ref:
+                update_fields.add("reference")
+            if stamped:
+                update_fields.add("quoted_at")
+            kwargs["update_fields"] = update_fields
+        super().save(*args, **kwargs)
+
     @property
     def is_open(self) -> bool:
         return self.status in {self.Status.NEW, self.Status.READ, self.Status.QUOTED}
+
+    @property
+    def booking_deposit(self):
+        """What a deposit would charge — the quoted deposit, else the package's."""
+        if self.quote_deposit:
+            return self.quote_deposit
+        if self.package and self.package.deposit_amount:
+            return self.package.deposit_amount
+        return None
+
+    @property
+    def can_book_online(self) -> bool:
+        """A quote is on the table, a deposit is known, and Stripe can take it."""
+        from .payments import configured
+
+        return bool(
+            self.booking_deposit
+            and self.status == self.Status.QUOTED
+            and not self.deposit_paid
+            and configured()
+        )
+
+    @property
+    def deposit_paid(self) -> bool:
+        return self.payments.filter(
+            kind=Payment.Kind.DEPOSIT, status=Payment.Status.PAID
+        ).exists()
+
+    @property
+    def progress(self) -> list[dict]:
+        """The four-beat status rail shown in the client portal."""
+        order = [
+            (self.Status.NEW, "Received"),
+            (self.Status.READ, "In review"),
+            (self.Status.QUOTED, "Quote ready"),
+            (self.Status.BOOKED, "Booked"),
+        ]
+        rank = {status: i for i, (status, _) in enumerate(order)}
+        current = rank.get(self.status, 0)
+        closed = self.status == self.Status.CLOSED
+        steps = []
+        for i, (status, label) in enumerate(order):
+            steps.append({
+                "label": label,
+                "done": (not closed) and i < current,
+                "current": (not closed) and i == current,
+            })
+        return steps
 
 
 class Payment(TimeStamped):
