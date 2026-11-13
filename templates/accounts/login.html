@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Sign in — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="ft-form">
+      <p class="beat beat--center" style="margin-bottom:1.2rem">Find the 90</p>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);text-align:center;margin-bottom:2rem">Sign in</h1>
+
+      {% if form.non_field_errors %}
+        <div class="ft-form__errors">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+        <div class="ft-form__row">
+          <label for="id_username">Email</label>
+          <input type="text" name="username" id="id_username"
+                 value="{{ form.username.value|default:'' }}"
+                 autocomplete="username" autofocus>
+          {% if form.username.errors %}
+            <p class="help" style="color:#f09090">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_password">Password</label>
+          <input type="password" name="password" id="id_password" autocomplete="current-password">
+          {% if form.password.errors %}
+            <p class="help" style="color:#f09090">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div style="margin-top:1.4rem;display:flex;flex-direction:column;gap:12px">
+          <button type="submit" class="ft-btn" style="width:100%;text-align:center">Sign in</button>
+          <p style="text-align:center;font-size:0.88rem;color:var(--ft-gry)">
+            No account? <a href="{% url 'accounts:signup' %}" style="color:var(--ft-lgy)">Join Find the 90</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

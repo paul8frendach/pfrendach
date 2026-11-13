@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ name }} — FindThe90 Shop{% endblock %}
+{% block description %}{{ description|default:"Official FindThe90 gear." }}{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block main %}
+<div class="coach-shell" style="padding-top: 3rem; padding-bottom: 4rem;">
+
+  <p style="margin-bottom: 2rem;">
+    <a href="{% url 'shop:product_list' %}" style="color: var(--ft-gry); font-size: 0.85rem; text-decoration: none;">
+      ← Back to shop
+    </a>
+  </p>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+
+    <div>
+      {% if thumbnail %}
+        <img src="{{ thumbnail }}" alt="{{ name }}"
+             style="width: 100%; border-radius: var(--ft-radius-lg); display: block;">
+      {% endif %}
+    </div>
+
+    <div>
+      <h1 style="font-family: var(--font-sans); font-size: 1.6rem; font-weight: 600; color: var(--ft-lgy); margin: 0 0 1rem;">{{ name }}</h1>
+
+      {% if description %}
+        <p style="color: var(--ft-gry); line-height: 1.6; margin-bottom: 2rem;">{{ description }}</p>
+      {% endif %}
+
+      {% if variants %}
+        <p style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ft-gry); margin-bottom: 0.6rem;">Available variants</p>
+        <ul style="list-style: none; padding: 0; margin: 0 0 2rem; display: flex; flex-direction: column; gap: 6px;">
+          {% for v in variants %}
+            <li class="offer-card" style="padding: 0.8rem 1rem; flex-direction: row; justify-content: space-between; align-items: center;">
+              <span style="color: var(--ft-lgy); font-size: 0.9rem;">{{ v.name }}</span>
+              {% with price=v.retail_price %}
+                {% if price %}
+                  <span style="color: var(--ft-gry); font-size: 0.9rem;">${{ price }}</span>
+                {% endif %}
+              {% endwith %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <p style="color: var(--ft-gry); font-size: 0.85rem; line-height: 1.5; padding: 1rem; border: 1px solid var(--ft-rule); border-radius: var(--ft-radius);">
+        Ready to order? <a href="{% url 'shop:product_list' %}" style="color: var(--ft-red);">Contact us</a> or check back soon for direct checkout.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+<style>
+  @media (max-width: 680px) {
+    .coach-shell > div[style*="grid"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,600 @@
+/* ==========================================================================
+   Find the 90 — account, messaging, and coach dashboard styles.
+   Brand tokens: BK, RED, GRY, LGY. Never hardcoded inline — always var().
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- tokens */
+
+:root {
+  --ft-bk:  #0a0a0a;
+  --ft-red: #c41010;
+  --ft-gry: #908070;
+  --ft-lgy: #f5f3f0;
+
+  --ft-red-dim: color-mix(in srgb, var(--ft-red) 70%, transparent);
+  --ft-bk-soft: color-mix(in srgb, var(--ft-bk) 85%, var(--ft-lgy));
+  --ft-rule:    color-mix(in srgb, var(--ft-gry) 22%, transparent);
+  --ft-rule-2:  color-mix(in srgb, var(--ft-gry) 40%, transparent);
+
+  --ft-radius: 6px;
+  --ft-radius-lg: 12px;
+}
+
+/* ---------------------------------------------------------------- rating badge */
+
+.rating-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.rating-badge--0 { background: color-mix(in srgb, var(--ft-gry) 20%, transparent); color: var(--ft-gry); }
+.rating-badge--1 { background: #1a3a2a; color: #6bcf9a; }
+.rating-badge--2 { background: #1a2e3a; color: #6ab4d0; }
+.rating-badge--3 { background: #2e2a10; color: #e0c84a; }
+.rating-badge--4 { background: #2e1a10; color: #f09050; }
+.rating-badge--5 { background: #2e0f0f; color: #e87070; }
+
+/* ---------------------------------------------------------------- offer cards */
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+
+.offer-card {
+  background: color-mix(in srgb, var(--ft-lgy) 6%, var(--ink-2));
+  border: 1px solid var(--ft-rule);
+  border-radius: var(--ft-radius-lg);
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.offer-card__tier {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ft-red);
+}
+
+.offer-card__title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ft-lgy);
+  margin: 0;
+}
+
+.offer-card__body {
+  font-size: 0.9rem;
+  color: var(--ft-gry);
+  line-height: 1.55;
+  flex: 1;
+  margin: 0;
+}
+
+.offer-card__cta {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 8px 18px;
+  background: var(--ft-red);
+  color: var(--ft-lgy);
+  border-radius: var(--ft-radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: background 180ms;
+}
+.offer-card__cta:hover { background: color-mix(in srgb, var(--ft-red) 80%, #fff); }
+
+/* ---------------------------------------------------------------- auth forms */
+
+.ft-form {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.ft-form__row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 1rem;
+}
+
+.ft-form__row label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--ft-gry);
+  text-transform: uppercase;
+}
+
+.ft-form__row input,
+.ft-form__row textarea,
+.ft-form__row select {
+  background: color-mix(in srgb, var(--ft-lgy) 5%, var(--ink-2));
+  border: 1px solid var(--ft-rule-2);
+  border-radius: var(--ft-radius);
+  padding: 10px 14px;
+  color: var(--ft-lgy);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 150ms;
+}
+.ft-form__row input:focus,
+.ft-form__row textarea:focus,
+.ft-form__row select:focus {
+  outline: none;
+  border-color: var(--ft-red);
+}
+
+.ft-form__errors {
+  margin-bottom: 1rem;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--ft-red) 12%, transparent);
+  border: 1px solid var(--ft-red-dim);
+  border-radius: var(--ft-radius);
+  color: #f09090;
+  font-size: 0.88rem;
+}
+
+.ft-form__row .help { font-size: 0.75rem; color: var(--ft-gry); margin: 0; }
+
+.ft-btn {
+  display: inline-block;
+  padding: 11px 28px;
+  background: var(--ft-red);
+  color: var(--ft-lgy);
+  border: none;
+  border-radius: var(--ft-radius);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 180ms;
+}
+.ft-btn:hover { background: color-mix(in srgb, var(--ft-red) 85%, #fff); }
+.ft-btn--quiet {
+  background: transparent;
+  border: 1px solid var(--ft-rule-2);
+  color: var(--ft-gry);
+}
+.ft-btn--quiet:hover { border-color: var(--ft-gry); color: var(--ft-lgy); background: transparent; }
+
+/* ---------------------------------------------------------------- messages / inbox */
+
+.inbox {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.thread-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.thread-item {
+  display: block;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--ft-lgy) 4%, var(--ink-2));
+  border: 1px solid var(--ft-rule);
+  border-radius: var(--ft-radius);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 150ms, background 150ms;
+  position: relative;
+}
+.thread-item:hover {
+  border-color: var(--ft-rule-2);
+  background: color-mix(in srgb, var(--ft-lgy) 7%, var(--ink-2));
+}
+.thread-item--unread { border-left: 3px solid var(--ft-red); }
+
+.thread-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 2px;
+}
+
+.thread-item__subject {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--ft-lgy);
+}
+.thread-item--unread .thread-item__subject { color: #fff; }
+
+.thread-item__when {
+  font-size: 0.75rem;
+  color: var(--ft-gry);
+  white-space: nowrap;
+}
+
+.thread-item__preview {
+  font-size: 0.82rem;
+  color: var(--ft-gry);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-item__badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge--unread   { background: var(--ft-red); color: #fff; }
+.badge--ai       { background: color-mix(in srgb, var(--ft-gry) 25%, transparent); color: var(--ft-gry); }
+.badge--escalate { background: #7c3000; color: #ffb070; }
+.badge--waiting  { background: #1a3a1a; color: #80c080; }
+
+/* ---------------------------------------------------------------- conversation */
+
+.conversation {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.conversation__header {
+  margin-bottom: 1.4rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--ft-rule);
+}
+
+.conversation__subject {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ft-lgy);
+  margin: 0 0 4px;
+}
+
+.conversation__meta {
+  font-size: 0.8rem;
+  color: var(--ft-gry);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 86%;
+}
+.msg--player  { align-self: flex-end; align-items: flex-end; }
+.msg--coach   { align-self: flex-start; align-items: flex-start; }
+.msg--ai      { align-self: flex-start; align-items: flex-start; }
+
+.msg__bubble {
+  padding: 10px 14px;
+  border-radius: var(--ft-radius-lg);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.msg--player .msg__bubble {
+  background: var(--ft-red);
+  color: var(--ft-lgy);
+  border-bottom-right-radius: 4px;
+}
+.msg--coach .msg__bubble {
+  background: color-mix(in srgb, var(--ft-lgy) 10%, var(--ink-2));
+  color: var(--ft-lgy);
+  border: 1px solid var(--ft-rule-2);
+  border-bottom-left-radius: 4px;
+}
+.msg--ai .msg__bubble {
+  background: color-mix(in srgb, var(--ft-gry) 12%, var(--ink-2));
+  color: var(--ft-gry);
+  border: 1px solid var(--ft-rule);
+  border-bottom-left-radius: 4px;
+}
+
+.msg__meta {
+  font-size: 0.72rem;
+  color: var(--ft-gry);
+  margin-top: 3px;
+  padding: 0 4px;
+}
+
+.reply-form {
+  border-top: 1px solid var(--ft-rule);
+  padding-top: 1.2rem;
+}
+
+.reply-form textarea {
+  width: 100%;
+  background: color-mix(in srgb, var(--ft-lgy) 5%, var(--ink-2));
+  border: 1px solid var(--ft-rule-2);
+  border-radius: var(--ft-radius);
+  padding: 10px 14px;
+  color: var(--ft-lgy);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  resize: vertical;
+  min-height: 90px;
+  transition: border-color 150ms;
+}
+.reply-form textarea:focus { outline: none; border-color: var(--ft-red); }
+.reply-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* ---------------------------------------------------------------- coach dashboard */
+
+.coach-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.coach-nav {
+  display: flex;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ft-rule);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.coach-nav a {
+  padding: 6px 14px;
+  border-radius: var(--ft-radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ft-gry);
+  text-decoration: none;
+  transition: background 150ms, color 150ms;
+}
+.coach-nav a:hover,
+.coach-nav a.active,
+.coach-nav a[aria-current="page"] {
+  background: color-mix(in srgb, var(--ft-lgy) 8%, transparent);
+  color: var(--ft-lgy);
+}
+.coach-nav a.active,
+.coach-nav a[aria-current="page"] { color: var(--ft-red); }
+
+.coach-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.coach-stat {
+  background: color-mix(in srgb, var(--ft-lgy) 5%, var(--ink-2));
+  border: 1px solid var(--ft-rule);
+  border-radius: var(--ft-radius-lg);
+  padding: 1.1rem 1.3rem;
+}
+
+.coach-stat__value,
+.coach-stat__num {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--ft-lgy);
+  line-height: 1;
+}
+.coach-stat__value--alert,
+.coach-stat__num--alert { color: var(--ft-red); }
+
+.coach-stat__label {
+  font-size: 0.78rem;
+  color: var(--ft-gry);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Coach player table */
+
+.player-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.player-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--ft-gry);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--ft-rule-2);
+}
+
+.player-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ft-rule);
+  color: var(--bone);
+  vertical-align: middle;
+}
+
+.player-table tr:last-child td { border-bottom: none; }
+
+.player-table tr:hover td {
+  background: color-mix(in srgb, var(--ft-lgy) 3%, transparent);
+}
+
+/* Coach offers table */
+
+.offers-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.offers-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--ft-gry);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--ft-rule-2);
+}
+
+.offers-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ft-rule);
+  color: var(--bone);
+  vertical-align: middle;
+}
+
+.offers-table tr:last-child td { border-bottom: none; }
+
+/* ---------------------------------------------------------------- notification badge */
+
+.notif-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--ft-red);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* ---------------------------------------------------------------- player dashboard */
+
+.player-dash {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.player-dash__profile {
+  background: color-mix(in srgb, var(--ft-lgy) 5%, var(--ink-2));
+  border: 1px solid var(--ft-rule);
+  border-radius: var(--ft-radius-lg);
+  padding: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.player-dash__name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--ft-lgy);
+}
+.player-dash__email { font-size: 0.82rem; color: var(--ft-gry); }
+
+.player-dash__section { margin-bottom: 2rem; }
+
+.player-dash__section-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ft-gry);
+  margin: 0 0 1rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ft-rule);
+}
+
+/* ---------------------------------------------------------------- status pill */
+
+.status-pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.status-pill--open      { background: #1a3a2a; color: #80d0a0; }
+.status-pill--waiting   { background: #1a2e1a; color: #80b080; }
+.status-pill--escalated { background: #3a1a0a; color: #f09050; }
+.status-pill--closed    { background: #222; color: #888; }
+
+/* ---------------------------------------------------------------- coach thread layout */
+
+.coach-thread-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ---------------------------------------------------------------- table scroll wrapper */
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ---------------------------------------------------------------- responsive guards */
+
+@media (max-width: 600px) {
+  .player-table, .offers-table {
+    font-size: 0.82rem;
+    min-width: 520px; /* allow horizontal scroll inside .table-scroll */
+  }
+  .player-table th, .player-table td,
+  .offers-table th, .offers-table td {
+    padding: 8px 6px;
+  }
+  .msg { max-width: 94%; }
+  .coach-stat-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Coach thread: stack sidebar below conversation */
+  .coach-thread-layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* Coach offer form: collapse 4-col grid */
+  .coach-offer-meta-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Signup: stack name fields */
+  .ft-name-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

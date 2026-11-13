@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}{{ thread.subject }} — Coach — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}" aria-current="page">Inbox</a>
+      </nav>
+
+      <div class="coach-thread-layout">
+
+        {% comment %}Conversation column{% endcomment %}
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.4rem">
+            <div>
+              <h1 style="font-size:clamp(1.1rem,2.5vw,1.6rem);margin:0">{{ thread.subject }}</h1>
+              <div style="display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap">
+                <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                {% if thread.service_name %}<span class="badge">{{ thread.service_name }}</span>{% endif %}
+                <span style="font-size:0.78rem;color:var(--ft-gry)">{{ thread.reference }}</span>
+              </div>
+            </div>
+            <a href="{% url 'accounts:coach_inbox' %}" class="ft-btn ft-btn--quiet" style="font-size:0.82rem;padding:6px 16px">Back</a>
+          </div>
+
+          <div class="conversation">
+            <div class="messages">
+              {% for msg in msgs %}
+                <div class="msg msg--{{ msg.sender_type }}">
+                  <div class="msg__bubble">
+                    {{ msg.body|linebreaksbr }}
+                  </div>
+                  <p class="msg__meta">
+                    {% if msg.sender_type == 'player' %}
+                      {{ thread.player.get_full_name|default:thread.player.username }}
+                    {% elif msg.sender_type == 'coach' %}
+                      You (Alex)
+                    {% else %}
+                      Find the 90 AI
+                    {% endif %}
+                    &middot; {{ msg.created_at|timesince }} ago
+                    {% if msg.is_escalation %}
+                      &middot; <span style="color:var(--ft-red);font-size:0.75rem">AI escalated</span>
+                    {% endif %}
+                    {% if not msg.is_read_by_player and msg.sender_type == 'coach' %}
+                      &middot; <span style="color:var(--ft-gry);font-size:0.75rem">Not read yet</span>
+                    {% endif %}
+                  </p>
+                </div>
+              {% endfor %}
+            </div>
+
+            {% if thread.status != 'closed' %}
+              <div class="reply-form">
+                <form method="post" novalidate>
+                  {% csrf_token %}
+                  {% if form.body.errors %}
+                    <p style="color:#f09090;margin-bottom:6px;font-size:0.85rem">{{ form.body.errors.0 }}</p>
+                  {% endif %}
+                  <textarea name="body" id="id_reply"
+                            placeholder="Reply to {{ thread.player.first_name|default:thread.player.username }}…"
+                            rows="5">{{ form.body.value|default:'' }}</textarea>
+                  <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                    <button type="submit" class="ft-btn" style="font-size:0.88rem;padding:8px 22px">Send reply</button>
+                  </div>
+                </form>
+              </div>
+            {% else %}
+              <p style="text-align:center;color:var(--ft-gry);padding:1rem;font-size:0.9rem">Thread is closed.</p>
+            {% endif %}
+          </div>
+        </div>
+
+        {% comment %}Player sidebar{% endcomment %}
+        <div style="position:sticky;top:calc(var(--chrome-h) + 1.5rem)">
+          <div style="background:rgba(255,255,255,.04);border:1px solid var(--ft-rule);border-radius:6px;padding:1.4rem">
+            <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ft-gry);margin:0 0 0.8rem">Player</p>
+            <p style="font-size:1rem;font-weight:600;margin:0 0 2px">
+              {{ thread.player.get_full_name|default:thread.player.username }}
+            </p>
+            <p style="font-size:0.82rem;color:var(--ft-gry);margin:0 0 1rem">{{ thread.player.email }}</p>
+
+            {% if player_profile %}
+              <div style="margin-bottom:0.8rem">
+                <span class="rating-badge rating-badge--{{ player_profile.rating }}">{{ player_profile.get_rating_display }}</span>
+              </div>
+              {% if player_profile.position %}
+                <p style="font-size:0.85rem;margin:0 0 4px">{{ player_profile.position }}</p>
+              {% endif %}
+              {% if player_profile.club %}
+                <p style="font-size:0.85rem;color:var(--ft-gry);margin:0 0 4px">{{ player_profile.club }}</p>
+              {% endif %}
+              {% if player_profile.grad_year %}
+                <p style="font-size:0.82rem;color:var(--ft-gry);margin:0 0 1rem">Class of {{ player_profile.grad_year }}</p>
+              {% endif %}
+              {% if player_profile.notes %}
+                <p style="font-size:0.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ft-gry);margin:0.8rem 0 4px">Notes</p>
+                <p style="font-size:0.85rem;color:var(--ft-lgy);white-space:pre-line">{{ player_profile.notes }}</p>
+              {% endif %}
+            {% endif %}
+
+            {% if player_profile %}<a href="{% url 'accounts:coach_rate_player' player_profile.pk %}"{% else %}<a href="{% url 'accounts:coach_players' %}"{% endif %}
+               class="ft-btn ft-btn--quiet"
+               style="width:100%;text-align:center;font-size:0.82rem;padding:6px 0;margin-top:1rem;display:block">
+              Edit profile
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Messages — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="player-dash">
+
+      <div class="player-dash__profile">
+        <h1 style="font-size:clamp(1.4rem,3vw,2rem);margin:0">Messages</h1>
+        <a href="{% url 'accounts:compose' %}" class="ft-btn" style="font-size:0.85rem;padding:8px 20px">New message</a>
+      </div>
+
+      <div class="inbox">
+        {% if threads %}
+          <ul class="thread-list">
+            {% for thread in threads %}
+              <li>
+                <a class="thread-item{% if thread.player_unread %} thread-item--unread{% endif %}"
+                   href="{% url 'accounts:thread' thread.reference %}">
+                  <div class="thread-item__header">
+                    <span class="thread-item__subject">{{ thread.subject }}</span>
+                    <span class="thread-item__when">{{ thread.updated_at|timesince }} ago</span>
+                  </div>
+                  {% with last=thread.messages.last %}
+                    {% if last %}
+                      <p class="thread-item__preview">{{ last.body|truncatechars:100 }}</p>
+                    {% endif %}
+                  {% endwith %}
+                  <div class="thread-item__badges">
+                    {% if thread.player_unread %}<span class="badge badge--unread">New reply</span>{% endif %}
+                    <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                    {% if thread.service_name %}
+                      <span class="badge">{{ thread.service_name }}</span>
+                    {% endif %}
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div style="padding:3rem 0;text-align:center;color:var(--ft-gry)">
+            <p>No messages yet.</p>
+            <a href="{% url 'accounts:compose' %}" class="ft-btn" style="margin-top:1rem;display:inline-block">Send Alex a message</a>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

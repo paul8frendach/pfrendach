@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Inbox — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}" aria-current="page">
+          Inbox
+          {% if unread %}<span class="notif-badge">{{ unread }}</span>{% endif %}
+        </a>
+      </nav>
+
+      <div style="display:flex;gap:1.4rem;align-items:center;margin-bottom:1.6rem;flex-wrap:wrap">
+        <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);margin:0">Inbox</h1>
+        {% if unread %}
+          <span class="badge badge--unread">{{ unread }} unread</span>
+        {% endif %}
+        {% if escalated %}
+          <span class="status-pill status-pill--escalated">{{ escalated }} escalated</span>
+        {% endif %}
+      </div>
+
+      {% if threads %}
+        <ul class="thread-list">
+          {% for thread in threads %}
+            <li>
+              <a class="thread-item{% if thread.coach_unread %} thread-item--unread{% endif %}"
+                 href="{% url 'accounts:coach_thread' thread.reference %}">
+                <div class="thread-item__header">
+                  <span class="thread-item__subject">
+                    {{ thread.player.get_full_name|default:thread.player.username }} — {{ thread.subject }}
+                  </span>
+                  <span class="thread-item__when">{{ thread.updated_at|timesince }} ago</span>
+                </div>
+                {% with last=thread.messages.last %}
+                  {% if last %}
+                    <p class="thread-item__preview">{{ last.body|truncatechars:100 }}</p>
+                  {% endif %}
+                {% endwith %}
+                <div class="thread-item__badges">
+                  {% if thread.coach_unread %}<span class="badge badge--unread">Unread</span>{% endif %}
+                  <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                  {% if thread.service_name %}<span class="badge">{{ thread.service_name }}</span>{% endif %}
+                  <span style="font-size:0.75rem;color:var(--ft-gry)">{{ thread.reference }}</span>
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div style="padding:3rem 0;text-align:center;color:var(--ft-gry)">
+          <p>No threads yet.</p>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+{% endblock %}

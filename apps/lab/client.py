@@ -313,6 +313,24 @@ class LabClient:
     def create_lead(self, payload: dict, *, idempotency_key: str | None = None) -> dict:
         return self.post("leads", payload, idempotency_key=idempotency_key)
 
+    def create_client(self, payload: dict, *, idempotency_key: str | None = None) -> dict:
+        """Give one of this site's users a LAB account.
+
+        Needs `clients:write`. Send the profile the site already holds — payer
+        (email required) and their athletes. **Never send a password**: there is
+        no field for one, and posting one is refused. The LAB creates the
+        account with no usable password and emails the person a link to set
+        their own.
+
+        Branch on `account.status`:
+          * `claim_sent`       — tell them to check their email.
+          * `claim_pending`    — a live link already went out; do not resubmit,
+                                 or you will spam them.
+          * `existing_account` — that address is already a LAB user. Nothing was
+                                 created and nothing was sent; ask them to log in.
+        """
+        return self.post("clients", payload, idempotency_key=idempotency_key)
+
     def write_service(self, payload: dict, *, idempotency_key: str | None = None) -> dict:
         """Create or update one service, keyed on its `external_ref`.
 

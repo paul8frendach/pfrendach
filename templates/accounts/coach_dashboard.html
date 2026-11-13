@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Coach dashboard — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}" aria-current="page">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}">
+          Inbox
+          {% if unread_threads %}<span class="notif-badge">{{ unread_threads }}</span>{% endif %}
+        </a>
+      </nav>
+
+      <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);margin:0 0 1.6rem">Overview</h1>
+
+      <div class="coach-stat-grid">
+        <div class="coach-stat">
+          <p class="coach-stat__num">{{ total_players }}</p>
+          <p class="coach-stat__label">Total players</p>
+        </div>
+        <div class="coach-stat">
+          <p class="coach-stat__num">{{ rated_players }}</p>
+          <p class="coach-stat__label">Rated</p>
+        </div>
+        <div class="coach-stat">
+          <p class="coach-stat__num">{{ unread_threads }}</p>
+          <p class="coach-stat__label">Unread threads</p>
+        </div>
+        <div class="coach-stat">
+          <p class="coach-stat__num">{{ escalated }}</p>
+          <p class="coach-stat__label">Escalated</p>
+        </div>
+        <div class="coach-stat">
+          <p class="coach-stat__num">{{ offers|length }}</p>
+          <p class="coach-stat__label">Live offers</p>
+        </div>
+      </div>
+
+      {% comment %}Recent threads{% endcomment %}
+      <div style="margin-top:2.4rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h2 style="font-size:1.1rem;margin:0">Recent threads</h2>
+          <a href="{% url 'accounts:coach_inbox' %}" style="font-size:0.85rem;color:var(--ft-gry)">All messages</a>
+        </div>
+        {% if recent_threads %}
+          <ul class="thread-list">
+            {% for thread in recent_threads %}
+              <li>
+                <a class="thread-item{% if thread.coach_unread %} thread-item--unread{% endif %}"
+                   href="{% url 'accounts:coach_thread' thread.reference %}">
+                  <div class="thread-item__header">
+                    <span class="thread-item__subject">{{ thread.player.get_full_name|default:thread.player.username }} — {{ thread.subject }}</span>
+                    <span class="thread-item__when">{{ thread.updated_at|timesince }} ago</span>
+                  </div>
+                  <div class="thread-item__badges">
+                    {% if thread.coach_unread %}<span class="badge badge--unread">Unread</span>{% endif %}
+                    <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p style="color:var(--ft-gry)">No threads yet.</p>
+        {% endif %}
+      </div>
+
+      {% comment %}Offer summary{% endcomment %}
+      <div style="margin-top:2.4rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h2 style="font-size:1.1rem;margin:0">Active offers</h2>
+          <a href="{% url 'accounts:coach_offers' %}" style="font-size:0.85rem;color:var(--ft-gry)">Manage offers</a>
+        </div>
+        {% with live_offers=offers %}
+          {% if live_offers %}
+            <div class="table-scroll">
+            <table class="offers-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Rating range</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for offer in live_offers %}
+                  <tr>
+                    <td>{{ offer.title }}</td>
+                    <td>{{ offer.get_min_rating_display }} – {{ offer.get_max_rating_display }}</td>
+                    <td>
+                      {% if offer.is_live %}
+                        <span class="status-pill status-pill--open">Live</span>
+                      {% else %}
+                        <span class="status-pill status-pill--closed">Off</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            </div>
+          {% else %}
+            <p style="color:var(--ft-gry)">No offers yet. <a href="{% url 'accounts:coach_offer_new' %}">Create one</a></p>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

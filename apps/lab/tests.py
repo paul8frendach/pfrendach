@@ -683,3 +683,36 @@ class BlockReconcileTests(SimpleTestCase):
     def test_a_block_only_in_the_lab_is_extra(self):
         result = reconcile_blocks([], [self.LIVE])
         self.assertEqual(len(result.unexpected), 1)
+
+
+@override_settings(**SETTINGS)
+class ClientProvisioningTests(TestCase):
+    """The wrapper must never be the thing that leaks a password."""
+
+    def test_a_profile_goes_up_without_any_credential(self):
+        sent = {}
+        def spy(request, timeout=None, **kw):
+            sent['body'] = json.loads(request.data.decode())
+            return _response({'payer_id': 1, 'athletes': [],
+                              'account': {'status': 'claim_sent'}})
+        with mock.patch("urllib.request.urlopen", side_effect=spy):
+            store.provision_client({
+                "payer": {"first_name": "Dana", "email": "dana@example.test"},
+                "athletes": [{"first_name": "Mia", "birth_year": "2011"}]})
+        self.assertNotIn("password", json.dumps(sent['body']).lower())
+
+    def test_it_always_carries_an_idempotency_key(self):
+        """Otherwise a retry emails somebody their claim link twice."""
+        with mock.patch("urllib.request.urlopen",
+                        return_value=_response({'payer_id': 1, 'athletes': [],
+                                                'account': {}})) as opener:
+            store.provision_client({"payer": {"email": "a@b.c"}})
+        self.assertTrue(opener.call_args[0][0].get_header("Idempotency-key"))
+
+    def test_a_refused_password_surfaces_as_a_rejection(self):
+        with mock.patch("urllib.request.urlopen",
+                        side_effect=_http_error(400, "password_not_accepted",
+                                                "Do not send a password.")):
+            with self.assertRaises(LabRejected):
+                store.provision_client({"payer": {"email": "a@b.c",
+                                                  "password": "hunter2"}})

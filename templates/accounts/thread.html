@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}{{ thread.subject }} — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="player-dash">
+
+      <div class="player-dash__profile">
+        <div>
+          <h1 style="font-size:clamp(1.1rem,2.5vw,1.6rem);margin:0">{{ thread.subject }}</h1>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+            <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+            {% if thread.service_name %}
+              <span class="badge">{{ thread.service_name }}</span>
+            {% endif %}
+            <span style="font-size:0.8rem;color:var(--ft-gry)">{{ thread.reference }}</span>
+          </div>
+        </div>
+        <a href="{% url 'accounts:inbox' %}" class="ft-btn ft-btn--quiet" style="font-size:0.85rem;padding:8px 20px">Inbox</a>
+      </div>
+
+      <div class="conversation">
+        <div class="messages">
+          {% for msg in msgs %}
+            <div class="msg msg--{{ msg.sender_type }}">
+              <div class="msg__bubble">
+                {{ msg.body|linebreaksbr }}
+              </div>
+              <p class="msg__meta">
+                {% if msg.sender_type == 'player' %}
+                  You
+                {% elif msg.sender_type == 'coach' %}
+                  Alex
+                {% else %}
+                  Find the 90 AI
+                {% endif %}
+                &middot; {{ msg.created_at|timesince }} ago
+                {% if msg.is_escalation %}
+                  &middot; <span style="color:var(--ft-red);font-size:0.75rem">Passed to Alex</span>
+                {% endif %}
+              </p>
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if thread.status != 'closed' %}
+          <div class="reply-form">
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {% if form.body.errors %}
+                <p style="color:#f09090;margin-bottom:6px;font-size:0.85rem">{{ form.body.errors.0 }}</p>
+              {% endif %}
+              <textarea name="body" id="id_reply"
+                        placeholder="Write your reply…"
+                        rows="4">{{ form.body.value|default:'' }}</textarea>
+              <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                <button type="submit" class="ft-btn" style="font-size:0.88rem;padding:8px 22px">Send reply</button>
+              </div>
+            </form>
+          </div>
+        {% else %}
+          <p style="text-align:center;color:var(--ft-gry);padding:1rem;font-size:0.9rem">This thread is closed.</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

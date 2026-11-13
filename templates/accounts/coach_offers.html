@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Offers — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}" aria-current="page">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}">Inbox</a>
+      </nav>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.6rem">
+        <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);margin:0">Offers</h1>
+        <a href="{% url 'accounts:coach_offer_new' %}" class="ft-btn" style="font-size:0.85rem;padding:8px 20px">New offer</a>
+      </div>
+
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="ft-form__errors" style="margin-bottom:1.2rem;background:rgba(0,200,100,.12);color:#6fe0a0;border-color:#6fe0a0">
+            {{ msg }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if offers %}
+        <div class="table-scroll">
+        <table class="offers-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Tier</th>
+              <th>Rating</th>
+              <th>Auth</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for offer in offers %}
+              <tr>
+                <td>
+                  <strong>{{ offer.title }}</strong>
+                  {% if offer.tier_label %}
+                    <br><span style="font-size:0.78rem;color:var(--ft-gry)">{{ offer.tier_label }}</span>
+                  {% endif %}
+                </td>
+                <td>{{ offer.tier_label|default:"—" }}</td>
+                <td style="white-space:nowrap">
+                  <span class="rating-badge rating-badge--{{ offer.min_rating }}">{{ offer.get_min_rating_display }}</span>
+                  &rarr;
+                  <span class="rating-badge rating-badge--{{ offer.max_rating }}">{{ offer.get_max_rating_display }}</span>
+                </td>
+                <td>{% if offer.requires_auth %}Yes{% else %}No{% endif %}</td>
+                <td>
+                  {% if offer.is_live %}
+                    <span class="status-pill status-pill--open">Live</span>
+                  {% else %}
+                    <span class="status-pill status-pill--closed">Off</span>
+                  {% endif %}
+                </td>
+                <td style="white-space:nowrap">
+                  <a href="{% url 'accounts:coach_offer_edit' offer.pk %}"
+                     class="ft-btn ft-btn--quiet"
+                     style="font-size:0.78rem;padding:4px 12px">Edit</a>
+                  <form method="post"
+                        action="{% url 'accounts:coach_offer_toggle' offer.pk %}"
+                        style="display:inline;margin-left:4px">
+                    {% csrf_token %}
+                    <button type="submit" class="ft-btn ft-btn--quiet"
+                            style="font-size:0.78rem;padding:4px 12px">
+                      {% if offer.is_live %}Turn off{% else %}Go live{% endif %}
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      {% else %}
+        <div style="padding:3rem 0;text-align:center;color:var(--ft-gry)">
+          <p>No offers yet.</p>
+          <a href="{% url 'accounts:coach_offer_new' %}" class="ft-btn" style="margin-top:1rem;display:inline-block">Create first offer</a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+{% endblock %}

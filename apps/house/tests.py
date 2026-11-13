@@ -1,4 +1,7 @@
-from django.test import TestCase
+import re
+from pathlib import Path
+from django.conf import settings
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from apps.house.models import Inquiry, Milestone, SiteConfig, World
@@ -177,3 +180,74 @@ class AlignmentContractTests(TestCase):
         # .actions carries the equal-width rule; loose buttons would escape it.
         html = self.client.get(reverse("train:index")).content.decode()
         self.assertIn('class="actions"', html)
+
+
+class SignatureWashTests(SimpleTestCase):
+    """The light behind the signature — and the two rules that keep it light.
+
+    This wash failed twice before it worked, both times rendering as a grey
+    plate behind the wordmark rather than as light. Neither failure was a taste
+    problem; both were geometry, and both are the kind that come back the
+    moment somebody nudges a number. So they are asserted here rather than
+    left in a comment.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        css = Path(settings.BASE_DIR) / "static" / "css" / "house.css"
+        cls.css = css.read_text()
+        start = cls.css.index(".chrome .sig::before {")
+        cls.rule = cls.css[start:cls.css.index("}", start)]
+
+    def test_the_wash_exists_behind_the_chrome_signature(self):
+        self.assertIn(".chrome .sig::before", self.css)
+        self.assertIn("z-index: -1", self.rule)
+
+    def test_it_never_bleeds_vertically(self):
+        """`.chrome__crest` is overflow:hidden and is exactly the signature's
+        height — measured, zero pixels above or below. Any vertical inset is
+        therefore clipped into a hard rectangle, which is what made the first
+        two attempts look like a plate."""
+        inset = [t for t in self.rule.splitlines() if "inset:" in t][0]
+        top, right, bottom, left = inset.split("inset:")[1].strip(" ;").split()
+        self.assertEqual(top, "0", "vertical bleed is clipped by .chrome__crest")
+        self.assertEqual(bottom, "0", "vertical bleed is clipped by .chrome__crest")
+        self.assertTrue(right.startswith("-") and left.startswith("-"),
+                        "horizontally there IS room, and the wash should use it")
+
+    def test_the_gradient_fades_out_before_its_own_edges(self):
+        """A radial still coloured where its box ends draws the same rectangle
+        by a different route. With the colour gone by 72% of the radius,
+        0.72 * r must stay inside the distance from the centre to each edge."""
+        match = re.search(
+            r"radial-gradient\(ellipse (\d+)% (\d+)% at (\d+)% (\d+)%.*?transparent (\d+)%",
+            self.rule, re.S)
+        self.assertIsNotNone(match, "the wash should be one sized ellipse")
+        rx, ry, cx, cy, stop = (int(g) / 100 for g in match.groups())
+        self.assertLess(stop * rx, cx, "colour still present at the left edge")
+        self.assertLess(stop * rx, 1 - cx, "colour still present at the right edge")
+        self.assertLess(stop * ry, cy, "colour still present at the top edge")
+        self.assertLess(stop * ry, 1 - cy, "colour still present at the bottom edge")
+
+    def test_the_colour_is_the_room_and_is_never_named(self):
+        """Per-page colour comes from --accent, which every room already sets —
+        so the wash, the ground and the clock change together. Naming gold,
+        glow or steel here would fork the palette and, worse, edge towards
+        colouring the mark per world, which the pack forbids."""
+        self.assertIn("var(--accent)", self.rule)
+        for locked in ("--gold", "--glow", "--steel", "#e8c36a", "#c6e04a", "#8fb4c4"):
+            self.assertNotIn(locked, self.rule)
+
+    def test_the_mark_itself_is_never_touched(self):
+        """The wash sits behind the lockup. The moment it becomes a filter,
+        a background or a tint ON the mark, the pack's rule is broken."""
+        img_rules = re.findall(r"\.sig img \{(.*?)\}", self.css, re.S)
+        for body in img_rules:
+            self.assertNotIn("filter", body)
+            self.assertNotIn("background", body)
+
+    def test_it_is_scoped_to_the_chrome(self):
+        """The splash signature and the footer one sit on their own grounds and
+        do not want a second light source."""
+        self.assertNotIn("\n.sig::before", self.css)

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}New message — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="player-dash">
+
+      <div class="player-dash__profile">
+        <div>
+          <h1 style="font-size:clamp(1.4rem,3vw,2rem);margin:0">New message</h1>
+          {% if service_name %}
+            <p style="margin:4px 0 0;color:var(--ft-gry);font-size:0.9rem">Re: {{ service_name }}</p>
+          {% endif %}
+        </div>
+        <a href="{% url 'accounts:inbox' %}" class="ft-btn ft-btn--quiet" style="font-size:0.85rem;padding:8px 20px">Back</a>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="ft-form__errors" style="margin-bottom:1.2rem">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" class="ft-form" style="max-width:none" novalidate>
+        {% csrf_token %}
+
+        {% if service_slug %}
+          <input type="hidden" name="service" value="{{ service_slug }}">
+        {% endif %}
+
+        <div class="ft-form__row">
+          <label for="id_subject">Subject</label>
+          <input type="text" name="subject" id="id_subject"
+                 value="{{ form.subject.value|default:'' }}"
+                 placeholder="What's your question about?" autofocus>
+          {% if form.subject.errors %}
+            <p class="help" style="color:#f09090">{{ form.subject.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_body">Message</label>
+          <textarea name="body" id="id_body" rows="8"
+                    placeholder="Be as specific as possible — position, age, what you're working on.">{{ form.body.value|default:'' }}</textarea>
+          {% if form.body.errors %}
+            <p class="help" style="color:#f09090">{{ form.body.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <p style="font-size:0.82rem;color:var(--ft-gry);margin-bottom:1.2rem">
+          You'll get an instant AI response first. If it can't help, Alex will be notified.
+        </p>
+
+        <div style="display:flex;gap:12px;align-items:center">
+          <button type="submit" class="ft-btn">Send message</button>
+          <a href="{% url 'accounts:inbox' %}" style="color:var(--ft-gry);font-size:0.9rem">Cancel</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

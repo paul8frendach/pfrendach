@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Join Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="ft-form">
+      <p class="beat beat--center" style="margin-bottom:1.2rem">Find the 90</p>
+      <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);text-align:center;margin-bottom:0.4rem">Create your account</h1>
+      <p style="text-align:center;color:var(--ft-gry);margin-bottom:2rem;font-size:0.9rem">
+        Track sessions, get personalised offers, and message Alex directly.
+      </p>
+
+      {% if form.non_field_errors %}
+        <div class="ft-form__errors">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="ft-name-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 1rem">
+          <div class="ft-form__row">
+            <label for="id_first_name">First name</label>
+            <input type="text" name="first_name" id="id_first_name"
+                   value="{{ form.first_name.value|default:'' }}" autocomplete="given-name" autofocus>
+            {% if form.first_name.errors %}<p class="help" style="color:#f09090">{{ form.first_name.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_last_name">Last name</label>
+            <input type="text" name="last_name" id="id_last_name"
+                   value="{{ form.last_name.value|default:'' }}" autocomplete="family-name">
+            {% if form.last_name.errors %}<p class="help" style="color:#f09090">{{ form.last_name.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_email">Email</label>
+          <input type="email" name="email" id="id_email"
+                 value="{{ form.email.value|default:'' }}" autocomplete="email">
+          {% if form.email.errors %}<p class="help" style="color:#f09090">{{ form.email.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_password1">Password</label>
+          <input type="password" name="password1" id="id_password1" autocomplete="new-password">
+          <p class="help">At least 8 characters.</p>
+          {% if form.password1.errors %}<p class="help" style="color:#f09090">{{ form.password1.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_password2">Confirm password</label>
+          <input type="password" name="password2" id="id_password2" autocomplete="new-password">
+          {% if form.password2.errors %}<p class="help" style="color:#f09090">{{ form.password2.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div style="margin-top:1.4rem;display:flex;flex-direction:column;gap:12px">
+          <button type="submit" class="ft-btn" style="width:100%;text-align:center">Create account</button>
+          <p style="text-align:center;font-size:0.88rem;color:var(--ft-gry)">
+            Already have one? <a href="{% url 'accounts:login' %}" style="color:var(--ft-lgy)">Sign in</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

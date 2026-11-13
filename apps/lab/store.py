@@ -125,6 +125,17 @@ def intake_definition() -> tuple[dict | None, str | None]:
     return definition, None
 
 
+def provision_client(payload: dict, *, idempotency_key: str | None = None) -> dict:
+    """Hand one of this site's users a LAB account. Raises; the view decides.
+
+    Deliberately NOT called from the enquiry flow. An enquiry is somebody
+    asking a question, and turning that into "we made you an account and
+    emailed you" is a decision the coach makes, not a side effect of a contact
+    form. Call this from your own sign-up, where the person chose to register.
+    """
+    return client().create_client(payload, idempotency_key=idempotency_key)
+
+
 def submit_lead(payload: dict, *, idempotency_key: str | None = None) -> dict:
     """Send an enquiry. Raises; the view decides what the visitor sees.
 

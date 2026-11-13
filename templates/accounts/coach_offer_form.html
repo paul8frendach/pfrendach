@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{% if offer %}Edit offer{% else %}New offer{% endif %} — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}" aria-current="page">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}">Inbox</a>
+      </nav>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8rem">
+        <h1 style="font-size:clamp(1.4rem,3vw,2rem);margin:0">
+          {% if offer %}Edit offer{% else %}New offer{% endif %}
+        </h1>
+        <a href="{% url 'accounts:coach_offers' %}" class="ft-btn ft-btn--quiet" style="font-size:0.85rem;padding:8px 20px">Back</a>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="ft-form__errors" style="margin-bottom:1.2rem">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" class="ft-form" style="max-width:none" novalidate>
+        {% csrf_token %}
+
+        <div class="ft-form__row">
+          <label for="id_title">Title</label>
+          <input type="text" name="title" id="id_title"
+                 value="{{ form.title.value|default:'' }}"
+                 placeholder="e.g. Elite 1-on-1 session package" autofocus>
+          {% if form.title.errors %}<p class="help" style="color:#f09090">{{ form.title.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_tier_label">Tier label <span style="color:var(--ft-gry);font-weight:400">(shown to player)</span></label>
+          <input type="text" name="tier_label" id="id_tier_label"
+                 value="{{ form.tier_label.value|default:'' }}"
+                 placeholder="e.g. Elite offer, Recommended for you">
+          {% if form.tier_label.errors %}<p class="help" style="color:#f09090">{{ form.tier_label.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_body">Description</label>
+          <textarea name="body" id="id_body" rows="5">{{ form.body.value|default:'' }}</textarea>
+          {% if form.body.errors %}<p class="help" style="color:#f09090">{{ form.body.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 1.4rem">
+          <div class="ft-form__row">
+            <label for="id_cta_label">CTA label</label>
+            <input type="text" name="cta_label" id="id_cta_label"
+                   value="{{ form.cta_label.value|default:'' }}"
+                   placeholder="Book now">
+            {% if form.cta_label.errors %}<p class="help" style="color:#f09090">{{ form.cta_label.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_cta_url">CTA URL</label>
+            <input type="text" name="cta_url" id="id_cta_url"
+                   value="{{ form.cta_url.value|default:'' }}"
+                   placeholder="/train/enquire/ or https://…">
+            {% if form.cta_url.errors %}<p class="help" style="color:#f09090">{{ form.cta_url.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="coach-offer-meta-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0 1.4rem">
+          <div class="ft-form__row">
+            <label for="id_min_rating">Min rating</label>
+            {{ form.min_rating }}
+            {% if form.min_rating.errors %}<p class="help" style="color:#f09090">{{ form.min_rating.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_max_rating">Max rating</label>
+            {{ form.max_rating }}
+            {% if form.max_rating.errors %}<p class="help" style="color:#f09090">{{ form.max_rating.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_sort">Sort order</label>
+            <input type="number" name="sort" id="id_sort"
+                   value="{{ form.sort.value|default:'0' }}" min="0">
+            {% if form.sort.errors %}<p class="help" style="color:#f09090">{{ form.sort.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label style="display:flex;gap:8px;align-items:center;margin-top:1.8rem;cursor:pointer">
+              <input type="checkbox" name="requires_auth" id="id_requires_auth"
+                     {% if form.requires_auth.value %}checked{% endif %}>
+              Auth required
+            </label>
+          </div>
+        </div>
+
+        <div class="ft-form__row">
+          <label style="display:flex;gap:8px;align-items:center;cursor:pointer">
+            <input type="checkbox" name="is_live" id="id_is_live"
+                   {% if form.is_live.value %}checked{% endif %}>
+            Live (visible to players)
+          </label>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-top:1.2rem">
+          <button type="submit" class="ft-btn">Save offer</button>
+          <a href="{% url 'accounts:coach_offers' %}" style="color:var(--ft-gry);font-size:0.9rem">Cancel</a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}My account — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="player-dash">
+
+      {% comment %}Profile card{% endcomment %}
+      <div class="player-dash__profile">
+        <div>
+          <p class="player-dash__name">{{ profile.display_name }}</p>
+          <p class="player-dash__email" style="margin:0">{{ profile.user.email }}</p>
+        </div>
+        <div style="text-align:right">
+          {% if profile.is_rated %}
+            <span class="rating-badge rating-badge--{{ profile.rating }}">{{ profile.get_rating_display }}</span>
+          {% else %}
+            <span class="rating-badge rating-badge--0">New player</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% comment %}Notifications{% endcomment %}
+      {% if unread_notifs %}
+        <div class="player-dash__section">
+          <p class="player-dash__section-title">Notifications</p>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            {% for notif in unread_notifs %}
+              <a href="{{ notif.url|default:'#' }}" class="thread-item{% if not notif.is_read %} thread-item--unread{% endif %}">
+                <div class="thread-item__header">
+                  <span class="thread-item__subject">{{ notif.title }}</span>
+                  <span class="thread-item__when">{{ notif.created_at|timesince }} ago</span>
+                </div>
+                {% if notif.body %}<p class="thread-item__preview">{{ notif.body }}</p>{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %}Personalised offers{% endcomment %}
+      {% if offers %}
+        <div class="player-dash__section">
+          <p class="player-dash__section-title">Your offers</p>
+          <div class="offers-grid">
+            {% for offer in offers %}
+              <div class="offer-card">
+                {% if offer.tier_label %}
+                  <span class="offer-card__tier">{{ offer.tier_label }}</span>
+                {% endif %}
+                <h3 class="offer-card__title">{{ offer.title }}</h3>
+                <p class="offer-card__body">{{ offer.body }}</p>
+                {% if offer.cta_url %}
+                  <a class="offer-card__cta" href="{{ offer.cta_url }}">{{ offer.cta_label }}</a>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% comment %}Recent messages{% endcomment %}
+      <div class="player-dash__section">
+        <p class="player-dash__section-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>Messages</span>
+          <a href="{% url 'accounts:compose' %}" class="ft-btn ft-btn--quiet" style="font-size:0.8rem;padding:5px 14px">New message</a>
+        </p>
+        {% if threads %}
+          <ul class="thread-list">
+            {% for thread in threads %}
+              <li>
+                <a class="thread-item{% if thread.player_unread %} thread-item--unread{% endif %}"
+                   href="{% url 'accounts:thread' thread.reference %}">
+                  <div class="thread-item__header">
+                    <span class="thread-item__subject">{{ thread.subject }}</span>
+                    <span class="thread-item__when">{{ thread.updated_at|timesince }} ago</span>
+                  </div>
+                  {% with last=thread.last_message %}
+                    {% if last %}
+                      <p class="thread-item__preview">{{ last.body|truncatechars:80 }}</p>
+                    {% endif %}
+                  {% endwith %}
+                  <div class="thread-item__badges">
+                    {% if thread.player_unread %}<span class="badge badge--unread">New reply</span>{% endif %}
+                    <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                  </div>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+          <p style="margin-top:0.8rem">
+            <a href="{% url 'accounts:inbox' %}" style="color:var(--ft-gry);font-size:0.85rem">All messages</a>
+          </p>
+        {% else %}
+          <p style="color:var(--ft-gry);font-size:0.9rem">No messages yet.
+            <a href="{% url 'accounts:compose' %}" style="color:var(--ft-lgy)">Send Alex a message</a>
+          </p>
+        {% endif %}
+      </div>
+
+      {% comment %}Quick links{% endcomment %}
+      <div class="player-dash__section" style="border-top:1px solid var(--ft-rule);padding-top:1.4rem">
+        <div class="actions">
+          <a class="btn btn--solid" href="{% url 'train:schedule' %}">Book a session</a>
+          <a class="btn btn--quiet" href="{% url 'accounts:compose' %}">Message Alex</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

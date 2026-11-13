@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop — Find the 90{% endblock %}
+{% block description %}Gear for players who find their 90. Official FindThe90 shop.{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block main %}
+<div class="coach-shell" style="padding-top: 3rem; padding-bottom: 4rem;">
+  <h1 style="font-family: var(--font-sans); font-size: 2rem; font-weight: 600; color: var(--ft-lgy); margin-bottom: 0.4rem;">Shop</h1>
+  <p style="color: var(--ft-gry); margin-bottom: 2.5rem;">Find your 90.</p>
+
+  {% if products %}
+    <div class="offers-grid">
+      {% for item in products %}
+        <a href="{% url 'shop:product_detail' item.local.slug %}" class="offer-card" style="text-decoration: none;">
+          {% if item.thumbnail %}
+            <img src="{{ item.thumbnail }}" alt="{{ item.name }}"
+                 style="width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--ft-radius); margin-bottom: 0.6rem;">
+          {% endif %}
+          <p class="offer-card__title">{{ item.name }}</p>
+          {% if item.local.display_description %}
+            <p class="offer-card__body">{{ item.local.display_description|truncatewords:20 }}</p>
+          {% endif %}
+          <span class="ft-btn" style="align-self: flex-start; margin-top: auto;">View product</span>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="color: var(--ft-gry);">No products are available right now — check back soon.</p>
+  {% endif %}
+</div>
+{% endblock %}

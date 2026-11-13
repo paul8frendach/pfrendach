@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Rate {{ profile.display_name }} — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}" aria-current="page">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}">Inbox</a>
+      </nav>
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.8rem">
+        <div>
+          <h1 style="font-size:clamp(1.4rem,3vw,2rem);margin:0">{{ profile.display_name }}</h1>
+          <p style="margin:4px 0 0;color:var(--ft-gry);font-size:0.9rem">{{ profile.user.email }}</p>
+        </div>
+        <a href="{% url 'accounts:coach_players' %}" class="ft-btn ft-btn--quiet" style="font-size:0.85rem;padding:8px 20px">Back</a>
+      </div>
+
+      {% if profile.rating > 0 %}
+        <p style="margin-bottom:1.4rem">
+          Current rating: <span class="rating-badge rating-badge--{{ profile.rating }}">{{ profile.get_rating_display }}</span>
+          {% if profile.rating_set_at %}
+            <span style="color:var(--ft-gry);font-size:0.82rem;margin-left:8px">set {{ profile.rating_set_at|timesince }} ago</span>
+          {% endif %}
+        </p>
+      {% endif %}
+
+      {% if form.non_field_errors %}
+        <div class="ft-form__errors" style="margin-bottom:1.2rem">
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" class="ft-form" style="max-width:none" novalidate>
+        {% csrf_token %}
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 1.4rem">
+          <div class="ft-form__row">
+            <label for="id_rating">Rating</label>
+            {{ form.rating }}
+            {% if form.rating.errors %}<p class="help" style="color:#f09090">{{ form.rating.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_position">Position</label>
+            <input type="text" name="position" id="id_position"
+                   value="{{ form.position.value|default:'' }}" placeholder="e.g. Center Mid">
+            {% if form.position.errors %}<p class="help" style="color:#f09090">{{ form.position.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_club">Club</label>
+            <input type="text" name="club" id="id_club"
+                   value="{{ form.club.value|default:'' }}" placeholder="Club name">
+            {% if form.club.errors %}<p class="help" style="color:#f09090">{{ form.club.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="ft-form__row">
+            <label for="id_grad_year">Grad year</label>
+            <input type="number" name="grad_year" id="id_grad_year"
+                   value="{{ form.grad_year.value|default:'' }}" placeholder="2027" min="2024" max="2035">
+            {% if form.grad_year.errors %}<p class="help" style="color:#f09090">{{ form.grad_year.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="ft-form__row">
+          <label for="id_notes">Private notes</label>
+          <textarea name="notes" id="id_notes" rows="4"
+                    placeholder="Coach-only notes — never shown to the player.">{{ form.notes.value|default:'' }}</textarea>
+          {% if form.notes.errors %}<p class="help" style="color:#f09090">{{ form.notes.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;margin-top:0.8rem">
+          <button type="submit" class="ft-btn">Save</button>
+          <a href="{% url 'accounts:coach_players' %}" style="color:var(--ft-gry);font-size:0.9rem">Cancel</a>
+        </div>
+      </form>
+
+      {% comment %}Message this player{% endcomment %}
+      <div style="margin-top:2.4rem;padding-top:1.6rem;border-top:1px solid var(--ft-rule)">
+        {% with player_threads=profile.user.threads.all %}
+          {% if player_threads %}
+            <h2 style="font-size:1rem;margin:0 0 1rem">Thread history</h2>
+            <ul class="thread-list">
+              {% for thread in player_threads %}
+                <li>
+                  <a class="thread-item{% if thread.coach_unread %} thread-item--unread{% endif %}"
+                     href="{% url 'accounts:coach_thread' thread.reference %}">
+                    <div class="thread-item__header">
+                      <span class="thread-item__subject">{{ thread.subject }}</span>
+                      <span class="thread-item__when">{{ thread.updated_at|timesince }} ago</span>
+                    </div>
+                    <div class="thread-item__badges">
+                      <span class="status-pill status-pill--{{ thread.status }}">{{ thread.get_status_display }}</span>
+                    </div>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

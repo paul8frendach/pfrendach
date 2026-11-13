@@ -352,6 +352,52 @@ p:last-child { margin-bottom: 0; }
   padding-inline: var(--rail-pad, 0px);
 }
 
+/* ---- the light behind the signature ----
+   The room's colour arrives BEHIND the lockup, never in it. The pack locks the
+   mark: it is not recoloured per world, outlined, or reset in another face. So
+   this is light falling on the wall behind the ꟼF, which is a different thing
+   from painting the ꟼF. One radial in `color-mix(... var(--accent) N%,
+   transparent)` — the same ingredient as the ground wash and the clock — so a
+   room change moves all three together. Nothing here names gold, glow or steel;
+   `--accent` already is the room.
+
+   TWO CONSTRAINTS, AND THEY ARE BOTH GEOMETRY.
+
+   1. `.chrome__crest` is `overflow: hidden` — that clip is what lets the crest
+      collapse on scroll, so it cannot be removed. And the crest box is exactly
+      the signature's height: measured, there are ZERO pixels above or below.
+      Any vertical bleed is therefore clipped into a hard rectangle. Hence
+      `inset: 0` top and bottom: the wash lives inside the line and fades out
+      within it. Horizontally the crest is ~200px wider each side, so there the
+      wash may spread.
+
+   2. A radial still coloured where its box ends draws that same rectangle by a
+      different route. With the colour gone by 72% of the radius, `0.72 * r`
+      must stay inside the distance from the centre to the nearest edge. Here
+      that is 0.72 * 0.55h = 0.40h against 0.50h vertically, and 0.72 * 0.46w =
+      0.33w against 0.40w to the left. Both clear.
+
+   Move the centre or the radius and BOTH sums have to be redone. The first two
+   attempts at this failed on exactly these two points and each looked like a
+   grey plate behind the wordmark. */
+.chrome .sig { position: relative; isolation: isolate; }
+.chrome .sig::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  /* Vertical 0: the crest clips there. Horizontal: room to spread. */
+  inset: 0 -2.2em 0 -2.2em;
+  background: radial-gradient(ellipse 46% 55% at 40% 50%,
+    color-mix(in srgb, var(--accent) 34%, transparent), transparent 72%);
+  /* Matches .ground__wash, so a room change reads as one gesture. */
+  transition: background 900ms var(--ease), opacity 900ms var(--ease);
+  pointer-events: none;
+}
+
+/* The mini sits beside the tab marker, which slides underneath it. At the
+   crest's strength the two lights argue. */
+.chrome .sig--mini::before { opacity: 0.55; }
+
 .sig--crest { font-size: 34px; }
 
 .sig--mini {
@@ -511,6 +557,20 @@ p:last-child { margin-bottom: 0; }
 }
 .subnav a:hover { color: var(--bone-dim); }
 .subnav a[aria-current="page"] { color: var(--accent); }
+/* Logout button — sits inline with nav links, looks like a link */
+.subnav__btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: color-mix(in srgb, var(--muted) 72%, transparent);
+  cursor: pointer;
+  transition: color 0.3s var(--ease);
+}
+.subnav__btn:hover { color: var(--bone-dim); }
 
 /* ---------------------------------------------------------------- buttons */
 

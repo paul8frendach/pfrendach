@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Players — Find the 90{% endblock %}
+{% block world %}train{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="shell">
+    <div class="coach-shell">
+
+      <nav class="coach-nav">
+        <a href="{% url 'accounts:coach_dashboard' %}">Overview</a>
+        <a href="{% url 'accounts:coach_players' %}" aria-current="page">Players</a>
+        <a href="{% url 'accounts:coach_offers' %}">Offers</a>
+        <a href="{% url 'accounts:coach_inbox' %}">Inbox</a>
+      </nav>
+
+      <h1 style="font-size:clamp(1.6rem,3vw,2.2rem);margin:0 0 1.6rem">Players</h1>
+
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="ft-form__errors" style="margin-bottom:1.2rem;background:rgba(0,200,100,.12);color:#6fe0a0;border-color:#6fe0a0">
+            {{ msg }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% if profiles %}
+        <div class="table-scroll">
+        <table class="player-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Email</th>
+              <th>Club</th>
+              <th>Position</th>
+              <th>Grad</th>
+              <th>Rating</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for profile in profiles %}
+              <tr>
+                <td>{{ profile.display_name }}</td>
+                <td style="font-size:0.85rem">{{ profile.user.email }}</td>
+                <td>{{ profile.club|default:"—" }}</td>
+                <td>{{ profile.position|default:"—" }}</td>
+                <td>{{ profile.grad_year|default:"—" }}</td>
+                <td>
+                  <span class="rating-badge rating-badge--{{ profile.rating }}">{{ profile.get_rating_display }}</span>
+                </td>
+                <td>
+                  <a href="{% url 'accounts:coach_rate_player' profile.pk %}"
+                     class="ft-btn ft-btn--quiet"
+                     style="font-size:0.78rem;padding:4px 12px">Edit</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      {% else %}
+        <p style="color:var(--ft-gry)">No players yet.</p>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+{% endblock %}

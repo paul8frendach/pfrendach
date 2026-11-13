@@ -338,6 +338,7 @@
   function mountPage() {
     mountPanels();
     if (window.PF && window.PF.mountCore) window.PF.mountCore();
+    if (window.PF && window.PF.mountConsoles) window.PF.mountConsoles();
 
     var risers = document.querySelectorAll(".rise:not(.is-in)");
 
