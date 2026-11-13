@@ -10,6 +10,15 @@
   <link rel="icon" href="{% static 'marks/pf-house.svg' %}" type="image/svg+xml">
   <link rel="apple-touch-icon" href="{% static 'marks/pf-app-icon-180.png' %}">
 
+  {% comment %}Installable app: manifest + iOS standalone chrome. The ink
+  background is set before any stylesheet so a launch never flashes white.{% endcomment %}
+  <link rel="manifest" href="{% asset 'manifest.webmanifest' %}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Oasis Visions">
+  <style>html{background:#0B0D0C}</style>
+
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Paul Frendach">
   <meta property="og:title" content="{% block og_title %}Paul Frendach — Create · Build · Train{% endblock %}">

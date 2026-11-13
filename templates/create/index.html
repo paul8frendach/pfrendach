@@ -7,6 +7,12 @@
 {% block og_description %}Cinematic highlight films for weddings, events, schools and listings. Owner-operated, delivered in 30 days.{% endblock %}
 {% block world %}create{% endblock %}
 
+{% comment %}The ꟼFrendach clock intro — plays once on arrival / each app launch,
+the signature opening the OMV home (and so the PWA launch screen).{% endcomment %}
+{% block curtain_css %}<link rel="stylesheet" href="{% asset 'css/curtain.css' %}">{% endblock %}
+{% block curtain %}{% include "partials/curtain.html" %}{% endblock %}
+{% block curtain_js %}<script src="{% asset 'js/sting.js' %}" defer></script>{% endblock %}
+
 {% block extra_head %}
 <link rel="stylesheet" href="{% asset 'css/omv.css' %}">
 <script type="application/ld+json">

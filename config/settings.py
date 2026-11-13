@@ -6,10 +6,14 @@ never by editing this file.
 """
 
 from pathlib import Path
+import mimetypes
 import os
 import sys
 
 from dotenv import load_dotenv
+
+# Serve the web app manifest with the type browsers expect.
+mimetypes.add_type("application/manifest+json", ".webmanifest", True)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
