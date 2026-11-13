@@ -4,6 +4,7 @@ import os
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -38,14 +39,34 @@ def index(request):
     if category in dict(Work.Category.choices):
         work = work.filter(category=category)
     featured = Work.objects.filter(is_live=True, is_featured=True)[:1].first()
+    # A real cinematic still fills the hero when there's no featured film yet.
+    hero_photo = (
+        Photo.objects.filter(is_live=True, style=Photo.Style.WEDDING).first()
+        or Photo.objects.filter(is_live=True).first()
+    )
+    # Each film category borrows a real still of the nearest style, so the
+    # "now booking" cards are never empty boxes.
+    _style_for = {"wedding": "wedding", "event": "wedding", "school": "sports",
+                  "listing": "aerial", "brand": "portrait", "stills": "portrait"}
+    _by_style = {}
+    cat_cards = []
+    for value, label in Work.Category.choices:
+        ps = _style_for.get(value, "wedding")
+        if ps not in _by_style:
+            _by_style[ps] = Photo.objects.filter(is_live=True, style=ps).first()
+        p = _by_style[ps] or Photo.objects.filter(is_live=True).first()
+        cat_cards.append({"value": value, "label": label,
+                          "poster": static(p.static_path) if p else ""})
     return render(
         request,
         "create/index.html",
         {
             "work": work,
             "featured": featured,
+            "hero_photo": hero_photo,
             "groups": _grouped_work(),
             "categories": Work.Category.choices,
+            "cat_cards": cat_cards,
             "active_category": category,
             "packages": Package.objects.filter(is_live=True),
             "methods": Method.objects.filter(is_live=True),

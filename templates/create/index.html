@@ -40,6 +40,8 @@
       </video>
     {% elif featured.poster %}
       <img src="{{ featured.poster.url }}" alt="">
+    {% elif hero_photo %}
+      <img src="{% static hero_photo.static_path %}" alt="" fetchpriority="high">
     {% endif %}
   </div>
   <div class="omv-hero__scrim" aria-hidden="true"></div>
@@ -133,11 +135,12 @@
     {% else %}
       {# No live films yet — show the categories as the way in, honestly. #}
       <div class="omv-cats">
-        {% for value, label in categories %}
-          <a class="omv-cat" href="{% url 'create:request' %}?service={{ value }}">
+        {% for c in cat_cards %}
+          <a class="omv-cat" href="{% url 'create:request' %}?service={{ c.value }}"
+             {% if c.poster %}style="--_poster:url('{{ c.poster }}')"{% endif %}>
             <span class="omv-cat__count">Now booking</span>
-            <span class="omv-cat__name">{{ label }}</span>
-            <p class="omv-cat__hint omv-cat__hint--soon">Fresh films are being cut. Start one &rarr;</p>
+            <span class="omv-cat__name">{{ c.label }}</span>
+            <p class="omv-cat__hint omv-cat__hint--soon">Fresh films being cut &mdash; start one &rarr;</p>
           </a>
         {% endfor %}
       </div>
