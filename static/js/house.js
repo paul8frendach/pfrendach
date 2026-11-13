@@ -20,6 +20,7 @@
     var lastCond = -1;
     var lastScrollY = 0;      // for scroll-direction, to auto-hide the bars
     var navTucked = false;
+    var navAccum = 0;         // sustained scroll distance in one direction
     var crest = chrome.querySelector(".chrome__crest");
     var CONDENSE_OVER = 90;   // px of scroll to go from full crest to slim rail
 
@@ -32,14 +33,21 @@
 
       /* Auto-hide the bars on the way down, bring them back on the way up — the
          nav is optional: there the instant you reach for it, gone while you
-         read. The top of the page always shows them. Runs before the condense
-         early-return below, so it keeps working once the bar has fully slimmed. */
+         read. The top always shows them. Runs before the condense early-return
+         below, so it keeps working once the bar has fully slimmed. A direction
+         accumulator (reset when you change direction) absorbs the little
+         overscroll bounce so the bar never flutters. */
       var dy = y - lastScrollY;
-      if (Math.abs(dy) > 5) {
-        if (y < 80) navTucked = false;
-        else if (dy > 0 && y > 220) navTucked = true;
-        else if (dy < 0) navTucked = false;
-        lastScrollY = y;
+      lastScrollY = y;
+      if ((dy > 0) !== (navAccum > 0)) navAccum = 0;   // direction changed
+      navAccum += dy;
+      var want = navTucked;
+      if (y <= 80) want = false;
+      else if (navAccum > 56 && y > 220) want = true;
+      else if (navAccum < -56) want = false;
+      if (want !== navTucked) {
+        navTucked = want;
+        navAccum = 0;
         if (document.documentElement.classList.toggle("nav-tucked", navTucked) && navTucked) {
           var mob = document.querySelector("[data-mobile-nav]");
           var burger = document.querySelector("[data-burger]");
