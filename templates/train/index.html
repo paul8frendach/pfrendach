@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}FRENDACH — Soccer Training{% endblock %}
 {% block description %}FRENDACH. Soccer training in Maryland. Small roster, high school first, film as part of the method.{% endblock %}
@@ -19,6 +20,32 @@
     <div class="actions">
       <a class="btn btn--solid" href="{% url 'train:schedule' %}">Open sessions</a>
       <a class="btn btn--quiet" href="{% url 'train:enquire' %}">Start training</a>
+    </div>
+  </div>
+</section>
+
+<hr class="tickrule shell">
+
+{# ---------------------------------------------------------------- the player #}
+<section class="section section--tight" id="player">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">The player</p>
+      <h2>Coached by someone who played.</h2>
+    </div></div>
+    <div class="train-player">
+      <img class="train-player__lead" src="{% static 'train/player/paul-1.jpg' %}"
+           alt="Paul Frendach — Temple student-athlete" loading="lazy">
+      <div class="train-player__row">
+        <img src="{% static 'train/player/paul-2.jpg' %}" alt="" loading="lazy">
+        <img src="{% static 'train/player/paul-3.jpg' %}" alt="" loading="lazy">
+        <img src="{% static 'train/player/paul-4.jpg' %}" alt="" loading="lazy">
+      </div>
+      <p class="train-player__note">
+        <b>Baltimore Celtic</b> · <b>DeMatha Catholic</b> · <b>Maryland</b> — on the 2018 national
+        championship roster · <b>Temple</b>, starter &amp; captain. The work on this page is the work
+        that got him there.
+      </p>
     </div>
   </div>
 </section>

@@ -1022,3 +1022,8 @@ html.nav-tucked .omv-subnav { top: 0; transform: translateY(-101%); }
 @media (max-width: 620px) {
   .omv-reel { grid-template-columns: 1fr; }
 }
+
+/* The press tile is a link out to the article — keep it clean, lift on hover. */
+a.omv-stat--press { text-decoration: none; cursor: pointer; transition: border-color .25s var(--ease), transform .25s var(--ease); }
+a.omv-stat--press:hover { border-color: color-mix(in srgb, var(--glow) 55%, transparent); transform: translateY(-2px); }
+a.omv-stat--press:hover .omv-stat__lbl { color: var(--bone); }

@@ -2051,3 +2051,44 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
 }
 .pwa-install__close:hover { color: var(--bone); }
 @media (min-width: 560px) { .pwa-install { left: auto; right: 16px; max-width: 430px; } }
+
+/* ---------------------------------------------------------- train: the player
+   Who's coaching you — a wide lead shot of Paul the player, then three more. */
+.train-player { margin-top: 1.4rem; }
+.train-player__lead {
+  width: 100%;
+  aspect-ratio: 16 / 8;
+  object-fit: cover;
+  object-position: center 32%;
+  border-radius: 14px;
+  border: 1px solid var(--rule);
+  display: block;
+  filter: saturate(1.02) contrast(1.04);
+}
+.train-player__row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.train-player__row img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center 28%;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  display: block;
+  filter: saturate(1.02) contrast(1.04);
+}
+.train-player__note {
+  margin-top: 1.3rem;
+  color: var(--muted);
+  max-width: 64ch;
+  line-height: 1.6;
+}
+.train-player__note b { color: var(--bone); font-weight: 500; }
+@media (max-width: 640px) {
+  .train-player__lead { aspect-ratio: 16 / 10; }
+  .train-player__row { gap: 8px; }
+}
