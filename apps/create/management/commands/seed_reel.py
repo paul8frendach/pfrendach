@@ -83,6 +83,11 @@ REEL = [
         "is_featured": False,
         "sort": 14,
     },
+    # Avenues Recovery — held as a draft. The footage pulled from the drone
+    # folder (DJI_0342) turned out to be ground-level B-roll of identifiable
+    # people at the recovery centre, which must not be published. Needs a
+    # people-free aerial/campus clip (or Paul's explicit OK on specific shots)
+    # before it goes live; the clip/still filenames are reserved here.
     {
         "slug": "avenues-recovery",
         "title": "Avenues Recovery",
@@ -94,7 +99,7 @@ REEL = [
         "blurb": "A recovery campus from the air, for a national brand.",
         "credit": "Oasis Media Visions",
         "year": "2023",
-        "is_live": True,
+        "is_live": False,
         "is_featured": False,
         "sort": 22,
     },

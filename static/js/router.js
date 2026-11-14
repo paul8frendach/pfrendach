@@ -192,37 +192,12 @@
   };
 
   /* ---------------------------------------------------------- swipe
-     On a touch screen the three rooms sit side by side: swipe left or right
-     to move between them, the same order as the tabs. */
-
-  var ORDER = ["create", "build", "train"];
-  var HREF = {};
-  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (tab) {
-    ORDER.forEach(function (slug) {
-      if (tab.classList.contains("tab--" + slug)) HREF[slug] = tab.getAttribute("href");
-    });
-  });
-
-  var sx = 0, sy = 0, tracking = false;
-  document.addEventListener("touchstart", function (e) {
-    if (e.touches.length !== 1) { tracking = false; return; }
-    sx = e.touches[0].clientX;
-    sy = e.touches[0].clientY;
-    tracking = true;
-  }, { passive: true });
-
-  document.addEventListener("touchend", function (e) {
-    if (!tracking) return;
-    tracking = false;
-    var t = e.changedTouches[0];
-    var dx = t.clientX - sx;
-    var dy = t.clientY - sy;
-    // Horizontal, decisive, and not a scroll.
-    if (Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2) return;
-    var world = document.documentElement.getAttribute("data-world");
-    var i = ORDER.indexOf(world);
-    if (i === -1) i = dx < 0 ? -1 : ORDER.length;
-    var next = ORDER[i + (dx < 0 ? 1 : -1)];
-    if (next && HREF[next]) go(HREF[next]);
-  }, { passive: true });
+     Swipe-between-worlds was deliberately removed. The Create world is full of
+     horizontal content — the films carousel, the photo galleries, the tab rail,
+     the category pills — and a left/right flick through any of it was being read
+     as "change world" instead of scrolling that content, which is exactly the
+     interaction a visitor expects to keep. Worlds are reached by the tabs and
+     the menu. If a cross-world swipe is ever wanted back, it must first bail the
+     moment the gesture starts inside anything horizontally scrollable, or it
+     will hijack content swipes again. */
 })();
