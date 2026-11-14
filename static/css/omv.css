@@ -1302,3 +1302,187 @@ html.lb-open { overflow: hidden; }
 .omv-reel__item:hover .omv-reel__play,
 .omv-reel__item:focus-visible .omv-reel__play { opacity: 1; transform: translate(-50%,-50%) scale(1.06); }
 .omv-reel__item:focus-visible { box-shadow: 0 0 0 2px var(--glow); border-radius: 12px; }
+
+/* ===================================================================
+   Request surface — the "start a film" page, lit like the film room.
+   The whole thing sits in atmosphere: layered depth, one slow drift of
+   light behind it, the form held in a lit glass panel beside a live
+   "what happens next" rail. The section itself is never clipped, so the
+   sticky sub-nav keeps working — only the background layer is clipped.
+   =================================================================== */
+.omv-request {
+  position: relative;
+  background: var(--ink);
+  padding-bottom: clamp(48px, 7vw, 96px);
+}
+.omv-request__room {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(85% 60% at 12% -5%, color-mix(in srgb, var(--glow) 13%, transparent), transparent 58%),
+    radial-gradient(70% 55% at 102% 108%, color-mix(in srgb, var(--glow) 9%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--glow) 5%, var(--ink)) 0%, var(--ink) 60%);
+}
+/* faint film-room grain/grid, so the dark never reads as flat black */
+.omv-request__room::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--bone) 6%, transparent) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: .5;
+  mask-image: radial-gradient(120% 90% at 30% 0%, #000 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(120% 90% at 30% 0%, #000 20%, transparent 75%);
+}
+/* the lobby drift — one soft blade of light, breathing slowly behind it all */
+.omv-request__room::before {
+  content: "";
+  position: absolute;
+  width: 72vmax;
+  height: 72vmax;
+  left: -16%;
+  top: -24%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--glow) 12%, transparent), transparent 62%);
+  filter: blur(46px);
+  animation: omv-req-drift 34s ease-in-out infinite alternate;
+}
+@keyframes omv-req-drift {
+  from { transform: translate(0, 0) scale(1); opacity: .75; }
+  to   { transform: translate(20%, 14%) scale(1.3); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .omv-request__room::before { animation: none; }
+}
+
+.omv-request__head {
+  position: relative;
+  z-index: 1;
+  padding-top: clamp(40px, 7vw, 92px);
+  padding-bottom: clamp(20px, 3vw, 34px);
+  max-width: 62ch;
+}
+.omv-request__lead {
+  margin-top: 1rem;
+  max-width: 52ch;
+  color: var(--bone-dim);
+  font-size: clamp(1rem, 1.3vw, 1.12rem);
+  line-height: 1.6;
+}
+
+.omv-request__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: start;
+  margin-top: clamp(20px, 3vw, 36px);
+}
+
+/* the lit panel that holds the form */
+.omv-request__panel {
+  position: relative;
+  border-radius: 20px;
+  padding: clamp(22px, 3.2vw, 40px);
+  background:
+    radial-gradient(90% 120% at 0% 0%, color-mix(in srgb, var(--glow) 11%, transparent), transparent 52%),
+    color-mix(in srgb, var(--ink-2) 92%, transparent);
+  border: 1px solid var(--omv-panel-edge);
+  box-shadow: 0 40px 90px -56px color-mix(in srgb, var(--glow) 40%, #000),
+    0 2px 0 color-mix(in srgb, var(--bone) 5%, transparent) inset;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.omv-request__panel .omv-form { margin-top: 0; }
+.omv-request__from {
+  margin: 0 0 1.4rem;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--glow) 8%, transparent);
+  border: 1px solid var(--omv-panel-edge);
+  color: var(--bone);
+  font-size: 0.92rem;
+}
+.omv-request__from b { color: var(--glow); }
+
+/* section markers inside the form, so a long form reads as three easy moves */
+.omv-form__step {
+  margin: 10px 0 2px;
+  padding-top: 18px;
+  border-top: 1px solid var(--omv-line);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--glow);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.omv-form__step:first-child { padding-top: 0; border-top: 0; }
+.omv-form__step span {
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 0.72rem;
+}
+
+/* the rail: a live "what happens next", then the standing facts */
+.omv-request__rail { display: grid; gap: clamp(18px, 2.4vw, 26px); }
+.omv-steps {
+  border-radius: 18px;
+  padding: clamp(18px, 2.4vw, 26px);
+  background: color-mix(in srgb, var(--ink-2) 70%, transparent);
+  border: 1px solid var(--omv-line);
+}
+.omv-steps__list {
+  list-style: none;
+  counter-reset: omvstep;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.omv-steps__item {
+  position: relative;
+  padding-left: 44px;
+  min-height: 30px;
+}
+.omv-steps__item::before {
+  counter-increment: omvstep;
+  content: counter(omvstep);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+  color: var(--glow);
+  background: color-mix(in srgb, var(--glow) 12%, var(--ink));
+  border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--glow) 7%, transparent);
+}
+/* the line threading the steps together */
+.omv-steps__item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: -20px;
+  width: 1px;
+  background: linear-gradient(var(--omv-panel-edge), transparent);
+}
+.omv-steps__item b { display: block; color: var(--bone); font-weight: 500; }
+.omv-steps__item span { display: block; margin-top: 2px; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+
+@media (max-width: 860px) {
+  .omv-request__grid { grid-template-columns: 1fr; }
+  .omv-request__rail { order: 2; }
+}
