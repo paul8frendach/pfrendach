@@ -180,11 +180,11 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
                  href="{{ piece.get_absolute_url }}" aria-label="{{ piece.title }}">
                 {% if piece.playable %}
                   <video data-reel-video muted loop playsinline preload="none"
-                         {% if piece.poster %}poster="{{ piece.poster.url }}"{% endif %}>
+                         {% if piece.still_url %}poster="{{ piece.still_url }}"{% endif %}>
                     <source src="{{ piece.playable }}" type="video/mp4">
                   </video>
-                {% elif piece.poster %}
-                  <img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">
+                {% elif piece.still_url %}
+                  <img src="{{ piece.still_url }}" alt="{{ piece.title }}" loading="lazy">
                 {% else %}
                   <span class="frame__empty">{{ piece.get_category_display }}</span>
                 {% endif %}

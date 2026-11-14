@@ -29,11 +29,11 @@
           <iframe src="{{ piece.video_url }}" title="{{ piece.title }}"
                   allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
         {% elif piece.playable %}
-          <video controls playsinline {% if piece.poster %}poster="{{ piece.poster.url }}"{% endif %}>
+          <video controls playsinline {% if piece.still_url %}poster="{{ piece.still_url }}"{% endif %}>
             <source src="{{ piece.playable }}" type="video/mp4">
           </video>
-        {% elif piece.poster %}
-          <img src="{{ piece.poster.url }}" alt="{{ piece.title }}">
+        {% elif piece.still_url %}
+          <img src="{{ piece.still_url }}" alt="{{ piece.title }}">
         {% else %}
           <span class="frame__empty">{{ piece.get_category_display }}</span>
         {% endif %}
@@ -73,7 +73,7 @@
       {% for other in more %}
         <a class="card" href="{{ other.get_absolute_url }}">
           <span class="frame">
-            {% if other.poster %}<img src="{{ other.poster.url }}" alt="{{ other.title }}" loading="lazy">
+            {% if other.still_url %}<img src="{{ other.still_url }}" alt="{{ other.title }}" loading="lazy">
             {% else %}<span class="frame__empty">{{ other.get_category_display }}</span>{% endif %}
           </span>
           <span class="card__title">{{ other.title }}</span>

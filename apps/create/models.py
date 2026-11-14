@@ -10,6 +10,7 @@ import string
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils import timezone
 
@@ -70,6 +71,18 @@ class Work(TimeStamped, Published):
         blank=True,
         help_text="Web-ready derivative made by `manage.py ingest_reel`.",
     )
+    clip = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Committed web clip under static/omv/reel/, e.g. autumn.mp4. "
+        "Ships with the site and is preferred over video_file, so the host "
+        "needs no media server.",
+    )
+    still = models.CharField(
+        max_length=200,
+        blank=True,
+        help_text="Committed poster under static/omv/reel/, e.g. autumn.jpg.",
+    )
     duration_seconds = models.FloatField(null=True, blank=True)
     width = models.PositiveIntegerField(null=True, blank=True)
     height = models.PositiveIntegerField(null=True, blank=True)
@@ -100,8 +113,19 @@ class Work(TimeStamped, Published):
     @property
     def playable(self) -> str:
         """The source the console should play, if there is one."""
+        if self.clip:
+            return static(f"omv/reel/{self.clip}")
         if self.video_file:
             return self.video_file.url
+        return ""
+
+    @property
+    def still_url(self) -> str:
+        """Poster for the card — committed still first, then any uploaded one."""
+        if self.still:
+            return static(f"omv/reel/{self.still}")
+        if self.poster:
+            return self.poster.url
         return ""
 
     @property
