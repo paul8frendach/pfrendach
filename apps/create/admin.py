@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Commission, Method, Package, Payment, Photo, Work
+from .models import Commission, Method, Package, Payment, Photo, ProjectLike, Service, Work
 
 
 @admin.register(Photo)
@@ -44,6 +44,13 @@ class PaymentAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
 
+class ProjectLikeInline(admin.TabularInline):
+    model = ProjectLike
+    extra = 0
+    readonly_fields = ("photo", "created_at")
+    can_delete = False
+
+
 @admin.register(Commission)
 class CommissionAdmin(admin.ModelAdmin):
     list_display = ("name", "service", "event_date", "location", "status", "created_at")
@@ -51,9 +58,16 @@ class CommissionAdmin(admin.ModelAdmin):
     list_filter = ("status", "service", "notified_oasis")
     search_fields = ("name", "email", "location", "details")
     readonly_fields = ("created_at", "updated_at", "source_path")
+    inlines = [ProjectLikeInline]
     date_hierarchy = "created_at"
     fieldsets = (
         (None, {"fields": ("name", "email", "phone", "how_heard")}),
         ("The job", {"fields": ("service", "package", "event_date", "location", "budget", "details")}),
         ("Tracking", {"fields": ("status", "notified_oasis", "source_path", "created_at", "updated_at")}),
     )
+
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ("title", "category", "clip", "is_live", "sort")
+    prepopulated_fields = {"slug": ("title",)}

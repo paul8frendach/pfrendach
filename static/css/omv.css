@@ -1157,3 +1157,40 @@ a.omv-stat--press:hover .omv-stat__lbl { color: var(--bone); }
 .omv-svc-morecard__t {
   font-family: var(--font-display); font-size: 1.25rem; color: var(--bone); line-height: 1.1;
 }
+
+/* ------------------------------------------------------------ project review */
+.review-grid { columns: 3 280px; column-gap: 14px; margin-top: 1.4rem; }
+.review-item {
+  position: relative;
+  break-inside: avoid;
+  margin: 0 0 14px;
+  border-radius: 12px;
+  overflow: clip;
+  border: 1px solid var(--omv-line);
+  background: var(--ink-2);
+}
+.review-item img { width: 100%; height: auto; display: block; filter: saturate(0.97) contrast(1.03); }
+.review-item.is-loved { border-color: var(--glow); box-shadow: 0 0 0 1px color-mix(in srgb, var(--glow) 40%, transparent); }
+.review-item [data-like-form] { position: absolute; top: 10px; right: 10px; margin: 0; }
+.review-heart {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--ink) 52%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid color-mix(in srgb, var(--bone) 20%, transparent);
+  color: var(--bone); cursor: pointer;
+  transition: transform .15s var(--ease), background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease);
+}
+.review-heart svg { fill: none; stroke: currentColor; stroke-width: 1.6; }
+.review-heart:hover { transform: scale(1.08); }
+.review-heart:active { transform: scale(0.94); }
+.review-item.is-loved .review-heart { background: var(--glow); color: var(--ink); border-color: var(--glow); }
+.review-item.is-loved .review-heart svg { fill: var(--ink); stroke: var(--ink); }
+@media (max-width: 620px) { .review-grid { columns: 2 150px; column-gap: 10px; } .review-item { margin-bottom: 10px; } }
+.omv-project__review {
+  display: inline-block; margin-top: 2px;
+  color: var(--glow); text-decoration: none; font-size: 0.9rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--glow) 35%, transparent);
+  transition: border-color .2s var(--ease);
+}
+.omv-project__review:hover { border-color: var(--glow); }

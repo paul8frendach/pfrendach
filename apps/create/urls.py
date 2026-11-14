@@ -17,6 +17,9 @@ urlpatterns = [
     path("account/", views.account, name="account"),
     path("signin/", views.signin, name="signin"),
     path("signout/", views.signout, name="signout"),
+    path("account/project/<str:reference>/", views.project_review, name="project_review"),
+    path("account/project/<str:reference>/like/", views.project_like, name="project_like"),
+
     path("service/<slug:slug>/", views.service_detail, name="service_detail"),
     path("<slug:slug>/", views.work_detail, name="work_detail"),
 ]

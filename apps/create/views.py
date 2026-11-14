@@ -18,7 +18,7 @@ from apps.house.models import SiteConfig
 
 from . import payments
 from .forms import CommissionForm
-from .models import Commission, Method, Package, Payment, Photo, Service, Work
+from .models import Commission, Method, Package, Payment, Photo, ProjectLike, Service, Work
 
 logger = logging.getLogger(__name__)
 
@@ -323,6 +323,48 @@ def account(request):
             "omv_tab": "account",
         },
     )
+
+
+@login_required(login_url="/create/signin/")
+def project_review(request, reference):
+    """Review looks for a project — the client hearts the styles they love."""
+    commission = get_object_or_404(Commission, reference=reference, client=request.user)
+    photo_style = _SVC_PHOTO_STYLE.get(commission.service, "wedding")
+    photos = list(Photo.objects.filter(is_live=True, style=photo_style))
+    if len(photos) < 6:
+        photos += list(
+            Photo.objects.filter(is_live=True).exclude(style=photo_style)[: 8 - len(photos)]
+        )
+    liked_ids = set(commission.likes.values_list("photo_id", flat=True))
+    return render(
+        request,
+        "create/project_review.html",
+        {
+            "commission": commission,
+            "photos": photos,
+            "liked_ids": liked_ids,
+            "liked_count": len(liked_ids),
+            "omv_tab": "account",
+        },
+    )
+
+
+@require_POST
+@login_required(login_url="/create/signin/")
+def project_like(request, reference):
+    """Toggle a loved portfolio piece on a project."""
+    commission = get_object_or_404(Commission, reference=reference, client=request.user)
+    photo = get_object_or_404(Photo, pk=request.POST.get("photo") or 0, is_live=True)
+    existing = ProjectLike.objects.filter(commission=commission, photo=photo).first()
+    if existing:
+        existing.delete()
+        liked = False
+    else:
+        ProjectLike.objects.create(commission=commission, photo=photo)
+        liked = True
+    if request.headers.get("X-Requested-With") == "fetch":
+        return JsonResponse({"liked": liked, "count": commission.likes.count()})
+    return redirect("create:project_review", reference=reference)
 
 
 def request_thanks(request):

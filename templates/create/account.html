@@ -46,6 +46,9 @@
           </div>
           <span class="omv-chip omv-chip--{{ c.status }}">{{ c.get_status_display }}</span>
         </header>
+        <a class="omv-project__review" href="{% url 'create:project_review' c.reference %}">
+          Review looks for this project{% if c.likes.count %} · {{ c.likes.count }} loved{% endif %} &rarr;
+        </a>
 
         {% if c.status != 'closed' %}
         <ol class="omv-rail" aria-label="Project status">

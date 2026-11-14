@@ -541,3 +541,24 @@ class Service(TimeStamped, Published):
         from django.templatetags.static import static
 
         return static(f"omv/service/{self.poster}") if self.poster else ""
+
+
+class ProjectLike(TimeStamped):
+    """
+    A portfolio piece a client loved while reviewing looks for their project.
+    Their hearts tell Paul the style they're after before he quotes.
+    """
+
+    commission = models.ForeignKey(
+        "create.Commission", on_delete=models.CASCADE, related_name="likes"
+    )
+    photo = models.ForeignKey(
+        "create.Photo", on_delete=models.CASCADE, related_name="likes"
+    )
+
+    class Meta:
+        unique_together = ("commission", "photo")
+        ordering = ("-created_at",)
+
+    def __str__(self) -> str:
+        return f"{self.commission.reference} ♥ {self.photo.image}"

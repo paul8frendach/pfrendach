@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static house_tags %}
+
+{% block title %}Review looks · {{ commission.reference }} — Oasis Media Visions{% endblock %}
+{% block description %}Review the looks for your project and tell Paul the style you love.{% endblock %}
+{% block world %}create{% endblock %}
+
+{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero hero--room" style="padding-bottom:0">
+  <div class="shell hero__inner">
+    <p class="omv-kicker">Oasis Media Visions <span>·</span> {{ commission.reference }}</p>
+    <h1 class="oasis-head" style="max-width:18ch">{{ commission.get_service_display }}</h1>
+    <p class="lead" style="margin-top:0.9rem;max-width:48ch">
+      Tap the looks you love. It tells me the style you're after — and shapes the film I make for you.
+    </p>
+  </div>
+</section>
+
+{% include "partials/omv_subnav.html" %}
+
+<section class="section" style="padding-top:clamp(24px,3vw,40px)">
+  <div class="shell">
+
+    <article class="omv-project omv-project--{{ commission.status }}" style="margin-bottom:1.8rem">
+      <header class="omv-project__head">
+        <div>
+          <p class="omv-project__meta" style="margin:0">
+            {% if commission.event_date %}<span>{{ commission.event_date|date:"j M Y" }}</span>{% endif %}
+            {% if commission.location %}<span>{{ commission.location }}</span>{% endif %}
+            <span>Requested {{ commission.created_at|date:"j M Y" }}</span>
+          </p>
+        </div>
+        <span class="omv-chip omv-chip--{{ commission.status }}">{{ commission.get_status_display }}</span>
+      </header>
+
+      {% if commission.status != 'closed' %}
+      <ol class="omv-rail" aria-label="Project status">
+        {% for step in commission.progress %}
+        <li class="omv-rail__step{% if step.done %} is-done{% endif %}{% if step.current %} is-current{% endif %}">
+          <span class="omv-rail__dot" aria-hidden="true"></span>
+          <span class="omv-rail__label">{{ step.label }}</span>
+        </li>
+        {% endfor %}
+      </ol>
+      {% endif %}
+
+      {% if commission.status == 'quoted' and commission.quote_amount %}
+      <div class="omv-quote">
+        <div class="omv-quote__top">
+          <p class="omv-quote__amount">${{ commission.quote_amount|floatformat:0 }}</p>
+          {% if commission.booking_deposit %}<p class="omv-quote__dep">${{ commission.booking_deposit|floatformat:0 }} deposit books your date</p>{% endif %}
+        </div>
+        {% if commission.quote_note %}<p class="omv-quote__note">{{ commission.quote_note|linebreaksbr }}</p>{% endif %}
+        {% if commission.can_book_online %}
+        <form method="post" action="{% url 'create:book' %}">
+          {% csrf_token %}
+          <input type="hidden" name="commission_id" value="{{ commission.pk }}">
+          <button class="btn btn--solid" type="submit">Pay deposit &amp; book &mdash; ${{ commission.booking_deposit|floatformat:0 }}</button>
+        </form>
+        {% endif %}
+      </div>
+      {% elif commission.status == 'new' %}
+      <p class="omv-project__line">Received — your quote is on its way. Love some looks below while you wait; it helps me quote you right.</p>
+      {% endif %}
+    </article>
+
+    <div class="headrow"><div>
+      <p class="beat"><span data-like-count>{{ liked_count }}</span> loved</p>
+      <h2>Looks for your {{ commission.get_service_display|lower }}.</h2>
+    </div></div>
+
+    <div class="review-grid">
+      {% for p in photos %}
+      <div class="review-item{% if p.id in liked_ids %} is-loved{% endif %}" data-review-item>
+        <img src="{% static p.static_path %}" alt="{{ p.get_style_display }}" loading="lazy"
+             {% if p.width %}width="{{ p.width }}" height="{{ p.height }}"{% endif %}>
+        <form method="post" action="{% url 'create:project_like' commission.reference %}" data-like-form>
+          {% csrf_token %}
+          <input type="hidden" name="photo" value="{{ p.id }}">
+          <button class="review-heart" type="submit"
+                  aria-pressed="{% if p.id in liked_ids %}true{% else %}false{% endif %}"
+                  aria-label="Love this look">
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="22" height="22">
+              <path d="M12 21s-7.5-4.6-10-9.3C.6 8.8 2 5.5 5.2 5.5c1.9 0 3.1 1.1 3.8 2.1C9.7 6.6 11 5.5 12.8 5.5 16 5.5 17.4 8.8 16 11.7 13.5 16.4 12 21 12 21z"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="omv-portal__foot" style="margin-top:2.2rem">
+      <a class="linkline" href="{% url 'create:account' %}">&larr; Back to your projects</a>
+      <a class="btn btn--quiet" href="{% url 'create:photography' %}">Browse the full gallery</a>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var count = document.querySelector("[data-like-count]");
+  document.querySelectorAll("[data-like-form]").forEach(function (form) {
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var item = form.closest("[data-review-item]");
+      var btn = form.querySelector(".review-heart");
+      fetch(form.action, {
+        method: "POST",
+        headers: { "X-Requested-With": "fetch" },
+        body: new FormData(form),
+      }).then(function (r) { return r.json(); }).then(function (d) {
+        item.classList.toggle("is-loved", d.liked);
+        btn.setAttribute("aria-pressed", d.liked ? "true" : "false");
+        if (count) count.textContent = d.count;
+      }).catch(function () { form.submit(); });
+    });
+  });
+})();
+</script>
+{% endblock %}
