@@ -18,31 +18,13 @@ from .models import Booking, Law, SessionType, Slot
 
 
 def index(request):
-    """The Train room. The tariff is The LAB's answer, not ours.
+    """The Train room — Paul's own playing portfolio.
 
-    `services` are the coach's own, priced by their account. When The LAB
-    cannot be reached `notice` carries a sentence to print in place of the
-    list — never a cached-from-somewhere-else price.
+    Bare bones on purpose: a few frames from his career and the record, no
+    coaching storefront and nothing that reaches out to The LAB. It is a
+    portfolio of the player, not a page that sells sessions.
     """
-    services, notice = store.storefront()
-    # Real times, from the coach's own calendar. The local Slot rows are not a
-    # fallback here: a page whose prices are live and whose times are invented
-    # is worse than one that says there is nothing open, because only one half
-    # of it looks wrong.
-    slots, _ = store.next_open(limit=3)
-    blocks, _ = store.prepaid_blocks()
-    return render(
-        request,
-        "train/index.html",
-        {
-            "laws": Law.objects.filter(is_live=True),
-            "services": services,
-            "services_notice": notice,
-            "next_slots": slots,
-            "blocks": blocks,
-            "milestones": Milestone.objects.filter(is_live=True, confirmed=True),
-        },
-    )
+    return render(request, "train/index.html", {})
 
 
 def service_detail(request, service_id):

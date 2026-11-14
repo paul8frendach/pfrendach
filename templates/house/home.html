@@ -50,21 +50,18 @@ actually shot, what is actually built.
 
       <div class="band__col rise" style="--accent:var(--gold)">
         <h2 class="band__head">Train</h2>
-        <p class="band__sub">{{ site.booking_note }}</p>
-        <div class="slots slots--mini">
-          {% for slot in next_slots %}
-            <a class="slot" href="{% url 'train:book' slot.id %}">
-              <span>
-                <span class="slot__when">{{ slot.starts_at|date:"D j M · g:i A" }}</span><br>
-                <span class="slot__where">{{ slot.session_type.name }}</span>
-              </span>
-              <span class="slot__seats">{{ slot.seats_left }}</span>
-            </a>
-          {% empty %}
-            <p class="band__empty">Nothing open. Ask and a time will be made.</p>
-          {% endfor %}
+        <p class="band__sub">The player. Baltimore Celtic to a national title at Maryland, captain at Temple.</p>
+        <div class="band__list">
+          <a class="band__item" href="{% url 'train:index' %}#player">
+            <span>In the kit</span>
+            <span class="meta">A few frames</span>
+          </a>
+          <a class="band__item" href="{% url 'train:index' %}#record">
+            <span>The record</span>
+            <span class="meta">Where he played</span>
+          </a>
         </div>
-        <a class="linkline" href="{% url 'train:schedule' %}">Schedule</a>
+        <a class="linkline" href="{% url 'train:index' %}">Soccer</a>
       </div>
 
       <div class="band__col rise" style="--accent:var(--glow)">

@@ -1234,6 +1234,9 @@ html.lb-open { overflow: hidden; }
   background: var(--ink-2);
   box-shadow: 0 40px 120px -30px rgba(0,0,0,.8), 0 0 0 1px color-mix(in srgb, var(--bone) 9%, transparent);
 }
+/* [hidden] must win over the display rule above, or a photo shows an empty
+   video player beneath it. */
+.lb__img[hidden], .lb__vid[hidden] { display: none !important; }
 .lb__mark {
   position: absolute; right: 16px; bottom: 16px;
   font-family: "Fraunces", Georgia, serif;
@@ -1245,7 +1248,7 @@ html.lb-open { overflow: hidden; }
   background: color-mix(in srgb, var(--ink) 30%, transparent);
   -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
 }
-.lb__vid ~ .lb__mark { bottom: 58px; }
+.lb--video .lb__mark { bottom: 58px; }
 .lb__cap {
   margin: 14px 2px 0; max-width: 60ch; text-align: center;
   color: var(--bone-dim); font-size: 0.92rem; line-height: 1.5;

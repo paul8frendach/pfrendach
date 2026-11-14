@@ -53,6 +53,7 @@
     }
     cap.textContent = caption;
     box.classList.toggle("lb--multi", items.length > 1);
+    box.classList.toggle("lb--video", !!videoSrc);
   }
 
   function open(trigger) {
