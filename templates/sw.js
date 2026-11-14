@@ -2,7 +2,7 @@
    Conservative on purpose: hashed static assets are cached (immutable, so
    never stale), navigations always go to the network first and only fall back
    to a cached home shell when offline. Bump CACHE to invalidate. */
-const CACHE = "omv-v2";
+const CACHE = "omv-v3";
 const OFFLINE_URL = "/";
 
 self.addEventListener("install", (event) => {

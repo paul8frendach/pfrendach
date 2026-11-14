@@ -283,7 +283,11 @@ p:last-child { margin-bottom: 0; }
       color-mix(in srgb, var(--accent) 4%, transparent),
       transparent 62%),
     color-mix(in srgb, var(--ink) calc(58% + 30% * var(--cond)), transparent);
-  backdrop-filter: saturate(150%) blur(calc(6px + 12px * var(--cond)));
+  /* Static blur radius: animating the blur amount per scroll frame forces a
+     full-viewport backdrop repaint every frame — the main cause of scroll
+     judder on phones. The background opacity still tracks --cond (cheap). */
+  -webkit-backdrop-filter: saturate(150%) blur(13px);
+  backdrop-filter: saturate(150%) blur(13px);
   border-bottom: 1px solid color-mix(in srgb, var(--bone) calc(4% + 10% * var(--cond)), transparent);
   transition: transform 0.42s var(--ease);
 }
@@ -1932,7 +1936,10 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
     align-items: flex-end;
     gap: 5px;
     position: absolute;
-    top: 0;
+    /* clear the status bar / notch when installed as a standalone app;
+       resolves to 0 in a normal browser. padding on .chrome cannot move an
+       absolutely-positioned child, so the inset has to live here. */
+    top: env(safe-area-inset-top, 0px);
     right: 14px;
     height: 59px;
     width: 46px;
@@ -1974,7 +1981,7 @@ a.tile:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
   .chrome__mobile {
     display: block;
     position: fixed;
-    top: 59px;
+    top: calc(59px + env(safe-area-inset-top, 0px));
     left: 0;
     right: 0;
     z-index: 55;
