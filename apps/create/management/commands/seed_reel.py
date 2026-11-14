@@ -50,20 +50,22 @@ REEL = [
         "is_featured": False,
         "sort": 20,
     },
-    # Held as drafts until Paul confirms — see the note from this session.
-    # match: looks like a broadcast feed, not his own camera (US soccer only).
-    # interesting: a candid of a stranger at an airport gate.
+    # Provenance confirmed by Paul (14 Nov):
+    # match: an edit job — he cut the highlight tape, did not shoot the game,
+    #        so it is titled and credited as an edit, not as his cinematography.
+    # interesting: his own — he filmed and produced it.
     {
         "slug": "match-film",
-        "title": "Match film",
+        "title": "Recruiting highlight tape",
         "category": "school",
         "kind": "film",
         "aspect": "video",
         "clip": "match.mp4",
         "still": "match.jpg",
-        "blurb": "Ninety minutes, cut to the moments that mattered.",
+        "blurb": "A season of match footage cut into a recruiting reel.",
+        "credit": "Edited by Oasis Media Visions",
         "year": "2025",
-        "is_live": False,
+        "is_live": True,
         "is_featured": False,
         "sort": 30,
     },
@@ -76,8 +78,9 @@ REEL = [
         "clip": "airport.mp4",
         "still": "airport.jpg",
         "blurb": "A night at the gate.",
+        "credit": "Oasis Media Visions",
         "year": "2025",
-        "is_live": False,
+        "is_live": True,
         "is_featured": False,
         "sort": 40,
     },
