@@ -83,11 +83,14 @@ REEL = [
         "is_featured": False,
         "sort": 14,
     },
-    # Avenues Recovery — held as a draft. The footage pulled from the drone
-    # folder (DJI_0342) turned out to be ground-level B-roll of identifiable
-    # people at the recovery centre, which must not be published. Needs a
-    # people-free aerial/campus clip (or Paul's explicit OK on specific shots)
-    # before it goes live; the clip/still filenames are reserved here.
+    # Avenues Recovery — a national addiction-recovery brand Paul shot for.
+    # The published clip is a top-down aerial pass over the campus pavilion and
+    # grounds (cut from DJI_0341, ~t32-36): the drone is directly overhead, so
+    # the few people on the patio are anonymous specks from that height — no
+    # identifiable faces. Deliberately NOT used: the ground-level drone B-roll
+    # (DJI_0342) and the Lake Ariel staff photos, both of which show
+    # identifiable people — those must not be published for a recovery centre
+    # without a signed release.
     {
         "slug": "avenues-recovery",
         "title": "Avenues Recovery",
@@ -99,7 +102,7 @@ REEL = [
         "blurb": "A recovery campus from the air, for a national brand.",
         "credit": "Oasis Media Visions",
         "year": "2023",
-        "is_live": False,
+        "is_live": True,
         "is_featured": False,
         "sort": 22,
     },
