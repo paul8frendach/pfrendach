@@ -78,13 +78,19 @@
     render();
   }
 
+  // Capture phase, so this runs BEFORE router.js's own document click handler.
+  // router.js treats every same-origin link as a page to swap in — including a
+  // link straight to a /static/*.jpg — and, finding no [data-main] in an image,
+  // falls back to location.href and navigates the whole tab to the raw file.
+  // Stopping the event here keeps the viewer on the page every time.
   document.addEventListener("click", function (e) {
-    var t = e.target.closest("[data-lightbox]");
+    var t = e.target.closest ? e.target.closest("[data-lightbox]") : null;
     if (!t) return;
     if (e.target.closest("[data-like-form], button, .review-heart")) return;
     e.preventDefault();
+    e.stopPropagation();
     open(t);
-  });
+  }, true);
   document.addEventListener("keydown", function (e) {
     // Open from a focused non-link trigger (e.g. a reel tile) via Enter/Space.
     if (box && !box.hidden) {
