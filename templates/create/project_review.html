@@ -75,6 +75,8 @@
       {% for p in photos %}
       <div class="review-item{% if p.id in liked_ids %} is-loved{% endif %}" data-review-item>
         <img src="{% static p.static_path %}" alt="{{ p.get_style_display }}" loading="lazy"
+             data-lightbox data-src="{% static p.static_path %}"
+             data-caption="{{ p.caption|default:p.get_style_display }}"
              {% if p.width %}width="{{ p.width }}" height="{{ p.height }}"{% endif %}>
         <form method="post" action="{% url 'create:project_like' commission.reference %}" data-like-form>
           {% csrf_token %}

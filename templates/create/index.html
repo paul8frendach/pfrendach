@@ -138,11 +138,13 @@ the signature opening the OMV home (and so the PWA launch screen).{% endcomment 
     </div></div>
     <div class="omv-reel">
       {% for t in teasers %}
-      <figure class="omv-reel__item">
+      <figure class="omv-reel__item" data-lightbox data-video="{{ t.src }}"
+              data-caption="{{ t.label }}" role="button" tabindex="0" aria-label="Play {{ t.label }}">
         <video class="omv-reel__vid" muted loop playsinline preload="none"
-               poster="{{ t.poster }}" data-reel aria-label="{{ t.label }}">
+               poster="{{ t.poster }}" data-reel aria-hidden="true">
           <source src="{{ t.src }}" type="video/mp4">
         </video>
+        <span class="omv-reel__play" aria-hidden="true"></span>
         <figcaption class="omv-reel__cap">{{ t.label }}</figcaption>
       </figure>
       {% endfor %}

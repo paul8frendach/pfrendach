@@ -99,7 +99,8 @@
     </div></div>
     <div class="omv-svc-stills">
       {% for p in stills %}
-      <a class="omv-svc-still" href="{% url 'create:photography' %}?style={{ p.style }}" aria-label="{{ p.get_style_display }}">
+      <a class="omv-svc-still" href="{% static p.static_path %}" data-lightbox
+         data-caption="{{ p.caption|default:p.get_style_display }}" aria-label="{{ p.get_style_display }}">
         <img src="{% static p.static_path %}" alt="{{ p.get_style_display }}" loading="lazy"
              {% if p.width %}width="{{ p.width }}" height="{{ p.height }}"{% endif %}>
       </a>

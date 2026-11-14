@@ -97,36 +97,4 @@
   </div>
 </section>
 
-{# lightbox #}
-<div class="lightbox" data-lightbox-box hidden aria-hidden="true">
-  <button class="lightbox__close" type="button" data-lightbox-close aria-label="Close">&times;</button>
-  <img class="lightbox__img" data-lightbox-img alt="">
-  <p class="lightbox__cap" data-lightbox-cap></p>
-</div>
-
-<script>
-(function () {
-  var box = document.querySelector('[data-lightbox-box]');
-  if (!box) return;
-  var img = box.querySelector('[data-lightbox-img]');
-  var cap = box.querySelector('[data-lightbox-cap]');
-  function open(href, caption) {
-    img.src = href; cap.textContent = caption || '';
-    box.hidden = false; box.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
-  function close() {
-    box.hidden = true; box.setAttribute('aria-hidden', 'true');
-    img.src = ''; document.body.style.overflow = '';
-  }
-  document.querySelectorAll('[data-lightbox]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      open(a.getAttribute('href'), a.getAttribute('data-caption'));
-    });
-  });
-  box.addEventListener('click', function (e) { if (e.target !== img) close(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
-})();
-</script>
 {% endblock %}
