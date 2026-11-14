@@ -25,6 +25,16 @@
   var seen = false;
   try { seen = sessionStorage.getItem(KEY) === "1"; } catch (e) { /* private mode */ }
 
+  // An installed PWA opens a fresh session on every launch, so the intro would
+  // replay each time and feel like a loading screen. An app should open
+  // instantly into its content — so skip the curtain outright when launched
+  // standalone from the home screen.
+  var isPWA = false;
+  try {
+    isPWA = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+            || window.navigator.standalone === true;
+  } catch (e) { /* ignore */ }
+
   var standalone = root.hasAttribute("data-standalone");
   var page = standalone ? null : document.querySelector("[data-page]");
   var sig = standalone ? null : document.querySelector(".chrome .sig");
@@ -38,11 +48,30 @@
     try { sessionStorage.setItem(KEY, "1"); } catch (e) { /* ignore */ }
   }
 
-  if (seen && !standalone) { release(); return; }
+  if ((seen || isPWA) && !standalone) { release(); return; }
 
   if (!standalone) document.documentElement.classList.add("is-curtained");
   root.hidden = false;
   if (sig) sig.style.opacity = "0";
+
+  // Wall-clock insurance, scheduled the instant the curtain shows: whatever
+  // happens to the animation or rAF after this — a thrown frame, a paused tab,
+  // a blocked font — the curtain is gone within a few seconds. A splash that
+  // sticks is worse than one cut short.
+  if (!standalone) {
+    window.setTimeout(function () {
+      if (!handedOff) { try { handoff(); } catch (e) { /* fall through */ } }
+      window.setTimeout(function () {
+        var c = document.querySelector("[data-curtain]");
+        if (c && c.parentNode) {
+          c.parentNode.removeChild(c);
+          document.documentElement.classList.remove("is-curtained");
+          if (page) page.classList.add("is-revealed");
+          if (sig) sig.style.opacity = "";
+        }
+      }, HANDOFF_MS + 500);
+    }, Math.ceil((INTRO_LEN / SPEED) * 1000) + 2500);
+  }
 
   // ------------------------------------------------------------ easing
 
@@ -216,14 +245,18 @@
     var raf = 0;
 
     function frame(now) {
-      var elapsed = ((now - t0) / 1000) * SPEED;
-      if (elapsed >= INTRO_LEN - 0.05) {
-        apply(HOLD, elapsed);
-        handoff();
-        return;
+      try {
+        var elapsed = ((now - t0) / 1000) * SPEED;
+        if (elapsed >= INTRO_LEN - 0.05) {
+          apply(HOLD, elapsed);
+          handoff();
+          return;
+        }
+        apply(sampleIntro(Math.max(0, elapsed)), elapsed);
+        raf = requestAnimationFrame(frame);
+      } catch (e) {
+        handoff();   // any failure in the animation bails straight to reveal
       }
-      apply(sampleIntro(Math.max(0, elapsed)), elapsed);
-      raf = requestAnimationFrame(frame);
     }
 
     apply(sampleIntro(0), 0);
