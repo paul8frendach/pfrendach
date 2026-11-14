@@ -18,19 +18,19 @@
   ],
   "icons": [
     {
-      "src": "/static/marks/pf-icon-192.png",
+      "src": "/static/marks/pf-icon-g192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/static/marks/pf-icon-512.png",
+      "src": "/static/marks/pf-icon-g512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/static/marks/pf-icon-maskable-512.png",
+      "src": "/static/marks/pf-icon-g-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
