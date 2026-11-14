@@ -42,6 +42,9 @@
     if (videoSrc) {
       img.hidden = true;
       vid.hidden = false;
+      var poster = el.getAttribute("data-poster") || "";
+      if (poster) vid.setAttribute("poster", poster); else vid.removeAttribute("poster");
+      vid.preload = "auto";
       vid.src = videoSrc;
       vid.play().catch(function () {});
     } else {

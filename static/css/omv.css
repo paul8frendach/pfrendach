@@ -1502,17 +1502,34 @@ html.lb-open { overflow: hidden; }
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(58% 42% at 16% 6%,  color-mix(in srgb, var(--glow) 11%, transparent), transparent 60%),
-    radial-gradient(52% 48% at 90% 20%, color-mix(in srgb, var(--glow) 7%,  transparent), transparent 62%),
-    radial-gradient(44% 40% at 72% 64%, color-mix(in srgb, var(--glow) 5%,  transparent), transparent 66%),
-    radial-gradient(74% 58% at 46% 112%, color-mix(in srgb, var(--glow) 9%, transparent), transparent 60%);
+    radial-gradient(60% 44% at 14% 4%,  color-mix(in srgb, var(--glow) 20%, transparent), transparent 60%),
+    radial-gradient(54% 50% at 92% 18%, color-mix(in srgb, var(--glow) 14%, transparent), transparent 62%),
+    radial-gradient(46% 44% at 6% 54%,  color-mix(in srgb, var(--glow) 11%, transparent), transparent 64%),
+    radial-gradient(46% 44% at 100% 72%, color-mix(in srgb, var(--glow) 10%, transparent), transparent 64%),
+    radial-gradient(44% 40% at 74% 60%, color-mix(in srgb, var(--glow) 9%,  transparent), transparent 66%),
+    radial-gradient(80% 60% at 46% 114%, color-mix(in srgb, var(--glow) 18%, transparent), transparent 60%);
   will-change: transform;
-  animation: omv-room-drift 42s ease-in-out infinite alternate;
+  animation: omv-room-drift 36s ease-in-out infinite alternate;
 }
 @keyframes omv-room-drift {
-  from { transform: translate3d(-1.4%, -1%, 0) scale(1.03); }
-  to   { transform: translate3d(2%, 1.6%, 0) scale(1.09); }
+  from { transform: translate3d(-2.4%, -1.6%, 0) scale(1.04); }
+  to   { transform: translate3d(3%, 2.4%, 0) scale(1.12); }
 }
 @media (prefers-reduced-motion: reduce) {
   [data-world="create"] body::before { animation: none; transform: scale(1.05); }
 }
+
+/* Reel tiles lift and the clip eases in on hover — a watch-me cue beyond the moving thumbnail. */
+.omv-reel__item { transition: transform .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease); }
+.omv-reel__vid { transition: transform .55s var(--ease); }
+.omv-reel__item:hover,
+.omv-reel__item:focus-within {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--glow) 42%, var(--omv-line));
+  box-shadow: 0 26px 54px -32px color-mix(in srgb, var(--glow) 45%, #000);
+}
+.omv-reel__item:hover .omv-reel__vid,
+.omv-reel__item:focus-within .omv-reel__vid { transform: scale(1.045); }
+/* The lightbox video shows its poster until it plays, so there's no black flash on open. */
+.lb__vid { background: var(--ink); }
+.lb__vid[poster] { object-fit: contain; }
