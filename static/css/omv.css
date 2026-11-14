@@ -38,16 +38,20 @@
 
 /* -------------------------------------------------------------- sub-navigation */
 .omv-subnav {
-  /* Matches the collapsed house chrome exactly — same ink, same blur, one
-     shared divider — so the two bars read as a single continuous nav. */
-  border-bottom: 1px solid color-mix(in srgb, var(--bone) 12%, transparent);
-  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  /* A raised surface, not a see-through film. Based on the panel ink (--ink-2),
+     one step lighter than the page, so the bar reads as a distinct nav even
+     when it floats over near-black content; a crisp divider and a soft drop
+     separate it from whatever scrolls underneath. */
+  border-top: 1px solid color-mix(in srgb, var(--bone) 7%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--bone) 16%, transparent);
+  background: color-mix(in srgb, var(--ink-2) 94%, transparent);
+  box-shadow: 0 16px 30px -20px rgba(0, 0, 0, 0.9);
   position: sticky;
   /* under the collapsed house chrome (59px); + the notch inset when installed */
   top: calc(58px + env(safe-area-inset-top, 0px));
   z-index: 40;
-  -webkit-backdrop-filter: saturate(150%) blur(18px);
-  backdrop-filter: saturate(150%) blur(18px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  backdrop-filter: saturate(140%) blur(16px);
   transition: transform 0.42s var(--ease), top 0.42s var(--ease);
 }
 /* When the house bar tucks away on the way down, the tab rail slides up to the
@@ -108,10 +112,10 @@ html.nav-tucked .omv-subnav { top: env(safe-area-inset-top, 0px); }
   transform-origin: left;
   transition: transform 0.35s var(--ease);
 }
-.omv-subnav__tab:hover { color: var(--bone); }
+.omv-subnav__tab:hover { color: var(--bone); background: color-mix(in srgb, var(--bone) 6%, transparent); }
 .omv-subnav__tab:hover::after,
 .omv-subnav__tab.is-active::after { transform: scaleX(1); }
-.omv-subnav__tab.is-active { color: var(--bone); }
+.omv-subnav__tab.is-active { color: var(--bone); background: color-mix(in srgb, var(--bone) 9%, transparent); }
 .omv-subnav__cta {
   margin-left: 6px;
   background: var(--glow);
