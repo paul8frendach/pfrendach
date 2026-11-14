@@ -97,7 +97,7 @@ class Work(TimeStamped, Published):
         default="wide",
     )
     runtime = models.CharField(max_length=20, blank=True, help_text="e.g. 1:42")
-    credit = models.CharField(max_length=120, default="Vision Oasis")
+    credit = models.CharField(max_length=120, default="Oasis Media Visions")
     is_featured = models.BooleanField(default=False)
 
     class Meta:
