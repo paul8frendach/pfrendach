@@ -1486,3 +1486,33 @@ html.lb-open { overflow: hidden; }
   .omv-request__grid { grid-template-columns: 1fr; }
   .omv-request__rail { order: 2; }
 }
+
+/* ===================================================================
+   Film-room backdrop — the Create world sits in a lit room, not on flat
+   black. One fixed field of soft light pools in the glow colour, drifting
+   slowly behind everything as you scroll (the "lobby" feel). The page
+   background stays ink; sections are transparent, so this shows through
+   below the hero. Scoped to the Create world and removed on navigation.
+   Transform-only drift (no blur filter) so it stays cheap on phones.
+   =================================================================== */
+[data-world="create"] body::before {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 42% at 16% 6%,  color-mix(in srgb, var(--glow) 11%, transparent), transparent 60%),
+    radial-gradient(52% 48% at 90% 20%, color-mix(in srgb, var(--glow) 7%,  transparent), transparent 62%),
+    radial-gradient(44% 40% at 72% 64%, color-mix(in srgb, var(--glow) 5%,  transparent), transparent 66%),
+    radial-gradient(74% 58% at 46% 112%, color-mix(in srgb, var(--glow) 9%, transparent), transparent 60%);
+  will-change: transform;
+  animation: omv-room-drift 42s ease-in-out infinite alternate;
+}
+@keyframes omv-room-drift {
+  from { transform: translate3d(-1.4%, -1%, 0) scale(1.03); }
+  to   { transform: translate3d(2%, 1.6%, 0) scale(1.09); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-world="create"] body::before { animation: none; transform: scale(1.05); }
+}
