@@ -35,5 +35,6 @@ class OMVApexMiddleware:
                 # middleware import side-effect-free at startup.
                 from apps.create.views import index
 
+                request.omv_apex = True
                 return index(request)
         return self.get_response(request)

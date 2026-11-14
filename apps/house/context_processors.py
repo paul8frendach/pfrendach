@@ -8,6 +8,8 @@ _WORLD_NAMESPACES = {"create", "build", "train"}
 
 
 def _current_world(request) -> str:
+    if getattr(request, "omv_apex", False):
+        return "create"
     match = getattr(request, "resolver_match", None)
     if match and match.namespace in _WORLD_NAMESPACES:
         return match.namespace

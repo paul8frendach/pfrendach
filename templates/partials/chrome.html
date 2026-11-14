@@ -40,24 +40,37 @@ cross-fade, so nothing ever jumps from one layout to another.
            {% if request.resolver_match.url_name == 'about' %}aria-current="page"{% endif %}>About</a>
         <a href="{% url 'house:contact' %}"
            {% if request.resolver_match.url_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
-        {% if user.is_authenticated %}
-          <a href="{% url 'accounts:dashboard' %}"
-             {% if request.resolver_match.app_name == 'accounts' %}aria-current="page"{% endif %}
-             style="position:relative">
-            My account
-            {% comment %}Notification badge — updated via fetch in house.js{% endcomment %}
-            <span class="notif-badge js-notif-badge" style="display:none" aria-label="unread notifications"></span>
-          </a>
-          {% if user.is_staff %}
-            <a href="{% url 'accounts:coach_dashboard' %}">Coach</a>
+        {% if current_world == 'create' %}
+          {% if user.is_authenticated %}
+            <a href="{% url 'create:account' %}"
+               {% if request.resolver_match.app_name == 'create' %}aria-current="page"{% endif %}>My account</a>
+            <form method="post" action="{% url 'create:signout' %}" style="display:inline">
+              {% csrf_token %}
+              <button type="submit" class="subnav__btn">Sign out</button>
+            </form>
+          {% else %}
+            <a href="{% url 'create:signin' %}">Sign in</a>
+            <a href="{% url 'create:request' %}">Join</a>
           {% endif %}
-          <form method="post" action="{% url 'accounts:logout' %}" style="display:inline">
-            {% csrf_token %}
-            <button type="submit" class="subnav__btn">Sign out</button>
-          </form>
         {% else %}
-          <a href="{% url 'accounts:login' %}">Sign in</a>
-          <a href="{% url 'accounts:signup' %}">Join</a>
+          {% if user.is_authenticated %}
+            <a href="{% url 'accounts:dashboard' %}"
+               {% if request.resolver_match.app_name == 'accounts' %}aria-current="page"{% endif %}
+               style="position:relative">
+              My account
+              <span class="notif-badge js-notif-badge" style="display:none" aria-label="unread notifications"></span>
+            </a>
+            {% if user.is_staff %}
+              <a href="{% url 'accounts:coach_dashboard' %}">Coach</a>
+            {% endif %}
+            <form method="post" action="{% url 'accounts:logout' %}" style="display:inline">
+              {% csrf_token %}
+              <button type="submit" class="subnav__btn">Sign out</button>
+            </form>
+          {% else %}
+            <a href="{% url 'accounts:login' %}">Sign in</a>
+            <a href="{% url 'accounts:signup' %}">Join</a>
+          {% endif %}
         {% endif %}
       </nav>
     </div>
@@ -78,12 +91,22 @@ cross-fade, so nothing ever jumps from one layout to another.
       <span class="chrome__mobile-label">House</span>
       <a href="{% url 'house:about' %}"{% if request.resolver_match.url_name == 'about' %} aria-current="page"{% endif %}>About</a>
       <a href="{% url 'house:contact' %}"{% if request.resolver_match.url_name == 'contact' %} aria-current="page"{% endif %}>Contact</a>
-      {% if user.is_authenticated %}
-        <a href="{% url 'accounts:dashboard' %}">My account</a>
-        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit" class="chrome__mobile-signout">Sign out</button></form>
+      {% if current_world == 'create' %}
+        {% if user.is_authenticated %}
+          <a href="{% url 'create:account' %}">My account</a>
+          <form method="post" action="{% url 'create:signout' %}">{% csrf_token %}<button type="submit" class="chrome__mobile-signout">Sign out</button></form>
+        {% else %}
+          <a href="{% url 'create:signin' %}">Sign in</a>
+          <a href="{% url 'create:request' %}" class="chrome__mobile-join">Join</a>
+        {% endif %}
       {% else %}
-        <a href="{% url 'accounts:login' %}">Sign in</a>
-        <a href="{% url 'accounts:signup' %}" class="chrome__mobile-join">Join</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:dashboard' %}">My account</a>
+          <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button type="submit" class="chrome__mobile-signout">Sign out</button></form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Sign in</a>
+          <a href="{% url 'accounts:signup' %}" class="chrome__mobile-join">Join</a>
+        {% endif %}
       {% endif %}
     </nav>
   </div>
