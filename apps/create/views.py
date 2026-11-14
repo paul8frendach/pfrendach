@@ -166,17 +166,35 @@ def work_detail(request, slug):
     )
 
 
+def _service_packages(category):
+    """The category's package(s) plus the universal Social Reels add-on."""
+    pkgs = list(Package.objects.filter(is_live=True, slug__startswith=category))
+    reels = Package.objects.filter(is_live=True, slug="social-reels").first()
+    if reels and reels not in pkgs:
+        pkgs.append(reels)
+    return pkgs
+
+
+# The still style that best represents each film service.
+_SVC_PHOTO_STYLE = {
+    "wedding": "wedding", "event": "event", "school": "sports",
+    "listing": "aerial", "brand": "portrait", "stills": "portrait",
+}
+
+
 def service_detail(request, slug):
-    """A single service — the context, what's included, the process, a clip."""
+    """A single service — context, what's included, the process, stills, pricing."""
     service = get_object_or_404(Service, slug=slug, is_live=True)
-    pieces = Work.objects.filter(is_live=True, category=service.category)[:3]
+    photo_style = _SVC_PHOTO_STYLE.get(service.category, "portrait")
     return render(
         request,
         "create/service_detail.html",
         {
             "service": service,
-            "pieces": pieces,
-            "packages": Package.objects.filter(is_live=True),
+            "pieces": Work.objects.filter(is_live=True, category=service.category)[:3],
+            "stills": list(Photo.objects.filter(is_live=True, style=photo_style)[:6]),
+            "packages": _service_packages(service.category),
+            "other_services": list(Service.objects.filter(is_live=True).exclude(pk=service.pk)),
             "omv_tab": "films",
         },
     )

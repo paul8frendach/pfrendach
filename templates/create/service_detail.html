@@ -1,11 +1,26 @@
 {% extends "base.html" %}
 {% load static house_tags %}
 
-{% block title %}{{ service.title }} — Oasis Media Visions{% endblock %}
+{% block title %}{{ service.title }} in Southern Maryland — Oasis Media Visions{% endblock %}
 {% block description %}{{ service.summary }}{% endblock %}
+{% block og_title %}{{ service.title }} — Oasis Media Visions{% endblock %}
+{% block og_description %}{{ service.summary }}{% endblock %}
 {% block world %}create{% endblock %}
 
-{% block extra_head %}<link rel="stylesheet" href="{% asset 'css/omv.css' %}">{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% asset 'css/omv.css' %}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "{{ service.title }}",
+  "serviceType": "{{ service.title }}",
+  "description": "{{ service.summary|escapejs }}",
+  "areaServed": "Southern Maryland",
+  "provider": {"@type": "LocalBusiness", "name": "Oasis Media Visions", "url": "https://omv.pfrendach.com", "founder": "Paul Frendach"}
+}
+</script>
+{% endblock %}
 
 {% block content %}
 <section class="omv-svc-hero">
@@ -75,19 +90,56 @@
 </section>
 {% endif %}
 
-{% if pieces %}
+{% if stills %}
 <section class="section section--tight">
   <div class="shell">
     <div class="headrow"><div>
-      <p class="beat">From the work</p>
-      <h2>Recent films.</h2>
+      <p class="beat">Stills</p>
+      <h2>A few frames.</h2>
     </div></div>
-    <div class="omv-svc-pieces">
-      {% for piece in pieces %}
-      <a class="omv-svc-piece" href="{{ piece.get_absolute_url }}">
-        {% if piece.poster %}<img src="{{ piece.poster.url }}" alt="{{ piece.title }}" loading="lazy">{% endif %}
-        <span>{{ piece.title }}</span>
+    <div class="omv-svc-stills">
+      {% for p in stills %}
+      <a class="omv-svc-still" href="{% url 'create:photography' %}?style={{ p.style }}" aria-label="{{ p.get_style_display }}">
+        <img src="{% static p.static_path %}" alt="{{ p.get_style_display }}" loading="lazy"
+             {% if p.width %}width="{{ p.width }}" height="{{ p.height }}"{% endif %}>
       </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if packages %}
+<section class="section section--tight" id="packages">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">What you can book</p>
+      <h2>Packages &amp; pricing.</h2>
+    </div></div>
+    <div class="pricegrid">
+      {% for package in packages %}
+        <div class="pricecard{% if package.is_featured %} pricecard--featured{% endif %}">
+          {% if package.is_featured %}<span class="pricecard__tag">Most booked</span>{% endif %}
+          <span class="pricecard__name">{{ package.name }}</span>
+          <span class="pricecard__price">{{ package.price_label }}<small>{{ package.price_note|default:package.turnaround }}</small></span>
+          <p class="pricecard__summary">{{ package.summary }}</p>
+          <ul class="pricecard__list">
+            {% for line in package.deliverable_lines %}<li>{{ line }}</li>{% endfor %}
+          </ul>
+          {% if package.bookable %}
+            <div class="pricecard__cta pricecard__book">
+              <form method="post" action="{% url 'create:book' %}">
+                {% csrf_token %}
+                <input type="hidden" name="package" value="{{ package.slug }}">
+                <button class="btn btn--solid" type="submit">Book — pay {{ package.deposit_label }} deposit</button>
+              </form>
+              <a class="linkline" href="{% url 'create:request' %}?package={{ package.slug }}">or ask a question first</a>
+            </div>
+          {% else %}
+            <a class="btn {% if package.is_featured %}btn--solid{% endif %} pricecard__cta"
+               href="{% url 'create:request' %}?package={{ package.slug }}">Request a quote</a>
+          {% endif %}
+        </div>
       {% endfor %}
     </div>
   </div>
@@ -106,6 +158,26 @@
     </div>
   </div>
 </section>
+
+{% if other_services %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">More ways in</p>
+      <h2>Other services.</h2>
+    </div></div>
+    <div class="omv-svc-more">
+      {% for s in other_services %}
+      <a class="omv-svc-morecard" href="{{ s.get_absolute_url }}"
+         {% if s.poster %}style="--_p:url('{{ s.poster_src }}')"{% endif %}>
+        <span class="omv-svc-morecard__k">{{ s.kicker|default:s.title }}</span>
+        <span class="omv-svc-morecard__t">{{ s.title }} &rarr;</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <script>
 (function () {
