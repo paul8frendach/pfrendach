@@ -72,6 +72,16 @@
         });
         if (prev) prev.disabled = i === 0;
         if (next) next.disabled = i === items.length - 1;
+
+        // The track locks to the tallest card by default; when clips are mixed
+        // portrait/landscape that leaves a gap under the short ones. Size the
+        // track to the active card instead, measured after layout settles.
+        var active = items[i];
+        if (active) {
+          requestAnimationFrame(function () {
+            root.style.setProperty("--console-h", active.offsetHeight + "px");
+          });
+        }
       }
 
       function go(i, smooth) {

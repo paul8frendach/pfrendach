@@ -928,12 +928,17 @@
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(min(86%, 620px), 1fr);
+  align-items: start;
   gap: clamp(12px, 1.8vw, 24px);
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   padding-bottom: 4px;
+  /* Height follows the active card (set by console.js) so a landscape clip
+     doesn't leave a tall gap under a portrait one. Falls back to natural. */
+  height: var(--console-h, auto);
+  transition: height 0.45s var(--ease);
 }
 [data-world="create"] .console__track::-webkit-scrollbar { display: none; }
 
