@@ -147,6 +147,42 @@
 </section>
 {% endif %}
 
+{% if service.terms_points %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">The agreement</p>
+      <h2>How we work together.</h2>
+    </div></div>
+    <ul class="omv-svc-terms">
+      {% for t in service.terms_points %}
+      <li><b>{{ t.title }}</b>{% if t.detail %}<span>{{ t.detail }}</span>{% endif %}</li>
+      {% endfor %}
+    </ul>
+    <p class="omv-svc-terms__note">Plain-English terms, not fine print — the full details go in your written quote before anything is booked.</p>
+  </div>
+</section>
+{% endif %}
+
+{% if service.faq_items %}
+<section class="section section--tight">
+  <div class="shell">
+    <div class="headrow"><div>
+      <p class="beat">Good to know</p>
+      <h2>Questions, answered.</h2>
+    </div></div>
+    <div class="omv-faq">
+      {% for item in service.faq_items %}
+      <details class="omv-faq__item"{% if forloop.first %} open{% endif %}>
+        <summary>{{ item.q }}<span class="omv-faq__mark" aria-hidden="true"></span></summary>
+        <div class="omv-faq__a">{{ item.a }}</div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 <section class="section">
   <div class="shell">
     <div class="omv-cta">

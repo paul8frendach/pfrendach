@@ -526,6 +526,14 @@ class Service(TimeStamped, Published):
     poster = models.CharField(
         max_length=120, blank=True, help_text="Poster image under static/omv/service/."
     )
+    terms = models.TextField(
+        blank=True,
+        help_text="The plain-English agreement — one term per line, as 'Title — detail'.",
+    )
+    faq = models.TextField(
+        blank=True,
+        help_text="Common questions — one per line, as 'Question :: Answer'.",
+    )
 
     class Meta:
         ordering = ("sort", "title")
@@ -565,6 +573,31 @@ class Service(TimeStamped, Published):
         from django.templatetags.static import static
 
         return static(f"omv/service/{self.poster}") if self.poster else ""
+
+    @property
+    def terms_points(self) -> list[dict]:
+        points = []
+        for line in self.terms.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if "—" in line:
+                title, detail = line.split("—", 1)
+                points.append({"title": title.strip(), "detail": detail.strip()})
+            else:
+                points.append({"title": line, "detail": ""})
+        return points
+
+    @property
+    def faq_items(self) -> list[dict]:
+        items = []
+        for line in self.faq.splitlines():
+            line = line.strip()
+            if not line or "::" not in line:
+                continue
+            q, a = line.split("::", 1)
+            items.append({"q": q.strip(), "a": a.strip()})
+        return items
 
 
 class ProjectLike(TimeStamped):

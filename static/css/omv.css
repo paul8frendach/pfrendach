@@ -1090,6 +1090,44 @@ a.omv-stat--press:hover .omv-stat__lbl { color: var(--bone); }
 .omv-svc-process__t b { color: var(--bone); font-weight: 500; font-size: 1.08rem; }
 .omv-svc-process__t span { color: var(--bone-dim); font-size: 0.92rem; line-height: 1.5; }
 
+/* the agreement — plain-english terms as cards */
+.omv-svc-terms {
+  list-style: none; margin: 1.4rem 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;
+}
+.omv-svc-terms li {
+  position: relative; border: 1px solid var(--omv-line); border-radius: 12px;
+  background: var(--ink-2); padding: 16px 16px 16px 40px; display: grid; gap: 4px;
+}
+.omv-svc-terms li::before {
+  content: ""; position: absolute; left: 16px; top: 1.35em;
+  width: 8px; height: 8px; border-radius: 2px; transform: rotate(45deg);
+  background: var(--glow); box-shadow: 0 0 10px -1px color-mix(in srgb, var(--glow) 70%, transparent);
+}
+.omv-svc-terms li b { color: var(--bone); font-weight: 500; font-size: 1.02rem; }
+.omv-svc-terms li span { color: var(--bone-dim); font-size: 0.92rem; line-height: 1.5; }
+.omv-svc-terms__note { margin: 1.1rem 0 0; color: var(--muted); font-size: 0.86rem; }
+
+/* faq — a quiet accordion */
+.omv-faq { margin-top: 1.4rem; display: grid; gap: 10px; max-width: 760px; }
+.omv-faq__item {
+  border: 1px solid var(--omv-line); border-radius: 12px; background: var(--ink-2); overflow: clip;
+}
+.omv-faq__item summary {
+  list-style: none; cursor: pointer; position: relative;
+  padding: 16px 48px 16px 18px;
+  color: var(--bone); font-family: var(--font-display); font-size: 1.05rem;
+}
+.omv-faq__item summary::-webkit-details-marker { display: none; }
+.omv-faq__mark { position: absolute; right: 18px; top: 50%; width: 13px; height: 13px; transform: translateY(-50%); }
+.omv-faq__mark::before, .omv-faq__mark::after {
+  content: ""; position: absolute; top: 50%; left: 0; width: 13px; height: 2px; margin-top: -1px;
+  background: var(--glow); transition: transform 0.3s var(--ease);
+}
+.omv-faq__mark::after { transform: rotate(90deg); }
+.omv-faq__item[open] .omv-faq__mark::after { transform: rotate(0); }
+.omv-faq__a { padding: 0 18px 18px; color: var(--bone-dim); font-size: 0.96rem; line-height: 1.55; max-width: 64ch; }
+
 .omv-svc-pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 1.4rem; }
 .omv-svc-piece { position: relative; border-radius: 12px; overflow: clip; border: 1px solid var(--omv-line); aspect-ratio: 16/10; display: block; }
 .omv-svc-piece img { width: 100%; height: 100%; object-fit: cover; }
