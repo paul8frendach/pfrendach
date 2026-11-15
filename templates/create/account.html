@@ -86,6 +86,26 @@
         {% elif c.status == 'read' %}
         <p class="omv-project__line">Paul has your details and is putting your quote together now.</p>
         {% endif %}
+
+        {% with dels=c.ready_deliverables %}
+        {% if dels %}
+        <div class="omv-deliver">
+          <p class="omv-deliver__head">Your final content</p>
+          <div class="omv-deliver__grid">
+            {% for d in dels %}
+            <a class="omv-deliver__item" href="{{ d.url }}" target="_blank" rel="noopener"{% if d.allow_download and not d.is_external %} download{% endif %}>
+              <span class="omv-deliver__thumb omv-deliver__thumb--{{ d.kind }}"{% if d.poster_url %} style="background-image:url('{{ d.poster_url }}')"{% endif %}></span>
+              <span class="omv-deliver__body">
+                <span class="omv-deliver__title">{{ d.title }}</span>
+                {% if d.note %}<span class="omv-deliver__note">{{ d.note }}</span>{% endif %}
+                <span class="omv-deliver__cue">{% if d.allow_download and not d.is_external %}Download{% else %}Open{% endif %} {{ d.get_kind_display|lower }} &rarr;</span>
+              </span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% endwith %}
       </article>
       {% endfor %}
     </div>
@@ -115,7 +135,7 @@
     <div class="omv-portal__foot">
       <p class="helptext">
         Questions on any of these? Text me on <a class="omv-inline-link" href="tel:+14436840042">(443) 684-0042</a>
-        or email <a class="omv-inline-link" href="mailto:paul@oasismediavisions.com">paul@oasismediavisions.com</a>.
+        or email <a class="omv-inline-link" href="mailto:{{ omv_email }}">{{ omv_email }}</a>.
       </p>
       <form method="post" action="{% url 'create:signout' %}">
         {% csrf_token %}

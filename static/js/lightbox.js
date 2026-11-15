@@ -109,4 +109,20 @@
     e.preventDefault();
     open(el);
   });
+
+  // A navigation must never leave the viewer open over the new page: that
+  // leftover scroll-locked overlay (html.lb-open sets overflow:hidden) is
+  // exactly what read as the page going "stale" after the gallery. The router
+  // fires pf:leaving just before it swaps main, so drop everything here —
+  // immediately, with no close animation to race the swap.
+  function forceClose() {
+    document.documentElement.classList.remove("lb-open");
+    if (!box) return;
+    box.classList.remove("is-in");
+    box.hidden = true;
+    if (vid) { vid.pause(); vid.removeAttribute("src"); }
+    if (img) img.src = "";
+    index = -1;
+  }
+  document.addEventListener("pf:leaving", forceClose);
 })();

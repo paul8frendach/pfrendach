@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import Commission, Method, Package, Payment, Photo, ProjectLike, Service, Work
+from .models import (
+    Commission, Deliverable, Method, Package, Payment, Photo, ProjectLike, Service, Work,
+)
 
 
 @admin.register(Photo)
@@ -51,23 +53,46 @@ class ProjectLikeInline(admin.TabularInline):
     can_delete = False
 
 
+class DeliverableInline(admin.TabularInline):
+    """Upload final content to this client's folder right on their project."""
+    model = Deliverable
+    extra = 1
+    fields = ("title", "kind", "external_url", "file", "poster", "note",
+              "allow_download", "is_ready", "sort")
+
+
 @admin.register(Commission)
 class CommissionAdmin(admin.ModelAdmin):
-    list_display = ("name", "service", "event_date", "location", "status", "created_at")
+    list_display = ("name", "service", "event_date", "location", "status",
+                    "delivered_count", "created_at")
     list_editable = ("status",)
     list_filter = ("status", "service", "notified_oasis")
-    search_fields = ("name", "email", "location", "details")
-    readonly_fields = ("created_at", "updated_at", "source_path")
-    inlines = [ProjectLikeInline]
+    search_fields = ("name", "email", "location", "details", "reference")
+    readonly_fields = ("reference", "created_at", "updated_at", "quoted_at", "source_path")
+    inlines = [DeliverableInline, ProjectLikeInline]
     date_hierarchy = "created_at"
     fieldsets = (
-        (None, {"fields": ("name", "email", "phone", "how_heard")}),
+        (None, {"fields": ("reference", "client", "name", "email", "phone", "how_heard")}),
         ("The job", {"fields": ("service", "package", "event_date", "location", "budget", "details")}),
+        ("Quote", {"fields": ("quote_amount", "quote_deposit", "quote_note", "quoted_at")}),
         ("Tracking", {"fields": ("status", "notified_oasis", "source_path", "created_at", "updated_at")}),
     )
+
+    @admin.display(description="Delivered")
+    def delivered_count(self, obj):
+        return obj.delivered_count
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "clip", "is_live", "sort")
     prepopulated_fields = {"slug": ("title",)}
+
+
+@admin.register(Deliverable)
+class DeliverableAdmin(admin.ModelAdmin):
+    list_display = ("title", "commission", "kind", "is_ready", "delivered_at", "sort")
+    list_editable = ("is_ready", "sort")
+    list_filter = ("kind", "is_ready", "notified_oasis")
+    search_fields = ("title", "note", "commission__reference", "commission__name")
+    readonly_fields = ("created_at", "updated_at", "delivered_at")

@@ -380,6 +380,15 @@ class Commission(TimeStamped):
             })
         return steps
 
+    @property
+    def ready_deliverables(self):
+        """Finished items to show in the client's folder, delivered-first."""
+        return self.deliverables.filter(is_ready=True)
+
+    @property
+    def delivered_count(self) -> int:
+        return self.deliverables.filter(is_ready=True).count()
+
 
 class Payment(TimeStamped):
     """
@@ -619,3 +628,84 @@ class ProjectLike(TimeStamped):
 
     def __str__(self) -> str:
         return f"{self.commission.reference} ♥ {self.photo.image}"
+
+
+class Deliverable(TimeStamped):
+    """
+    A finished piece delivered to a client, shown in their project folder in the
+    portal. Storage is deliberately flexible: a smaller final can be an uploaded
+    file served from the site, while a large master rides as an external link (a
+    private Vimeo, a Google Drive folder, a signed download URL) so multi-gigabyte
+    files never have to live on the web host. One Commission is one client's
+    folder; its ready deliverables are what they see.
+    """
+
+    class Kind(models.TextChoices):
+        VIDEO = "video", "Film / video"
+        GALLERY = "gallery", "Photo gallery"
+        PHOTO = "photo", "Photo"
+        DOCUMENT = "document", "Document"
+        LINK = "link", "Link"
+
+    commission = models.ForeignKey(
+        "create.Commission",
+        on_delete=models.CASCADE,
+        related_name="deliverables",
+        help_text="The client project this belongs to — their folder.",
+    )
+    title = models.CharField(max_length=140)
+    kind = models.CharField(max_length=10, choices=Kind.choices, default=Kind.VIDEO)
+    note = models.CharField(
+        max_length=240, blank=True,
+        help_text="A short line shown to the client with this item.",
+    )
+    # Storage A — hosted on the site. Fine for smaller finals.
+    file = models.FileField(upload_to="create/deliverables/", blank=True)
+    poster = models.ImageField(upload_to="create/deliverables/posters/", blank=True)
+    # Storage B — the final lives elsewhere; the portal links out to it.
+    external_url = models.URLField(
+        max_length=600, blank=True,
+        help_text="Private Vimeo, a Google Drive folder, or a direct download link. "
+        "Use this for anything large, so the web host never stores the master.",
+    )
+    allow_download = models.BooleanField(
+        default=True, help_text="Offer a download, not only a view."
+    )
+    is_ready = models.BooleanField(
+        default=False,
+        help_text="Off while you stage it; on to show it in the client's folder.",
+    )
+    delivered_at = models.DateTimeField(null=True, blank=True)
+    sort = models.PositiveIntegerField(default=100, help_text="Low numbers first.")
+    notified_oasis = models.BooleanField(
+        default=False,
+        help_text="Set once Oasis has logged this delivery, so it is not re-counted.",
+    )
+
+    class Meta:
+        ordering = ("sort", "-created_at")
+
+    def __str__(self) -> str:
+        ref = self.commission.reference if self.commission_id else "—"
+        return f"{self.title} · {ref}"
+
+    def save(self, *args, **kwargs):
+        if self.is_ready and not self.delivered_at:
+            self.delivered_at = timezone.now()
+        super().save(*args, **kwargs)
+
+    @property
+    def is_external(self) -> bool:
+        return bool(self.external_url)
+
+    @property
+    def url(self) -> str:
+        if self.external_url:
+            return self.external_url
+        if self.file:
+            return self.file.url
+        return ""
+
+    @property
+    def poster_url(self) -> str:
+        return self.poster.url if self.poster else ""

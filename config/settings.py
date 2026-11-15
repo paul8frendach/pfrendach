@@ -205,6 +205,11 @@ else:
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"hello@{SITE_DOMAIN}")
 NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", DEFAULT_FROM_EMAIL)
 
+# The Oasis Media Visions public contact inbox — shown on the Create world and
+# where OMV commission / payment notices are sent. Its own address, kept apart
+# from the house contact email.
+OMV_CONTACT_EMAIL = os.environ.get("OMV_CONTACT_EMAIL", "omvcreative@proton.me")
+
 # ---------------------------------------------------------------- Stripe (OMV)
 # Payments go straight into Oasis Media Visions' own Stripe account. With no
 # keys set, the booking buttons stay hidden and the page falls back to

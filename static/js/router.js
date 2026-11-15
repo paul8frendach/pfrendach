@@ -102,6 +102,17 @@
 
   function apply(page, url, opts) {
     opts = opts || {};
+    // Retire the outgoing page before it is replaced: pause its media and let
+    // modules tear down (the lightbox closes and drops its scroll-lock, each
+    // console clears its timers, observers and document listeners). Without
+    // this a swap could leave a scroll-locked overlay or a still-playing clip
+    // behind — the page going "stale" after a video or the gallery.
+    try {
+      Array.prototype.forEach.call(main.querySelectorAll("video"), function (v) {
+        try { v.pause(); } catch (e) {}
+      });
+      document.dispatchEvent(new CustomEvent("pf:leaving"));
+    } catch (e) { /* teardown is best-effort; never block the swap */ }
     main.innerHTML = page.html;
     document.title = page.title;
     markChrome(page.world, page.urlName);

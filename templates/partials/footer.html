@@ -28,7 +28,7 @@
         {% if site.instagram_url %}<a href="{{ site.instagram_url }}" rel="me noopener">Instagram</a>{% endif %}
         {% if site.youtube_url %}<a href="{{ site.youtube_url }}" rel="me noopener">YouTube</a>{% endif %}
         {% if site.github_url %}<a href="{{ site.github_url }}" rel="me noopener">GitHub</a>{% endif %}
-        <a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>
+        {% if current_world == 'create' %}<a href="mailto:{{ omv_email }}">{{ omv_email }}</a>{% else %}<a href="mailto:{{ site.contact_email }}">{{ site.contact_email }}</a>{% endif %}
       </div>
     </div>
 

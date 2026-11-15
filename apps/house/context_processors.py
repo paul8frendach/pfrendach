@@ -22,4 +22,5 @@ def house(request):
         "worlds": World.objects.filter(is_live=True),
         "site_url": settings.SITE_URL,
         "current_world": _current_world(request),
+        "omv_email": settings.OMV_CONTACT_EMAIL,
     }

@@ -1,6 +1,7 @@
 import logging
 import os
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
@@ -22,8 +23,9 @@ from .models import Commission, Method, Package, Payment, Photo, ProjectLike, Se
 
 logger = logging.getLogger(__name__)
 
-# Where OMV commission requests are emailed. Its own inbox, not the house one.
-OMV_NOTIFY_EMAIL = os.environ.get("OMV_NOTIFY_EMAIL", "paul@oasismediavisions.com")
+# Where OMV commission requests are emailed. Its own inbox, not the house one;
+# defaults to the OMV contact address, overridable per deployment.
+OMV_NOTIFY_EMAIL = os.environ.get("OMV_NOTIFY_EMAIL", settings.OMV_CONTACT_EMAIL)
 
 
 def _grouped_work():

@@ -15,6 +15,7 @@
   "use strict";
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var live = [];   // teardown fns for mounted consoles, retired on page swap
 
   function mountConsoles() {
     Array.prototype.forEach.call(document.querySelectorAll("[data-console]"), function (root) {
@@ -121,10 +122,11 @@
       root.addEventListener("mouseenter", stop);
       root.addEventListener("mouseleave", schedule);
       root.addEventListener("focusin", surrender);
-      document.addEventListener("visibilitychange", function () {
+      function onVis() {
         if (document.visibilityState === "hidden") stop();
         else schedule();
-      });
+      }
+      document.addEventListener("visibilitychange", onVis);
 
       if (prev) prev.addEventListener("click", function () { surrender(); go(index - 1); });
       if (next) next.addEventListener("click", function () { surrender(); go(index + 1); });
@@ -158,10 +160,33 @@
       }
 
       setActive(0);
+
+      // Retire this console cleanly when the router swaps the page out, so
+      // stale timers, observers, document listeners and still-playing clips
+      // never accumulate — that build-up is what made the page feel stale
+      // after a few reels or a trip through the gallery.
+      live.push(function teardown() {
+        stop();
+        document.removeEventListener("visibilitychange", onVis);
+        if (watcher) watcher.disconnect();
+        if (starter) starter.disconnect();
+        items.forEach(function (item) {
+          var video = item.querySelector("[data-reel-video]");
+          if (video && !video.paused) video.pause();
+        });
+      });
     });
   }
 
   window.PF = window.PF || {};
   window.PF.mountConsoles = mountConsoles;
+
+  // When the router is about to swap pages, retire every live console so the
+  // outgoing page leaves nothing running behind it.
+  document.addEventListener("pf:leaving", function () {
+    live.forEach(function (teardown) { teardown(); });
+    live = [];
+  });
+
   mountConsoles();
 })();
