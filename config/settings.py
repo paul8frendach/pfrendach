@@ -219,6 +219,10 @@ STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY", "")
 STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
 STRIPE_CURRENCY = os.environ.get("STRIPE_CURRENCY", "usd")
 
+# Oasis link — shared secret that lets Paul's Oasis read the read-only /oasis-link/ summary.
+# Unset means the endpoint returns 503 for everyone (see config/oasis_link.py).
+OASIS_LINK_SECRET = os.environ.get("OASIS_LINK_SECRET", "")
+
 # ---------------------------------------------------------------- security
 
 X_FRAME_OPTIONS = "DENY"

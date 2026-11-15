@@ -6,9 +6,11 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 from apps.house.sitemaps import SITEMAPS
+from config import oasis_link
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("oasis-link/", oasis_link.view),   # read-only OMV summary for Oasis (Bearer OASIS_LINK_SECRET)
     path("accounts/", include("apps.accounts.urls")),
     path("train/", include("apps.train.urls")),
     path("create/", include("apps.create.urls")),
